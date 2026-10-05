@@ -29,11 +29,11 @@ Two rules hold for every skill:
 
 ## Install the skills and set up the wiki
 
-Clone the repository once and copy the skills into your agent's skills folder:
+Clone the repository once and install the skills for your agent:
 
 ```bash
 git clone https://github.com/ntanh1402/sdlc-skills
-sdlc-skills/install-skills.sh ~/.claude/skills            # the folder your agent reads
+sdlc-skills/install-skills.sh --agent claude            # no arguments lists the agent names
 ```
 
 Skills need Python 3.11 or newer and git. To update, run `git pull` in the
@@ -245,4 +245,7 @@ to run the tool's `refresh` on the other draft, and merge that one.
 ## More
 
 - [README](../../README.md): the short version.
+- [docs/runbook.md](../runbook.md): the wiki repository, the tool's commands and
+  how to change a wiki by hand.
 - [CONTEXT.md](../../CONTEXT.md): the terms used here.
+- [docs/adr/](../adr/): the decisions behind the design.

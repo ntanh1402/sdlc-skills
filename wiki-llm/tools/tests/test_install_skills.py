@@ -1,5 +1,6 @@
 """install-skills.sh: copy or link the skills into an agent's skills folder."""
 
+import os
 import subprocess
 import tempfile
 import unittest
@@ -12,8 +13,9 @@ SCRIPT = REPO / "install-skills.sh"
 NAMES = sorted(path.parent.name for path in (REPO / "skills").glob("*/SKILL.md"))
 
 
-def install(*argv):
-    out = subprocess.run(["bash", str(SCRIPT), *argv], capture_output=True, text=True)
+def install(*argv, home=None):
+    env = {**os.environ, "HOME": home or tempfile.mkdtemp()}
+    out = subprocess.run(["bash", str(SCRIPT), *argv], capture_output=True, text=True, env=env)
     return out.returncode, out.stdout + out.stderr
 
 
@@ -26,7 +28,7 @@ class InstallSkillsTest(unittest.TestCase):
         self._tmp.cleanup()
 
     def test_copies_every_skill_without_caches(self):
-        code, output = install(str(self.agent))
+        code, output = install("--folder", str(self.agent))
         self.assertEqual(code, 0, output)
         self.assertEqual(sorted(path.name for path in self.agent.iterdir()), NAMES)
         setup = self.agent / "sdlc-setup-wiki"
@@ -37,25 +39,25 @@ class InstallSkillsTest(unittest.TestCase):
         self.assertIn("copied sdlc-setup-wiki", output)
 
     def test_links_with_link(self):
-        code, output = install(str(self.agent), "--link")
+        code, output = install("--folder", str(self.agent), "--link")
         self.assertEqual(code, 0, output)
         setup = self.agent / "sdlc-setup-wiki"
         self.assertTrue(setup.is_symlink())
         self.assertEqual(setup.resolve(), (REPO / "skills/sdlc-setup-wiki").resolve())
 
     def test_a_second_install_replaces_the_first(self):
-        install(str(self.agent), "--link")
-        code, output = install(str(self.agent))
+        install("--folder", str(self.agent), "--link")
+        code, output = install("--folder", str(self.agent))
         self.assertEqual(code, 0, output)
         self.assertFalse((self.agent / "sdlc-setup-wiki").is_symlink())
         (self.agent / "sdlc-setup-wiki/extra.txt").write_text("x", encoding="utf-8")
-        self.assertEqual(install(str(self.agent))[0], 0)
+        self.assertEqual(install("--folder", str(self.agent))[0], 0)
         self.assertFalse((self.agent / "sdlc-setup-wiki/extra.txt").exists())
 
     def test_a_folder_that_is_not_a_skill_stops_everything(self):
         (self.agent / "sdlc-setup-wiki").mkdir(parents=True)
         (self.agent / "sdlc-setup-wiki/mine.txt").write_text("x", encoding="utf-8")
-        code, output = install(str(self.agent))
+        code, output = install("--folder", str(self.agent))
         self.assertEqual(code, 1)
         self.assertIn("is not an installed skill", output)
         self.assertEqual([path.name for path in self.agent.iterdir()], ["sdlc-setup-wiki"])
@@ -63,8 +65,31 @@ class InstallSkillsTest(unittest.TestCase):
 
     def test_usage(self):
         self.assertEqual(install()[0], 1)
-        self.assertEqual(install(str(self.agent), "--copy")[0], 1)
+        self.assertEqual(install("--folder", str(self.agent), "--copy")[0], 1)
         self.assertFalse(self.agent.exists())
+
+    def test_agent_name_installs_into_its_skills_folder(self):
+        home = Path(self._tmp.name) / "home"
+        home.mkdir()
+        code, output = install("--agent", "claude", "--agent", "gemini", home=str(home))
+        self.assertEqual(code, 0, output)
+        for folder in (".claude", ".gemini"):
+            self.assertEqual(sorted(p.name for p in (home / folder / "skills").iterdir()), NAMES)
+        self.assertFalse((home / ".codex").exists())
+
+    def test_no_arguments_lists_the_agent_names(self):
+        code, output = install()
+        self.assertEqual(code, 1)
+        for name in ("claude", "codex", "gemini", "cursor", "copilot", "opencode", "windsurf"):
+            self.assertIn(name, output)
+
+    def test_unknown_agent_stops(self):
+        home = Path(self._tmp.name) / "home"
+        home.mkdir()
+        code, output = install("--agent", "nope", home=str(home))
+        self.assertEqual(code, 1)
+        self.assertIn("unknown agent 'nope'", output)
+        self.assertEqual(list(home.iterdir()), [])
 
 
 if __name__ == "__main__":

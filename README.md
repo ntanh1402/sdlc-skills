@@ -16,22 +16,30 @@ cycle, and what you do by hand in between.
 
 ## Install the skills
 
-Clone this repository once, then copy the skills into your agent's skills
-folder:
+Clone this repository once, then run the script with the name of your agent:
 
 ```bash
 git clone https://github.com/ntanh1402/sdlc-skills
-sdlc-skills/install-skills.sh ~/.claude/skills            # the folder your agent reads
+sdlc-skills/install-skills.sh --agent claude
 ```
 
-| Agent | Skills folder |
-|---|---|
-| Claude Code | `~/.claude/skills` |
+Run the script with no arguments to list the supported agent names:
 
-For other agents, use the folder their documentation names for skills. To
-update, run `git pull` in the clone and run the script again. With `--link`,
-the script links the skills to the clone instead of copying them, so `git pull`
-alone updates them.
+| Agent | Name |
+|---|---|
+| Claude Code | `claude` |
+| Codex | `codex` |
+| Gemini CLI | `gemini` |
+| Cursor | `cursor` |
+| Copilot CLI | `copilot` |
+| OpenCode | `opencode` |
+| Windsurf | `windsurf` |
+
+Repeat `--agent` to install into several agents at once. To update, run
+`git pull` in the clone and run the script again. With `--link`, the script
+links the skills to the clone instead of copying them, so `git pull` alone
+updates them. For an agent not listed, pass the folder it reads its skills from
+with `--folder <folder>`.
 
 A third-party installer works too, for example
 [`npx skills add ntanh1402/sdlc-skills -g`](https://github.com/vercel-labs/skills),
@@ -383,4 +391,7 @@ to run the tool's `refresh` on the other draft, and merge that one.
 - [`docs/user-guide/user-guide.md`](docs/user-guide/user-guide.md): the user
   guide, with one page per skill: the scenarios you will meet, what the skill
   does and what you do.
+- [`docs/runbook.md`](docs/runbook.md): the wiki repository, the tool's
+  commands and how to change a wiki by hand.
 - [`CONTEXT.md`](CONTEXT.md): the terms used here.
+- [`docs/adr/`](docs/adr/): the decisions behind the design.

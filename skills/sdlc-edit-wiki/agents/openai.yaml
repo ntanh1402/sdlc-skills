@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Edit Wiki"
+  short_description: "Make a small edit no lifecycle skill owns"
+  default_prompt: "Use $sdlc-edit-wiki to fix wording, the glossary or conventions, mark a Feature released, or link a Task's ticket."

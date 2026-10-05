@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Import"
+  short_description: "Bring existing code, documents and tests into the wiki"
+  default_prompt: "Use $sdlc-import to import this existing code, document or test suite into the project wiki, or to compare it with what the wiki already says."

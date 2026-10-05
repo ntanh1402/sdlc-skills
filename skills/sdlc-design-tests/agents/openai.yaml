@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Design Tests"
+  short_description: "Design traceable test suites and cases"
+  default_prompt: "Use $sdlc-design-tests to design TestSuites and TestCases for an Approved Feature or ChangeRequest."

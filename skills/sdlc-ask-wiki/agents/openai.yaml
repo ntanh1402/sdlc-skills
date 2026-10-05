@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Ask Wiki"
+  short_description: "Answer questions from the project wiki"
+  default_prompt: "Use $sdlc-ask-wiki to list features, show an architecture or answer a question from the project wiki."

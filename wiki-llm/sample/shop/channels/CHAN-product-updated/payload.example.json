@@ -1,0 +1,17 @@
+{
+  "key": "b7419c30-6e28-4d5a-9f13-0a8c2e64d71f",
+  "headers": {
+    "message-id": "45de8c02-1b7f-4a39-96c8-3e07d5b21f4a",
+    "event-type": "product.updated",
+    "event-version": "1.0",
+    "occurred-at": "2026-07-14T08:12:44.117Z",
+    "correlation-id": "0c5a9e73-8f41-4b26-a3d0-7e19b4f62c85",
+    "producer": "SVC-catalog"
+  },
+  "body": {
+    "productId": "b7419c30-6e28-4d5a-9f13-0a8c2e64d71f",
+    "changeType": "updated",
+    "revision": 12,
+    "updatedAt": "2026-07-14T08:12:44.117Z"
+  }
+}

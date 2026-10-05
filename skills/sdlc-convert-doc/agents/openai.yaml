@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Convert Doc"
+  short_description: "Route documents through MarkItDown or Marker"
+  default_prompt: "Use $sdlc-convert-doc to convert this local document into clean Markdown."

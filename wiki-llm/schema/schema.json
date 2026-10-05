@@ -1,0 +1,703 @@
+{
+  "schema_version": "1",
+  "okf_version": "0.2",
+  "common_fields": {
+    "type": {"kind": "string", "required": true},
+    "title": {"kind": "string", "required": true},
+    "description": {"kind": "string", "required": true},
+    "generated": {"kind": "actor_stamp", "required": true},
+    "verified": {"kind": "actor_stamps"},
+    "sources": {"kind": "sources"},
+    "resource": {"kind": "uri"},
+    "stale_after": {"kind": "timestamp"},
+    "tags": {"kind": "string_list"}
+  },
+  "design_types": [
+    "Service",
+    "WebFrontend",
+    "MobileFrontend",
+    "Endpoint",
+    "Subscription",
+    "MessageChannel",
+    "Database",
+    "Table",
+    "Cache",
+    "BlobStore",
+    "SearchIndex",
+    "ExternalService",
+    "Operation"
+  ],
+  "qualifiers": {"change": ["new", "modified", "removed"], "access": ["read", "write", "rw"], "criticality": ["critical"]},
+  "pending": {
+    "heading": "Pending changes",
+    "status_by_change": {"new": "Planned", "removed": "Removing", "modified": "Modifying"},
+    "open_parents": {"Feature": ["Approved", "InDev"], "ChangeRequest": ["Approved"]},
+    "open_requests": ["Proposed", "ReqApproved", "Approved"],
+    "delta": ["Delta", "Target delta"],
+    "feature_scope": ["Architecture"],
+    "task_scope": ["Planned scope"]
+  },
+  "collections": [
+    {"dir": "features", "title": "Features", "description": "Product capabilities, their requirements and target architecture.", "types": ["Feature"]},
+    {"dir": "change-requests", "title": "Change requests", "description": "Requested changes to existing features.", "types": ["ChangeRequest"]},
+    {"dir": "decisions", "title": "Decisions", "description": "Architecture decisions for the whole application.", "types": ["ArchitectureDecision"]},
+    {"dir": "frontends", "title": "Frontends", "description": "Web and mobile clients.", "types": ["WebFrontend", "MobileFrontend"]},
+    {"dir": "services", "title": "Services", "description": "Backend services with their endpoints and subscriptions.", "types": ["Service"]},
+    {
+      "dir": "datastores",
+      "title": "Datastores",
+      "description": "Databases, caches, blob stores and search indexes.",
+      "types": ["Database", "Cache", "BlobStore", "SearchIndex"]
+    },
+    {"dir": "channels", "title": "Channels", "description": "Message channels and their payload contracts.", "types": ["MessageChannel"]},
+    {"dir": "externals", "title": "Externals", "description": "Third-party services and the operations called on them.", "types": ["ExternalService"]},
+    {"dir": "tests", "title": "Tests", "description": "Test suites and their test cases.", "types": ["TestSuite"]}
+  ],
+  "types": {
+    "Application": {
+      "page": "application.md",
+      "phase": "Plan",
+      "path": "<app>/",
+      "shape": "folder",
+      "log": false,
+      "plural": "Applications",
+      "place": {"kind": "app"},
+      "key_pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "lifecycle": true,
+      "statuses": ["Active", "Archived"],
+      "fields": {
+        "ownerTeam": {"kind": "string", "required": true},
+        "appType": {"kind": "enum", "values": ["web", "mobile", "platform", "internal"]},
+        "criticality": {"kind": "string"}
+      },
+      "headings": [{"name": "Architecture", "presence": "required", "allow_none": true, "mermaid": "flowchart"}],
+      "owns": ["Convention", "Glossary", "Reference"]
+    },
+    "Feature": {
+      "page": "feature.md",
+      "phase": "Plan",
+      "path": "<app>/features/FEAT-<slug>/",
+      "shape": "folder",
+      "plural": "Features",
+      "prefix": "FEAT-",
+      "place": {"kind": "collection", "dir": "features"},
+      "lifecycle": true,
+      "statuses": ["Draft", "ReqApproved", "Approved", "InDev", "Released", "Deprecated"],
+      "fields": {
+        "ownerTeam": {"kind": "string", "required": true},
+        "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]},
+        "targetRelease": {"kind": "string"},
+        "epicKey": {"kind": "string"},
+        "flagKey": {"kind": "string"},
+        "releasedAt": {"kind": "timestamp"}
+      },
+      "headings": [
+        {"name": "Requirements", "presence": "required", "requirements": {"min": 1}},
+        {
+          "name": "Architecture",
+          "presence": "required",
+          "allow_none": true,
+          "none_statuses": ["Draft", "ReqApproved"],
+          "nested": [
+            {"name": "Context and constraints", "presence": "required"},
+            {"name": "High-level architecture", "presence": "required", "mermaid": "flowchart"},
+            {"name": "Services", "presence": "required", "links": {"targets": ["Service"], "min": 1}},
+            {"name": "Frontends", "presence": "optional", "links": {"targets": ["WebFrontend", "MobileFrontend"], "min": 1}},
+            {"name": "Runtime sequences", "presence": "required", "mermaid": "sequenceDiagram"},
+            {"name": "Decisions", "presence": "required", "links": {"targets": ["ArchitectureDecision"], "min": 0}},
+            {"name": "Traceability", "presence": "required"}
+          ]
+        },
+        {
+          "name": "Change history",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "ChangeRequest", "heading": ["Changes"]}], "when_empty": "none"}
+        }
+      ],
+      "owns": ["Reference", "UserStory", "Task"]
+    },
+    "ChangeRequest": {
+      "page": "change-request.md",
+      "phase": "Plan",
+      "path": "<app>/change-requests/CR-<name>/",
+      "shape": "folder",
+      "plural": "Change requests",
+      "prefix": "CR-",
+      "place": {"kind": "collection", "dir": "change-requests"},
+      "lifecycle": true,
+      "statuses": ["Proposed", "ReqApproved", "Approved", "Implemented", "Rejected"],
+      "fields": {
+        "changeType": {"kind": "enum", "values": ["feature", "bugfix", "refactor", "security", "perf"], "required": true},
+        "riskLevel": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true},
+        "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]},
+        "targetRelease": {"kind": "string"},
+        "requestedBy": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Changes", "presence": "required", "links": {"targets": ["Feature"], "min": 1, "max": 1}},
+        {"name": "Reason", "presence": "required"},
+        {"name": "Requirements", "presence": "required", "requirements": {"min": 0}},
+        {
+          "name": "Delta",
+          "presence": "required",
+          "allow_none": true,
+          "none_statuses": ["Proposed", "ReqApproved", "Rejected"],
+          "nested": [
+            {
+              "name": "Target delta",
+              "presence": "required",
+              "links": {"targets": ["@design"], "min": 1, "qualifier": {"set": "change", "required": true}}
+            },
+            {"name": "Runtime sequences", "presence": "required", "mermaid": "sequenceDiagram"},
+            {"name": "Decisions", "presence": "required", "links": {"targets": ["ArchitectureDecision"], "min": 0}},
+            {"name": "Traceability", "presence": "required"}
+          ]
+        }
+      ],
+      "owns": ["Reference", "UserStory", "Task"]
+    },
+    "UserStory": {
+      "page": "user-story.md",
+      "phase": "Plan",
+      "path": "<app>/features/FEAT-*/STORY-<name>.md or <app>/change-requests/CR-*/STORY-<name>.md",
+      "shape": "file",
+      "plural": "User stories",
+      "prefix": "STORY-",
+      "place": {"kind": "owned", "owners": ["Feature", "ChangeRequest"]},
+      "lifecycle": false,
+      "fields": {
+        "trackerKey": {"kind": "string"},
+        "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]}
+      },
+      "headings": [
+        {"name": "Acceptance criteria", "presence": "required"},
+        {"name": "Requirements", "presence": "required", "links": {"targets": ["Requirement"], "min": 1}},
+        {"name": "Affects", "presence": "optional", "links": {"targets": ["UserStory"], "min": 0}},
+        {"name": "Notes", "presence": "optional"},
+        {
+          "name": "Changed by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "UserStory", "heading": ["Affects"]}], "when_empty": "omit"}
+        }
+      ]
+    },
+    "ArchitectureDecision": {
+      "page": "architecture-decision.md",
+      "phase": "Design",
+      "path": "<app>/decisions/ADR-<name>.md",
+      "shape": "file",
+      "plural": "Decisions",
+      "prefix": "ADR-",
+      "place": {"kind": "collection", "dir": "decisions"},
+      "lifecycle": true,
+      "statuses": ["Proposed", "Accepted", "Rejected", "Superseded"],
+      "fields": {"ownerTeam": {"kind": "string", "required": true}, "decisionDate": {"kind": "date"}},
+      "headings": [
+        {"name": "Context", "presence": "required"},
+        {"name": "Decision", "presence": "required"},
+        {"name": "Alternatives", "presence": "required"},
+        {"name": "Consequences", "presence": "required"},
+        {"name": "Affected concepts", "presence": "required", "links": {"targets": ["@design", "Feature", "ChangeRequest"], "min": 1}},
+        {"name": "Supersedes", "presence": "optional", "links": {"targets": ["ArchitectureDecision"], "min": 1}},
+        {
+          "name": "Superseded by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "ArchitectureDecision", "heading": ["Supersedes"]}], "when_empty": "omit"}
+        }
+      ]
+    },
+    "Reference": {
+      "page": "source-document.md",
+      "phase": "Source",
+      "path": "<app>/<name>.md, <app>/features/FEAT-*/<name>.md, <app>/change-requests/CR-*/<name>.md or <app>/tests/TS-*/<name>.md",
+      "shape": "file",
+      "plural": "Source documents",
+      "place": {"kind": "owned", "owners": ["Application", "Feature", "ChangeRequest", "TestSuite"]},
+      "lifecycle": false,
+      "title": "free",
+      "free_headings": true,
+      "human_verified": true,
+      "fields": {},
+      "headings": []
+    },
+    "Convention": {
+      "page": "convention.md",
+      "phase": "Plan",
+      "path": "<app>/conventions.md",
+      "shape": "file",
+      "plural": "Conventions",
+      "filename": "conventions.md",
+      "place": {"kind": "owned", "owners": ["Application"]},
+      "lifecycle": false,
+      "free_headings": true,
+      "fields": {},
+      "headings": []
+    },
+    "Glossary": {
+      "page": "glossary.md",
+      "phase": "Plan",
+      "path": "<app>/glossary.md",
+      "shape": "file",
+      "plural": "Glossary",
+      "filename": "glossary.md",
+      "place": {"kind": "owned", "owners": ["Application"]},
+      "lifecycle": false,
+      "fields": {},
+      "headings": [
+        {"name": "Terms", "presence": "required", "allow_none": true, "table": ["Term", "Definition"]},
+        {"name": "Roles", "presence": "required", "allow_none": true, "table": ["Role", "Description"]}
+      ]
+    },
+    "Service": {
+      "page": "service.md",
+      "phase": "Design",
+      "path": "<app>/services/SVC-<slug>/",
+      "shape": "folder",
+      "plural": "Services",
+      "prefix": "SVC-",
+      "place": {"kind": "collection", "dir": "services"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "serviceType": {"kind": "enum", "values": ["api", "worker", "cron", "consumer", "gateway"], "required": true},
+        "ownerTeam": {"kind": "string", "required": true},
+        "resource": {"kind": "uri", "required": true},
+        "language": {"kind": "string"},
+        "framework": {"kind": "string"},
+        "runtime": {"kind": "string"},
+        "deployTarget": {"kind": "enum", "values": ["k8s", "lambda", "vm"]},
+        "slaTier": {"kind": "string"},
+        "version": {"kind": "string"},
+        "port": {"kind": "integer"},
+        "healthcheckPath": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Publishes", "presence": "optional", "links": {"targets": ["MessageChannel"], "min": 0}},
+        {"name": "Calls", "presence": "optional", "links": {"targets": ["Endpoint", "Operation"], "min": 0}},
+        {"name": "Reads", "presence": "optional", "links": {"targets": ["Table"], "min": 0}},
+        {"name": "Writes", "presence": "optional", "links": {"targets": ["Table"], "min": 0}},
+        {
+          "name": "Uses",
+          "presence": "optional",
+          "links": {"targets": ["Cache", "BlobStore", "SearchIndex"], "min": 0, "qualifier": {"set": "access", "required": true}}
+        },
+        {
+          "name": "Depends on",
+          "presence": "optional",
+          "links": {"targets": ["ExternalService"], "min": 0, "qualifier": {"set": "criticality", "required": false}}
+        }
+      ],
+      "owns": ["Endpoint", "Subscription"]
+    },
+    "WebFrontend": {
+      "page": "frontend-web.md",
+      "phase": "Design",
+      "path": "<app>/frontends/WEB-<slug>/",
+      "shape": "folder",
+      "plural": "Web frontends",
+      "prefix": "WEB-",
+      "place": {"kind": "collection", "dir": "frontends"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "ownerTeam": {"kind": "string", "required": true},
+        "resource": {"kind": "uri", "required": true},
+        "language": {"kind": "string"},
+        "framework": {"kind": "string"},
+        "renderingMode": {"kind": "enum", "values": ["csr", "ssr", "ssg", "hybrid"]},
+        "buildTool": {"kind": "string"},
+        "packageManager": {"kind": "string"},
+        "deployTarget": {"kind": "enum", "values": ["static-host", "edge", "container", "serverless"]},
+        "baseUrl": {"kind": "string"},
+        "version": {"kind": "string"},
+        "browserSupport": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Routes", "presence": "required"},
+        {"name": "Architecture", "presence": "required", "mermaid": "flowchart"},
+        {"name": "Calls", "presence": "required", "links": {"targets": ["Endpoint", "Operation"], "min": 0}},
+        {
+          "name": "Depends on",
+          "presence": "optional",
+          "links": {"targets": ["ExternalService"], "min": 0, "qualifier": {"set": "criticality", "required": false}}
+        },
+        {"name": "Runtime behavior", "presence": "required"},
+        {"name": "Quality constraints", "presence": "required"},
+        {"name": "Delivery", "presence": "optional"},
+        {"name": "Observability", "presence": "optional"}
+      ]
+    },
+    "MobileFrontend": {
+      "page": "frontend-mobile.md",
+      "phase": "Design",
+      "path": "<app>/frontends/MB-<slug>/",
+      "shape": "folder",
+      "plural": "Mobile frontends",
+      "prefix": "MB-",
+      "place": {"kind": "collection", "dir": "frontends"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "ownerTeam": {"kind": "string", "required": true},
+        "resource": {"kind": "uri", "required": true},
+        "platform": {"kind": "enum", "values": ["ios", "android", "cross-platform"], "required": true},
+        "language": {"kind": "string"},
+        "framework": {"kind": "string"},
+        "minimumOsVersion": {"kind": "string"},
+        "applicationId": {"kind": "string"},
+        "bundleId": {"kind": "string"},
+        "distribution": {"kind": "enum", "values": ["app-store", "enterprise", "internal", "sideload"]},
+        "buildTool": {"kind": "string"},
+        "version": {"kind": "string"},
+        "offlineCapable": {"kind": "boolean"}
+      },
+      "headings": [
+        {"name": "Screens and navigation", "presence": "required"},
+        {"name": "Architecture", "presence": "required", "mermaid": "flowchart"},
+        {"name": "Calls", "presence": "required", "links": {"targets": ["Endpoint", "Operation"], "min": 0}},
+        {
+          "name": "Depends on",
+          "presence": "optional",
+          "links": {"targets": ["ExternalService"], "min": 0, "qualifier": {"set": "criticality", "required": false}}
+        },
+        {"name": "Runtime behavior", "presence": "required"},
+        {"name": "Platform integrations", "presence": "required"},
+        {"name": "Deep links", "presence": "optional"},
+        {"name": "Quality constraints", "presence": "required"},
+        {"name": "Delivery", "presence": "optional"},
+        {"name": "Observability", "presence": "optional"}
+      ]
+    },
+    "Endpoint": {
+      "page": "endpoint.md",
+      "phase": "Design",
+      "path": "<app>/services/SVC-*/EP-<slug>.md",
+      "shape": "file",
+      "plural": "Endpoints",
+      "prefix": "EP-",
+      "place": {"kind": "owned", "owners": ["Service"]},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "method": {"kind": "string", "required": true},
+        "path": {"kind": "string", "required": true},
+        "protocol": {"kind": "enum", "values": ["http", "grpc", "graphql"], "required": true},
+        "authType": {"kind": "enum", "values": ["none", "apikey", "jwt", "oauth"]},
+        "rateLimit": {"kind": "string"},
+        "idempotent": {"kind": "boolean"},
+        "version": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Request", "presence": "required"},
+        {"name": "Response", "presence": "required", "nested": [{"name": "Status codes", "presence": "required"}]},
+        {"name": "Validations", "presence": "optional"},
+        {"name": "Behavior", "presence": "required"},
+        {"name": "Sequence diagram", "presence": "optional", "mermaid": "sequenceDiagram"}
+      ]
+    },
+    "Subscription": {
+      "page": "subscription.md",
+      "phase": "Design",
+      "path": "<app>/services/SVC-*/SUB-<slug>.md",
+      "shape": "file",
+      "plural": "Subscriptions",
+      "prefix": "SUB-",
+      "place": {"kind": "owned", "owners": ["Service"]},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {"consumerGroup": {"kind": "string", "required": true}, "maxAttempts": {"kind": "integer"}, "concurrency": {"kind": "integer"}},
+      "headings": [
+        {"name": "Consumes", "presence": "required", "links": {"targets": ["MessageChannel"], "min": 1, "max": 1}},
+        {"name": "Handler", "presence": "required"},
+        {"name": "Idempotency", "presence": "required"},
+        {"name": "Failure behavior", "presence": "required"},
+        {"name": "Sequence diagram", "presence": "optional", "mermaid": "sequenceDiagram"}
+      ]
+    },
+    "MessageChannel": {
+      "page": "message-channel.md",
+      "phase": "Design",
+      "path": "<app>/channels/CHAN-<slug>/",
+      "shape": "folder",
+      "plural": "Message channels",
+      "prefix": "CHAN-",
+      "place": {"kind": "collection", "dir": "channels"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "title": "fixed:Overview",
+      "title_nested": [{"name": "Dead letter", "presence": "required"}],
+      "fields": {
+        "channelName": {"kind": "string", "required": true},
+        "kind": {"kind": "string", "required": true},
+        "channelType": {"kind": "enum", "values": ["topic", "queue"], "required": true},
+        "schemaFormat": {"kind": "enum", "values": ["avro", "protobuf", "json"]},
+        "schemaVersion": {"kind": "string"},
+        "schemaRegistryUrl": {"kind": "string"},
+        "partitions": {"kind": "integer"},
+        "retentionHours": {"kind": "integer"},
+        "ordering": {"kind": "boolean"},
+        "deliveryGuarantee": {"kind": "enum", "values": ["at-least-once", "exactly-once", "at-most-once"]}
+      },
+      "headings": [
+        {
+          "name": "Payload",
+          "presence": "required",
+          "nested": [{"name": "Key", "presence": "required"}, {"name": "Header", "presence": "required"}, {"name": "Body", "presence": "required"}]
+        },
+        {"name": "Payload example", "presence": "required"},
+        {
+          "name": "Publishers",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "Service", "heading": ["Publishes"]}], "when_empty": "none"}
+        },
+        {
+          "name": "Subscribers",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "Subscription", "heading": ["Consumes"]}], "when_empty": "none"}
+        }
+      ],
+      "extra_files": [{"name": "payload.example.json", "description": "Example message: key, headers, body."}]
+    },
+    "Database": {
+      "page": "datastore-database.md",
+      "phase": "Design",
+      "path": "<app>/datastores/DB-<slug>/",
+      "shape": "folder",
+      "plural": "Databases",
+      "prefix": "DB-",
+      "place": {"kind": "collection", "dir": "datastores"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "engine": {"kind": "string", "required": true},
+        "version": {"kind": "string"},
+        "schemaName": {"kind": "string"},
+        "replication": {"kind": "boolean"},
+        "backupPolicy": {"kind": "string"}
+      },
+      "headings": [],
+      "owns": ["Table"]
+    },
+    "Table": {
+      "page": "datastore-table.md",
+      "phase": "Design",
+      "path": "<app>/datastores/DB-*/TBL-<slug>.md",
+      "shape": "file",
+      "plural": "Tables",
+      "prefix": "TBL-",
+      "place": {"kind": "owned", "owners": ["Database"]},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "tableName": {"kind": "string", "required": true},
+        "pii": {"kind": "boolean"},
+        "rowCountEstimate": {"kind": "integer"},
+        "partitionKey": {"kind": "string"},
+        "retentionPolicy": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Schema", "presence": "required"},
+        {"name": "Indexes", "presence": "optional"},
+        {
+          "name": "Used by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {
+            "sources": [{"type": "Service", "heading": ["Reads"], "label": "read"}, {"type": "Service", "heading": ["Writes"], "label": "write"}],
+            "when_empty": "none"
+          }
+        }
+      ]
+    },
+    "Cache": {
+      "page": "datastore-cache.md",
+      "phase": "Design",
+      "path": "<app>/datastores/CACHE-<slug>/",
+      "shape": "folder",
+      "plural": "Caches",
+      "prefix": "CACHE-",
+      "place": {"kind": "collection", "dir": "datastores"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "engine": {"kind": "string", "required": true},
+        "version": {"kind": "string"},
+        "keyPattern": {"kind": "string"},
+        "dataType": {"kind": "enum", "values": ["string", "hash", "set", "zset", "json"]},
+        "evictionPolicy": {"kind": "string"},
+        "ttlSeconds": {"kind": "integer"},
+        "maxMemory": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Value", "presence": "required"},
+        {"name": "Caches", "presence": "required", "links": {"targets": ["Table", "Endpoint"], "min": 0}},
+        {
+          "name": "Used by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "Service", "heading": ["Uses"], "label": "@qualifier"}], "when_empty": "none"}
+        }
+      ]
+    },
+    "BlobStore": {
+      "page": "datastore-blob.md",
+      "phase": "Design",
+      "path": "<app>/datastores/BLOB-<slug>/",
+      "shape": "folder",
+      "plural": "Blob stores",
+      "prefix": "BLOB-",
+      "place": {"kind": "collection", "dir": "datastores"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "provider": {"kind": "string", "required": true},
+        "bucket": {"kind": "string"},
+        "pathPattern": {"kind": "string"},
+        "region": {"kind": "string"},
+        "publicAccess": {"kind": "boolean"},
+        "encryption": {"kind": "boolean"},
+        "lifecyclePolicy": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Content types", "presence": "required"},
+        {
+          "name": "Used by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "Service", "heading": ["Uses"], "label": "@qualifier"}], "when_empty": "none"}
+        }
+      ]
+    },
+    "SearchIndex": {
+      "page": "datastore-search-index.md",
+      "phase": "Design",
+      "path": "<app>/datastores/IDX-<slug>/",
+      "shape": "folder",
+      "plural": "Search indexes",
+      "prefix": "IDX-",
+      "place": {"kind": "collection", "dir": "datastores"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {"engine": {"kind": "string", "required": true}, "indexName": {"kind": "string"}, "shards": {"kind": "integer"}},
+      "headings": [
+        {"name": "Indexed fields", "presence": "required"},
+        {
+          "name": "Used by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "Service", "heading": ["Uses"], "label": "@qualifier"}], "when_empty": "none"}
+        }
+      ]
+    },
+    "ExternalService": {
+      "page": "external-service.md",
+      "phase": "Design",
+      "path": "<app>/externals/EXT-<slug>/",
+      "shape": "folder",
+      "plural": "External services",
+      "prefix": "EXT-",
+      "place": {"kind": "collection", "dir": "externals"},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "vendor": {"kind": "string", "required": true},
+        "apiUrl": {"kind": "uri", "required": true},
+        "authType": {"kind": "string"},
+        "slaTier": {"kind": "string"},
+        "costModel": {"kind": "enum", "values": ["per-call", "subscription"]}
+      },
+      "headings": [{"name": "Fallback", "presence": "required"}],
+      "owns": ["Operation"]
+    },
+    "Operation": {
+      "page": "external-operation.md",
+      "phase": "Design",
+      "path": "<app>/externals/EXT-*/OP-<slug>.md",
+      "shape": "file",
+      "plural": "Operations",
+      "prefix": "OP-",
+      "place": {"kind": "owned", "owners": ["ExternalService"]},
+      "lifecycle": true,
+      "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
+      "fields": {
+        "method": {"kind": "string", "required": true},
+        "path": {"kind": "string", "required": true},
+        "timeoutMs": {"kind": "integer"},
+        "rateLimit": {"kind": "string"},
+        "costPerCall": {"kind": "string"}
+      },
+      "headings": [{"name": "Schema", "presence": "required"}, {"name": "Failure handling", "presence": "required"}]
+    },
+    "Task": {
+      "page": "task.md",
+      "phase": "Build",
+      "path": "<app>/features/FEAT-*/TASK-<name>.md or <app>/change-requests/CR-*/TASK-<name>.md",
+      "shape": "file",
+      "plural": "Tasks",
+      "prefix": "TASK-",
+      "place": {"kind": "owned", "owners": ["Feature", "ChangeRequest"]},
+      "lifecycle": true,
+      "statuses": ["Todo", "Done"],
+      "fields": {
+        "trackerKey": {"kind": "string"},
+        "taskType": {"kind": "enum", "values": ["dev", "test", "design", "spike"]},
+        "estimate": {"kind": "string"},
+        "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]},
+        "prUrl": {"kind": "uri"},
+        "mergedAt": {"kind": "timestamp"},
+        "mergeCommitSha": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Acceptance", "presence": "required"},
+        {"name": "Stories", "presence": "optional", "links": {"targets": ["UserStory"], "min": 0}},
+        {
+          "name": "Planned scope",
+          "presence": "required",
+          "links": {"targets": ["@design"], "min": 0, "qualifier": {"set": "change", "required": true}}
+        },
+        {"name": "Blocked by", "presence": "optional", "links": {"targets": ["Task"], "min": 0}},
+        {"name": "Reviewers", "presence": "optional"}
+      ]
+    },
+    "TestSuite": {
+      "page": "test-suite.md",
+      "phase": "Verify",
+      "path": "<app>/tests/TS-<slug>/",
+      "shape": "folder",
+      "plural": "Test suites",
+      "prefix": "TS-",
+      "place": {"kind": "collection", "dir": "tests"},
+      "lifecycle": true,
+      "statuses": ["Draft", "Approved", "Implemented", "Deprecated"],
+      "fields": {"suiteType": {"kind": "enum", "values": ["unit", "integration", "e2e", "load", "security"], "required": true}, "framework": {"kind": "string"}},
+      "headings": [{"name": "Verifies", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest"], "min": 1}}],
+      "owns": ["TestCase", "Reference"]
+    },
+    "TestCase": {
+      "page": "test-case.md",
+      "phase": "Verify",
+      "path": "<app>/tests/TS-*/TC-<slug>.md",
+      "shape": "file",
+      "plural": "Test cases",
+      "prefix": "TC-",
+      "place": {"kind": "owned", "owners": ["TestSuite"]},
+      "lifecycle": false,
+      "fields": {
+        "risk": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true}
+      },
+      "headings": [
+        {"name": "Covers", "presence": "required", "links": {"targets": ["Requirement", "@design", "ArchitectureDecision"], "min": 1}},
+        {"name": "Purpose", "presence": "required"},
+        {"name": "Preconditions", "presence": "required"},
+        {"name": "Test data", "presence": "required"},
+        {"name": "Steps", "presence": "required", "table": ["Step", "Action", "Expected result", "Validation"]},
+        {"name": "Postconditions and cleanup", "presence": "required"}
+      ]
+    }
+  }
+}

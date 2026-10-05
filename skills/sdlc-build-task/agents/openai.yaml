@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Build Task"
+  short_description: "Write the code of one wiki Task"
+  default_prompt: "Use $sdlc-build-task to write the code and unit tests of this wiki Task in this code repository."

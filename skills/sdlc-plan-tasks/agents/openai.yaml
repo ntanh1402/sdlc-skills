@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Plan Tasks"
+  short_description: "Break an approved design into build tasks"
+  default_prompt: "Use $sdlc-plan-tasks to plan the build Tasks of an Approved Feature or ChangeRequest."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Review Code"
+  short_description: "Review a code change against the project wiki"
+  default_prompt: "Use $sdlc-review-code to review this code change against the project wiki."

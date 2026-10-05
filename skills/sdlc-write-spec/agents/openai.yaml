@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Write Spec"
+  short_description: "Turn intent into approved wiki requirements"
+  default_prompt: "Use $sdlc-write-spec to write and approve a Feature or ChangeRequest specification."

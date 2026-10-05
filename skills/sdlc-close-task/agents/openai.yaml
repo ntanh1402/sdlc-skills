@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Close Task"
+  short_description: "Record in the wiki that a Task's code is merged"
+  default_prompt: "Use $sdlc-close-task to record in the project wiki that this Task's code is merged."

@@ -1,0 +1,21 @@
+{
+  "key": "3f2b8c14-9a6d-4e21-b7f0-1c5d8e93a204",
+  "headers": {
+    "message-id": "e63b1a09-4d72-4c85-b0f1-8a396e2d74cb",
+    "event-type": "payment.authorized",
+    "event-version": "1.0",
+    "occurred-at": "2026-07-14T09:41:11.902Z",
+    "correlation-id": "7d19f4b6-2e58-4c03-9a71-6b0f3e2d5c19",
+    "producer": "SVC-payments"
+  },
+  "body": {
+    "paymentId": "9b4d0e21-7c85-4f36-a1e9-5d820c73f6b8",
+    "orderId": "3f2b8c14-9a6d-4e21-b7f0-1c5d8e93a204",
+    "customerId": "c8e41f7a-30bd-4a92-85c6-9f2e07d41b53",
+    "amountUsd": 128.45,
+    "currency": "USD",
+    "cardBrand": "visa",
+    "cardLast4": "4242",
+    "authorizedAt": "2026-07-14T09:41:11.902Z"
+  }
+}

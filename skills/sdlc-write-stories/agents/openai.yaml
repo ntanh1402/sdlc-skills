@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Write Stories"
+  short_description: "Break approved requirements into user stories"
+  default_prompt: "Use $sdlc-write-stories to write the user stories of a ReqApproved or Approved Feature or ChangeRequest."

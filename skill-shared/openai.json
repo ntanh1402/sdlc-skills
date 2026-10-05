@@ -1,0 +1,67 @@
+{
+  "sdlc-setup-wiki": {
+    "display_name": "SDLC Setup Wiki",
+    "short_description": "Create, upgrade or link a project wiki",
+    "default_prompt": "Use $sdlc-setup-wiki to set up, upgrade or link the project wiki for this folder."
+  },
+  "sdlc-write-spec": {
+    "display_name": "SDLC Write Spec",
+    "short_description": "Turn intent into approved wiki requirements",
+    "default_prompt": "Use $sdlc-write-spec to write and approve a Feature or ChangeRequest specification."
+  },
+  "sdlc-write-stories": {
+    "display_name": "SDLC Write Stories",
+    "short_description": "Break approved requirements into user stories",
+    "default_prompt": "Use $sdlc-write-stories to write the user stories of a ReqApproved or Approved Feature or ChangeRequest."
+  },
+  "sdlc-design-arch": {
+    "display_name": "SDLC Design Architecture",
+    "short_description": "Design target architecture from approved requirements",
+    "default_prompt": "Use $sdlc-design-arch to design the target architecture of a ReqApproved Feature or ChangeRequest."
+  },
+  "sdlc-plan-tasks": {
+    "display_name": "SDLC Plan Tasks",
+    "short_description": "Break an approved design into build tasks",
+    "default_prompt": "Use $sdlc-plan-tasks to plan the build Tasks of an Approved Feature or ChangeRequest."
+  },
+  "sdlc-design-tests": {
+    "display_name": "SDLC Design Tests",
+    "short_description": "Design traceable test suites and cases",
+    "default_prompt": "Use $sdlc-design-tests to design TestSuites and TestCases for an Approved Feature or ChangeRequest."
+  },
+  "sdlc-ask-wiki": {
+    "display_name": "SDLC Ask Wiki",
+    "short_description": "Answer questions from the project wiki",
+    "default_prompt": "Use $sdlc-ask-wiki to list features, show an architecture or answer a question from the project wiki."
+  },
+  "sdlc-import": {
+    "display_name": "SDLC Import",
+    "short_description": "Bring existing code, documents and tests into the wiki",
+    "default_prompt": "Use $sdlc-import to import this existing code, document or test suite into the project wiki, or to compare it with what the wiki already says."
+  },
+  "sdlc-review-code": {
+    "display_name": "SDLC Review Code",
+    "short_description": "Review a code change against the project wiki",
+    "default_prompt": "Use $sdlc-review-code to review this code change against the project wiki."
+  },
+  "sdlc-build-task": {
+    "display_name": "SDLC Build Task",
+    "short_description": "Write the code of one wiki Task",
+    "default_prompt": "Use $sdlc-build-task to write the code and unit tests of this wiki Task in this code repository."
+  },
+  "sdlc-close-task": {
+    "display_name": "SDLC Close Task",
+    "short_description": "Record in the wiki that a Task's code is merged",
+    "default_prompt": "Use $sdlc-close-task to record in the project wiki that this Task's code is merged."
+  },
+  "sdlc-edit-wiki": {
+    "display_name": "SDLC Edit Wiki",
+    "short_description": "Make a small edit no lifecycle skill owns",
+    "default_prompt": "Use $sdlc-edit-wiki to fix wording, the glossary or conventions, mark a Feature released, or link a Task's ticket."
+  },
+  "sdlc-convert-doc": {
+    "display_name": "SDLC Convert Doc",
+    "short_description": "Route documents through MarkItDown or Marker",
+    "default_prompt": "Use $sdlc-convert-doc to convert this local document into clean Markdown."
+  }
+}

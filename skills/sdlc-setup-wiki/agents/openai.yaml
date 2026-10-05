@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Setup Wiki"
+  short_description: "Create, upgrade or link a project wiki"
+  default_prompt: "Use $sdlc-setup-wiki to set up, upgrade or link the project wiki for this folder."

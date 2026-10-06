@@ -41,6 +41,7 @@ One material, hard-to-reverse design choice. All decisions of an application sha
 | `# Consequences` | required | author |  |  |  |
 | `# Affected concepts` | required | author | any Design type, Feature, ChangeRequest (1 or more) |  |  |
 | `# Supersedes` | optional | author | ArchitectureDecision (1 or more) |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Superseded by` | when not empty | tool | mirrors ArchitectureDecision `# Supersedes` |  |  |
 <!-- generated:schema end -->
 

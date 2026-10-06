@@ -24,7 +24,7 @@ A key-value cache.
 | `engine` | yes | text |
 | `version` | no | text |
 | `keyPattern` | no | text |
-| `dataType` | no | `string`, `hash`, `set`, `zset`, `json` |
+| `dataType` | no | lower-case words joined by `-`; common: `string`, `hash`, `set`, `zset`, `json` |
 | `evictionPolicy` | no | text |
 | `ttlSeconds` | no | whole number |
 | `maxMemory` | no | text |
@@ -42,6 +42,7 @@ A key-value cache.
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Value` | required | author |  |  |  |
 | `# Caches` | required | author | Table, Endpoint (any number) |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Used by` | always | tool | mirrors Service `# Uses` |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->

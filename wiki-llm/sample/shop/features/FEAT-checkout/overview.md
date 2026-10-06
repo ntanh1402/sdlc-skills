@@ -8,10 +8,6 @@ ownerTeam: payments
 priority: P1
 generated: { by: human:sample-author, at: 2026-06-01T09:00:00Z }
 verified: { by: human:sample-author, at: 2026-06-01T09:00:00Z }
-sources:
-  - id: checkout-prd
-    resource: prd.md
-    title: Checkout PRD
 ---
 
 # Checkout
@@ -100,6 +96,10 @@ sequenceDiagram
 |---|---|
 | [REQ-checkout-complete-purchase](#req-checkout-complete-purchase) | [WEB-storefront](../../frontends/WEB-storefront/overview.md), [MB-shop](../../frontends/MB-shop/overview.md), [EP-orders-create](../../services/SVC-orders/EP-orders-create.md), [TBL-orders](../../datastores/DB-shop/TBL-orders.md), [CHAN-order-created](../../channels/CHAN-order-created/overview.md) |
 | [REQ-checkout-pay-before-confirm](#req-checkout-pay-before-confirm) | [SVC-orders](../../services/SVC-orders/overview.md), [SVC-payments](../../services/SVC-payments/overview.md) |
+
+# References
+
+* [REF-checkout-prd](../../references/REF-checkout-prd/overview.md) — the PRD the Requirements were written from.
 
 # Change history
 

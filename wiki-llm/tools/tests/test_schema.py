@@ -4,11 +4,11 @@ from wikilib.schema import Schema
 
 HEADING_KEYS = {
     "name", "presence", "origin", "allow_none", "none_statuses", "nested", "links", "mermaid",
-    "requirements", "table", "generated",
+    "requirements", "table", "generated", "stamped",
 }
 FIELD_KINDS = {
     "string", "enum", "boolean", "integer", "uri", "timestamp", "date",
-    "actor_stamp", "actor_stamps", "sources", "string_list",
+    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested",
 }
 
 
@@ -45,8 +45,9 @@ class SchemaFileTest(unittest.TestCase):
         for name, spec in self.schema.types.items():
             for heading in spec.get("headings", []):
                 for source in heading.get("generated", {}).get("sources", []):
+                    owner = "Feature" if source["type"] == "@any" else source["type"]  # every type has the heading
                     self.assertIsNotNone(
-                        self.schema.heading(source["type"], source["heading"]),
+                        self.schema.heading(owner, source["heading"]),
                         f"{name} # {heading['name']} mirrors a missing heading",
                     )
 
@@ -61,7 +62,7 @@ class SchemaFileTest(unittest.TestCase):
             walk(self.schema.headings(name))
             for field, spec in self.schema.fields(name).items():
                 self.assertIn(spec["kind"], FIELD_KINDS, f"{name}.{field}")
-                if spec["kind"] == "enum":
+                if spec["kind"] in ("enum", "suggested"):
                     self.assertTrue(spec["values"], f"{name}.{field}")
 
     def test_design_types_share_one_status_set_and_pending_heading(self):
@@ -92,17 +93,26 @@ class LookupTest(unittest.TestCase):
         self.assertEqual(self.schema.type_for_key(datastores, "DB-shop"), "Database")
         self.assertIsNone(self.schema.type_for_key(datastores, "QUEUE-x"))
 
-    def test_type_for_key_falls_back_to_the_prefixless_type(self):
+    def test_type_for_key_uses_prefixes_of_owned_types(self):
         owned = self.schema.owned_types("Feature")
         self.assertEqual(self.schema.type_for_key(owned, "TASK-pay-001"), "Task")
-        self.assertEqual(self.schema.type_for_key(owned, "prd"), "Reference")
+        self.assertIsNone(self.schema.type_for_key(owned, "prd"))
 
     def test_type_for_key_uses_fixed_filenames(self):
         owned = self.schema.owned_types("Application")
         self.assertEqual(self.schema.type_for_key(owned, "glossary"), "Glossary")
-        self.assertEqual(self.schema.type_for_key(owned, "architecture-overview"), "Reference")
-        self.assertEqual(self.schema.type_for_key(self.schema.owned_types("TestSuite"), "test-plan"), "Reference")
+        self.assertIsNone(self.schema.type_for_key(owned, "architecture-overview"))
+        self.assertIsNone(self.schema.type_for_key(self.schema.owned_types("TestSuite"), "test-plan"))
         self.assertIsNone(self.schema.type_for_key(self.schema.owned_types("Service"), "notes"))
+
+    def test_references_heading_comes_before_tool_and_pending_sections(self):
+        names = [spec["name"] for spec in self.schema.headings("Feature")]
+        self.assertEqual(names[-2:], ["References", "Change history"])
+        names = [spec["name"] for spec in self.schema.headings("Endpoint")]
+        self.assertEqual(names[-2:], ["References", "Pending changes"])
+        names = [spec["name"] for spec in self.schema.headings("Reference")]
+        self.assertEqual(names, ["Contents", "References", "Referenced by"])
+        self.assertEqual([spec["name"] for spec in self.schema.headings("Convention")], ["References"])
 
     def test_fields_merge_common_type_and_status(self):
         fields = self.schema.fields("Service")
@@ -116,7 +126,8 @@ class LookupTest(unittest.TestCase):
         self.assertEqual(self.schema.key_pattern("ArchitectureDecision"), "^ADR-[a-z0-9]+(-[a-z0-9]+)*$")
         self.assertEqual(self.schema.key_pattern("Task"), "^TASK-[a-z0-9]+(-[a-z0-9]+)*$")
         self.assertEqual(self.schema.key_pattern("Service"), "^SVC-[a-z0-9]+(-[a-z0-9]+)*$")
-        self.assertIsNone(self.schema.key_pattern("Reference"))
+        self.assertEqual(self.schema.key_pattern("Reference"), "^REF-[a-z0-9]+(-[a-z0-9]+)*$")
+        self.assertIsNone(self.schema.key_pattern("Convention"))
 
     def test_nested_heading_lookup(self):
         spec = self.schema.heading("ChangeRequest", ["Delta", "Target delta"])

@@ -35,7 +35,7 @@ that need judgment; the tool does not check those.
   from the title (`CR-coupon-codes`, `TASK-refund-endpoint`). Keys are never
   sequence numbers, so writers working in parallel do not pick the same one.
 - Keys are unique per type inside an application. TestCase keys are unique
-  inside their suite; Reference filenames inside their owner.
+  inside their suite.
 - A key never changes after it reaches the default branch. Before that,
   `wiki_llm.py rename` changes it and every reference to it.
 
@@ -50,9 +50,16 @@ that need judgment; the tool does not check those.
   content changed and nobody re-confirmed it.
 - Actors are `human:<id>`, `process:<id>`, or `<producer>/<version>` for a skill
   or agent.
-- `sources` lists what the content was derived from. `resource` names the real
-  asset the file describes: a repository, a source file, a tracker ticket.
+- `sources` lists what the content was derived from outside the bundle: an
+  OpenAPI file, a ticket, an external document. It never names a
+  [Reference](reference.md); link a Reference under `# References`. `resource`
+  names the real asset the file describes: a repository, a source file, a
+  tracker ticket.
 - Relationships to other concepts never go in frontmatter.
+- A field whose values read "lower-case words joined by `-`; common: …"
+  describes the system and is free text in that form. A skill suggests the
+  values already used in the Application and the common ones; the person
+  picks one or writes their own.
 
 The tool reads exactly these forms. Each is valid YAML; any other YAML form is
 rejected, for example a `generated:` mapping spread over several lines, a
@@ -115,6 +122,30 @@ no log; git history is their record.
   other side, where it exists, is written by the tool.
 - A note never states another concept's status or pending state.
 - A section with no relationships contains `None`.
+
+## References
+
+Every type may end its own sections with `# References`: the
+[References](reference.md) a reader should consult while working on the
+concept. It comes after the author's sections and before any section the tool
+writes and `# Pending changes`.
+
+```markdown
+# References
+
+* [REF-cancel-flow-example](../../references/REF-cancel-flow-example/overview.md) — take the idempotency-key handling; ignore its legacy retry loop.
+```
+
+- Each entry links the `overview.md` of a Reference of the same Application.
+  The note says what to take from it. A `Deprecated` Reference is a warning.
+- The tool writes the other side, `# Referenced by`, on the Reference.
+- Adding or removing an entry is not a change of the concept: its status stays,
+  it needs no ChangeRequest and no pending entry, and `verified` stays. Record
+  it in the folder's `log.md` as a **References** entry, or in the commit
+  message for a file that has no log.
+- In a type whose other headings are free (Convention), `# References` still
+  means this list. A document's own list of sources is called
+  `# Bibliography`.
 
 ## Pending changes
 
@@ -181,7 +212,7 @@ them; edit the authored side and run `sync`.
 | Plan | ChangeRequest | [change-request](change-request.md) | `<app>/change-requests/CR-<name>/` |
 | Plan | UserStory | [user-story](user-story.md) | `<app>/features/FEAT-*/STORY-<name>.md or <app>/change-requests/CR-*/STORY-<name>.md` |
 | Design | ArchitectureDecision | [architecture-decision](architecture-decision.md) | `<app>/decisions/ADR-<name>.md` |
-| Source | Reference | [source-document](source-document.md) | `<app>/<name>.md, <app>/features/FEAT-*/<name>.md, <app>/change-requests/CR-*/<name>.md or <app>/tests/TS-*/<name>.md` |
+| Source | Reference | [reference](reference.md) | `<app>/references/REF-<name>/` |
 | Plan | Convention | [convention](convention.md) | `<app>/conventions.md` |
 | Plan | Glossary | [glossary](glossary.md) | `<app>/glossary.md` |
 | Design | Service | [service](service.md) | `<app>/services/SVC-<slug>/` |

@@ -20,14 +20,18 @@ class HeadingsTest(RuleTest):
         self.edit(CHANNEL, "## Dead letter\n", "## Retries\n")
         self.assertRule("headings.missing", CHANNEL)
 
-    def test_reference_body_is_free(self):
-        self.write(
-            "pay/features/FEAT-pay/prd.md",
-            "---\ntype: Reference\ntitle: Pay PRD\ndescription: Approved.\n"
-            "generated: { by: human:alice, at: 2026-09-01T09:00:00Z }\n"
-            "verified: { by: human:bob, at: 2026-09-02T09:00:00Z }\n---\n\nNo heading at all.\n\n# Anything\n\n# Goes\n",
-        )
-        self.assertClean()
+    def test_reference_overview_needs_contents(self):
+        self.edit("pay/references/REF-pay-prd/overview.md", "# Contents\n\n* [prd.md](prd.md) — the full PRD.", "")
+        self.assertRule("headings.missing", "pay/references/REF-pay-prd/overview.md")
+
+    def test_reference_overview_has_no_other_top_level_heading(self):
+        self.edit("pay/references/REF-pay-prd/overview.md", "# Contents", "# Goals\n\nText.\n\n# Contents")
+        self.assertRule("headings.unknown", "pay/references/REF-pay-prd/overview.md")
+
+    def test_references_come_after_the_authors_sections(self):
+        self.edit("pay/features/FEAT-pay/TASK-pay-002.md", "# Blocked by\n\n* [TASK-pay-001](TASK-pay-001.md)\n\n", "")
+        self.edit("pay/features/FEAT-pay/TASK-pay-002.md", "the refund rules.", "the refund rules.\n\n# Blocked by\n\n* [TASK-pay-001](TASK-pay-001.md)")
+        self.assertRule("headings.order", "pay/features/FEAT-pay/TASK-pay-002.md")
 
     def test_convention_headings_are_free_but_title_is_checked(self):
         self.edit("pay/conventions.md", "# Definition of done", "# Whatever we like")

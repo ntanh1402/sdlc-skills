@@ -8,9 +8,9 @@ Make a small edit to the wiki that no other skill owns.
 | | |
 |---|---|
 | **Who** | Anyone: a release manager marking a release, a tech lead adding ticket links, an author fixing a typo |
-| **Use when** | You need a typo or wording fix; a glossary or conventions change; a Feature marked `Released` or `Deprecated`; a Task's or user story's ticket or pull request link; or a record that a person confirmed a file |
+| **Use when** | You need a typo or wording fix; a glossary or conventions change; a Feature marked `Released` or `Deprecated`; a Reference added, linked from a file, or marked `Deprecated`; a Task's or user story's ticket or pull request link; or a record that a person confirmed a file |
 | **Needs first** | The file exists on the wiki's default branch. For `Released`: the Feature is `InDev`, no Task is `Todo`, and no design item still has a pending entry for it |
-| **Say** | "Mark FEAT-gift-cards released, shipped today", "Add ticket SHOP-142 to TASK-gift-card-redeem" |
+| **Say** | "Mark FEAT-gift-cards released, shipped today", "Add ticket SHOP-142 to TASK-gift-card-redeem", "Add our refund policy page as a reference and link it from TASK-refund-endpoint" |
 | **You get** | A small draft, `wiki/edit-<key>`. Anything that changes what someone would build or test is refused, and the skill names the skill to use instead |
 | **Next** | Merge the pull request |
 
@@ -27,6 +27,9 @@ stops once to show the exact old and new text, then once for the change set.
 | A Task's `trackerKey`, `resource` and `prUrl` | The ticket and pull request you followed by hand. Never its status |
 | A user story's `trackerKey` and `resource` | The ticket you made from the story's paste-ready copy |
 | A `verified` stamp | You say you read the file and it is right |
+| A new Reference | A page, a short document or a code location at a commit or tag. You approve the whole folder |
+| A `# References` link on any file | It links a Reference of the same Application, with a note on what to take from it. It changes no status |
+| A Reference's status to `Deprecated` | You say it no longer applies. It is never deleted |
 
 ## What you do
 

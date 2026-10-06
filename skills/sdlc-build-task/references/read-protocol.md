@@ -70,6 +70,20 @@ one file or one folder named by its key, for example
   `# Used by`, a Channel's `# Publishers` and `# Subscribers`, a Feature's
   `# Change history`. For anything else, search for the key:
   `grep -rl "SVC-orders" wiki/ --include='*.md'`.
+- **References.** A Reference is material a person approved to be read while
+  working: a PRD, a change brief, a test plan, a domain page, a vendor's
+  documentation, a code example. Find the ones that apply in two ways, and
+  use both:
+  - follow the `# References` section of every concept you read, and read
+    each entry's note: it says what to take from it;
+  - scan `wiki/<app>/references/index.md`, one line per Reference with its
+    title and description, for the ones about your subject.
+
+  Read a Reference's `overview.md` first; it summarises the material and
+  lists its files under `# Contents`. Open a content file, or the `resource`
+  it points to, only when the work needs the detail. A Reference is context:
+  it never overrides a Requirement, a contract or a convention, and a
+  `Deprecated` one is read only to see what was replaced.
 - **Not live yet.** `grep -rl "^# Pending changes" wiki/` lists every concept
   whose file describes more than what is deployed.
 - **Unconfirmed.** `grep -rL "^verified:" wiki/ --include='*.md'` lists files

@@ -46,9 +46,17 @@ def check(bundle: Bundle) -> list[Finding]:
     for concept in bundle.concepts:
         resources = [concept.meta.get("resource")]
         sources = concept.meta.get("sources")
-        if isinstance(sources, list):
-            resources.extend(entry.get("resource") for entry in sources if isinstance(entry, dict))
-        for resource in resources:
+        listed = [entry.get("resource") for entry in sources if isinstance(entry, dict)] if isinstance(sources, list) else []
+        for resource in resources + listed:
             if isinstance(resource, str) and resource and not SCHEME_RE.match(resource):
                 check_target(concept.path, resource, "links.resource")
+        for resource in listed:
+            if not isinstance(resource, str) or not resource or SCHEME_RE.match(resource):
+                continue
+            path, _ = bundle.resolve(concept.path, resource)
+            target = bundle.by_path.get(path) or bundle.content_holder(path)
+            if target is not None and target.type == "Reference":
+                findings.append(
+                    Finding("links.source-reference", concept.rel, f"sources lists {resource}, a Reference; link it under # References instead")
+                )
     return findings

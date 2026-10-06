@@ -35,13 +35,25 @@ class BundleTest(unittest.TestCase):
         service = self.concept("pay/services/SVC-pay/overview.md")
         self.assertEqual((service.type, service.key), ("Service", "SVC-pay"))
         self.assertEqual(service.folder.name, "SVC-pay")
-        self.assertEqual(self.concept("pay/features/FEAT-pay/prd.md").type, "Reference")
+        reference = self.concept("pay/references/REF-pay-prd/overview.md")
+        self.assertEqual((reference.type, reference.key, reference.owner), ("Reference", "REF-pay-prd", None))
         self.assertEqual(self.concept("pay/glossary.md").type, "Glossary")
         self.assertEqual(self.concept("pay/decisions/ADR-001.md").type, "ArchitectureDecision")
 
     def test_owned_lists_children(self):
         feature = self.concept("pay/features/FEAT-pay/overview.md")
         self.assertEqual([task.key for task in self.bundle.owned(feature, "Task")], ["TASK-pay-001", "TASK-pay-002"])
+
+    def test_reference_content_is_not_a_concept_and_needs_no_index(self):
+        folder = self.root / "pay/references/REF-pay-prd"
+        self.assertNotIn(folder / "prd.md", self.bundle.by_path)
+        self.assertNotIn(folder / "images", self.bundle.directories)
+        self.assertIn(folder, self.bundle.directories)
+        holder = self.bundle.content_holder(folder / "images/flow.png")
+        self.assertEqual(holder.key, "REF-pay-prd")
+        self.assertIs(self.bundle.content_holder(folder / "prd.md"), holder)
+        self.assertIsNone(self.bundle.content_holder(folder / "overview.md"))
+        self.assertIsNone(self.bundle.content_holder(self.root / "pay/features/FEAT-pay/log.md"))
 
     def test_resolve_relative_absolute_anchor_and_external(self):
         source = self.root / "pay/services/SVC-pay/overview.md"
@@ -73,14 +85,14 @@ class BundleTest(unittest.TestCase):
         self.assertEqual([r.kind for r in self.bundle.relations(case, ["Covers"])], ["Requirement", "Endpoint"])
 
     def test_file_that_is_not_utf8_loads_without_raising(self):
-        path = self.root / "pay/features/FEAT-pay/prd.md"
+        path = self.root / "pay/references/REF-pay-prd/overview.md"
         original = path.read_bytes()
         path.write_bytes(original + b"\xff\xfe caf\xe9\n")
         try:
             bundle = Bundle.load(self.root, Schema.load())
         finally:
             path.write_bytes(original)
-        self.assertTrue(any(concept.rel == "pay/features/FEAT-pay/prd.md" for concept in bundle.concepts))
+        self.assertTrue(any(concept.rel == "pay/references/REF-pay-prd/overview.md" for concept in bundle.concepts))
 
     def test_dot_entries_are_ignored(self):
         fixture.write(self.root, ".git/config", "x")

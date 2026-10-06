@@ -13,6 +13,7 @@ ACTOR_RE = re.compile(r"^(human:[A-Za-z0-9._-]+|process:[A-Za-z0-9._-]+|[A-Za-z0
 TIMESTAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SOURCE_KEYS = {"id", "resource", "title"}
+NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
 
 def _is_timestamp(value: str) -> bool:
@@ -73,6 +74,8 @@ def problem_with(value: object, spec: dict) -> str | None:
         return "expected a single value"
     if kind == "enum" and value not in spec["values"]:
         return f"must be one of {', '.join(spec['values'])}; got {value}"
+    if kind == "suggested" and not NAME_RE.match(value):
+        return f"must be lower-case words joined by -, such as {', '.join(spec['values'])}; got {value}"
     if kind == "boolean" and value not in ("true", "false"):
         return f"must be true or false; got {value}"
     if kind == "integer" and not re.match(r"^-?\d+$", value):

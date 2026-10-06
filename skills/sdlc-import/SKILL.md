@@ -1,6 +1,6 @@
 ---
 name: sdlc-import
-description: Bring an existing, already built system into the project wiki, one source per run - a service's or frontend's code, an architecture document, a requirement document (PRD), a built capability that has no document, an end-to-end, integration, load or security test suite, or a test plan - as as-built Design files, Released Features, decisions and TestSuites that a person confirms group by group. When the source is already in the wiki, compare it with the wiki instead and let the person decide each difference. Use for brownfield onboarding, importing or documenting existing code, documents or tests, and checking whether the wiki still matches the code. Not for anything that is not built yet, for reviewing a code change, or for running tests.
+description: Bring an existing, already built system into the project wiki, one source per run - a service's or frontend's code, an architecture document, a requirement document (PRD), a built capability that has no document, an end-to-end, integration, load or security test suite, a test plan, or a page, document or code example to keep as a Reference - as as-built Design files, Released Features, decisions, TestSuites and References that a person confirms group by group. When the source is already in the wiki, compare it with the wiki instead and let the person decide each difference. Use for brownfield onboarding, importing or documenting existing code, documents or tests, and checking whether the wiki still matches the code. Not for anything that is not built yet, for reviewing a code change, or for running tests.
 ---
 
 # Import an existing project
@@ -17,6 +17,7 @@ what is built and running today. A person confirms them group by group.
 | A built capability that has no document | `references/import-undocumented-capability.md` |
 | Test code: one end-to-end, integration, load or security suite | `references/import-test-code.md` |
 | Test document (a test plan, a sheet of manual cases) | `references/import-test-document.md` |
+| A reference: a page, a document or a code location to consult | `references/import-reference.md` |
 
 When the Import source is already in the wiki, the run compares instead of
 creating (`references/compare.md`).
@@ -29,7 +30,7 @@ Its draft prefix is `import-`: the draft for the code of `SVC-orders` is
 Read, in this skill's folder, `references/read-protocol.md`,
 `references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
 steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read `schema.md` and `source-document.md` in the wiki's
+at each step. Then read `schema.md` and `reference.md` in the wiki's
 `.wiki-llm/schema/`. The guide of the kind names the other schema pages; open
 only that guide.
 
@@ -94,11 +95,12 @@ list the ones you see and the order to do them (section 2), and do the first.
 | Kind | Writes | Status written | Draft key | Must be on the default branch first |
 |---|---|---|---|---|
 | Code | The Service or frontend, its Endpoints and Subscriptions, and the Tables, Channels, stores and externals it uses that the wiki lacks | `Active` | `import-SVC-<name>`, `import-WEB-<name>` or `import-MB-<name>` | Nothing |
-| Architecture document | The Application's `# Architecture`, decisions, `conventions.md`, `glossary.md`, a Service page for each service the wiki lacks, and the document as a Reference in the Application folder | Decisions `Accepted`; Services `Active` | `import-<document name>` | Nothing |
-| Requirement document | One as-built Feature per capability, with the document as a Reference in its folder | `Released` | `import-FEAT-<name>`; `import-<document name>` for several Features | A Service page for each service it uses |
+| Architecture document | The Application's `# Architecture`, decisions, `conventions.md`, `glossary.md`, a Service page for each service the wiki lacks, and the document as a Reference | Decisions `Accepted`; Services `Active` | `import-<document name>` | Nothing |
+| Requirement document | One as-built Feature per capability, and the document as a Reference | `Released` | `import-FEAT-<name>`; `import-<document name>` for several Features | A Service page for each service it uses |
 | Capability with no document | One as-built Feature | `Released` | `import-FEAT-<name>` | The Endpoints and Subscriptions of the services it uses |
 | Test code | One TestSuite and one TestCase per test | `Implemented` | `import-TS-<name>` | A Feature it verifies |
-| Test document | One TestSuite, its TestCases, and the document as a Reference in the suite folder | `Approved` | `import-TS-<name>` | A Feature it verifies |
+| Test document | One TestSuite, its TestCases, and the document as a Reference | `Approved` | `import-TS-<name>` | A Feature it verifies |
+| Reference | One Reference, and the `# References` links to it | `Active` | `import-REF-<name>` | Nothing |
 
 `<document name>` is the file name without its extension, in lower-case words
 joined by `-`: `Architecture Overview.pdf` gives `import-architecture-overview`.
@@ -130,7 +132,7 @@ the default branch:
 | Kind | The main concept |
 |---|---|
 | Code | The Service or frontend whose `resource` is this repository, or whose key is the one you would propose |
-| A document | A Reference with the document's name |
+| A document, a reference | The Reference whose `resource` is the source's URL, or whose key is the one you would propose |
 | Capability with no document, test code | The Feature or TestSuite the person names |
 
 Compare repository URLs in one form: `https://<host>/<org>/<repo>`, with no
@@ -218,6 +220,7 @@ groups, each file in full, never as a summary.
 | Architecture document | The Reference; each Service page; each decision; the Application's `# Architecture`; conventions; glossary |
 | Requirement document, capability with no document | Each Feature, with its Reference when it has one |
 | Test code, test document | The suite page, with the Reference of a test document; then its TestCases, a few at a time |
+| Reference | The Reference, with the links to it |
 
 End each group with one question. Three answers are accepted:
 
@@ -266,7 +269,8 @@ protocol, section 4, step 3).
 In the draft worktree, under `wiki/<app>/`, write the approved files as their
 schema pages require. For every file:
 
-- **`sources`** names the Import source.
+- **The Import source is named** on every file. Code and test code are
+  named in `sources`:
 
   ```yaml
   sources:
@@ -275,12 +279,19 @@ schema pages require. For every file:
       title: src/api/orders.py at 3f2a9c1
   ```
 
-  For code, `resource` is the repository URL and `title` is the path that was
-  read, then `at`, then the commit. Build no link to a hosting service's file
-  view. For a document, `resource` is the relative path of its Reference
-  (`resource: architecture-overview.md`) and `title` is the document's title.
+  `resource` is the repository URL and `title` is the path that was read,
+  then `at`, then the commit. Build no link to a hosting service's file view.
   A capability with no document repeats the code entries of the Design files
-  it was read from.
+  it was read from. A document is never named in `sources`: every file
+  written from it links its Reference under `# References`, with a note
+  naming the part it was written from.
+- **A document's Reference** is the folder
+  `references/REF-<document name>/`, as `reference.md` says: the document's
+  Markdown copy as a content file named after the document
+  (`architecture-overview.md`), the images it links and the original file
+  beside it, an `overview.md` that summarises the document and lists the copy
+  under `# Contents`, and `log.md`. `resource` is the document's URL when it
+  has one.
 - **`resource`** of a Service or frontend is the repository URL of section 4.
   A TestSuite written from test code has `resource` set to where its tests
   live.
@@ -312,7 +323,8 @@ schema pages require. For every file:
 Follow `references/write-protocol.md` section 4 from step 5. In the self
 review, also check that:
 
-- every file written names the Import source in `sources`;
+- every file written names the Import source: in `sources`, or by linking
+  the document's Reference under `# References`;
 - no file has a status that means "not built yet" or a `# Pending changes`
   entry, and no secret was copied;
 - every group in the Run plan has its answer, and the files of a group saved
@@ -352,8 +364,8 @@ order of section 2.
 
 ## Done when
 
-- One Import source was read, and every file written from it names it in
-  `sources`.
+- One Import source was read, and every file written from it names it, in
+  `sources` or under `# References`.
 - Every group was approved, corrected, or saved as not checked; no file is
   marked confirmed that the person did not see in full.
 - The three lists were shown before the Change-set gate.

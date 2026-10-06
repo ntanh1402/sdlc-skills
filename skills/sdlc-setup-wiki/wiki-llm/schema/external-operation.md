@@ -40,6 +40,7 @@ One call this application makes on an ExternalService.
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Schema` | required | author |  |  |  |
 | `# Failure handling` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

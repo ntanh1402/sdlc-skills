@@ -34,6 +34,7 @@ The domain terms and user roles of the application, defined once.
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Terms` | required; may be `None` | author |  |  | table with columns `Term`, `Definition` |
 | `# Roles` | required; may be `None` | author |  |  | table with columns `Role`, `Description` |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules

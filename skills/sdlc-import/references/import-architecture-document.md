@@ -4,7 +4,7 @@ One run reads one document that describes the system as it is built: its
 parts, how they connect, the decisions behind them, the team's conventions,
 its terms. Read these schema pages in `.wiki-llm/schema/` first:
 `application.md`, `architecture-decision.md`, `convention.md`, `glossary.md`,
-`service.md` and `source-document.md`.
+`service.md` and `reference.md`.
 
 A document adds what code cannot show: reasons, decisions, diagrams, terms.
 It never decides a contract. Code wins for endpoints, tables, channels,
@@ -14,7 +14,7 @@ stores, vendors and their operations.
 
 | From the document | File |
 |---|---|
-| The document itself | A Reference in the Application folder: `wiki/<app>/<document name>.md`, with the images it links beside it |
+| The document itself | The Reference `references/REF-<document name>/`, as `SKILL.md` section 6 says |
 | The system picture | The Application's `# Architecture`: prose and one Mermaid `flowchart` |
 | Each decision in force | `decisions/ADR-<name>.md`, `status: Accepted` |
 | Coding and working rules | `conventions.md` |
@@ -23,9 +23,9 @@ stores, vendors and their operations.
 
 Rules:
 
-- **The Reference** is the document's Markdown copy, complete. Only its
-  frontmatter is added. It needs the person's approval of the whole body, so
-  its group cannot be saved as not checked.
+- **The Reference** holds the document's Markdown copy, complete, as a
+  content file, and an overview that summarises it. It needs the person's
+  approval of the whole folder, so its group cannot be saved as not checked.
 - **Service pages only.** Of the Design types this run writes only Service
   pages, one for each service the wiki lacks and the person gave a repository
   URL, an owner team and a type for. Such a page holds the title, the
@@ -49,9 +49,9 @@ Rules:
   has an `# Architecture`, conventions or a glossary, show the differences and
   let the person decide each one (`compare.md`). New terms and new rules are
   additions.
-- Every file written from the document names its Reference in `sources`:
-  `resource: <document name>.md` from the Application folder, or the relative
-  path from another folder.
+- Every file written from the document links its Reference under
+  `# References`, with a note naming the part it was written from. The
+  Application's own files and the decisions link it too.
 
 ## 2. What to ask
 
@@ -69,6 +69,7 @@ Check by reading:
 
 - the `flowchart` shows every service and frontend the prose names;
 - every decision links at least one concept that exists;
-- the Reference is the whole document, and its images are beside it;
+- the Reference's content file is the whole document, and its images are
+  beside it;
 - nothing the document describes as planned was written as built. List it for
   `sdlc-write-spec` instead.

@@ -24,7 +24,7 @@ One synchronous operation a Service exposes.
 | `method` | yes | text |
 | `path` | yes | text |
 | `protocol` | yes | `http`, `grpc`, `graphql` |
-| `authType` | no | `none`, `apikey`, `jwt`, `oauth` |
+| `authType` | no | lower-case words joined by `-`; common: `none`, `apikey`, `jwt`, `oauth` |
 | `rateLimit` | no | text |
 | `idempotent` | no | `true` or `false` |
 | `version` | no | text |
@@ -46,6 +46,7 @@ One synchronous operation a Service exposes.
 | `# Validations` | optional | author |  |  |  |
 | `# Behavior` | required | author |  |  |  |
 | `# Sequence diagram` | optional | author |  |  | Mermaid `sequenceDiagram` diagram |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

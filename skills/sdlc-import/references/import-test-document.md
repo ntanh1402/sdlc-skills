@@ -2,7 +2,7 @@
 
 One run reads one document of test cases (a test plan, a sheet of manual
 cases) and writes one TestSuite with its TestCases. Read `test-suite.md`,
-`test-case.md` and `source-document.md` in `.wiki-llm/schema/` first.
+`test-case.md` and `reference.md` in `.wiki-llm/schema/` first.
 
 Before anything else, check the prerequisite: a Feature the suite verifies is
 on the default branch. If none is, stop and name the Feature import to run
@@ -14,10 +14,12 @@ first.
 
 | File | Content |
 |---|---|
-| `overview.md` | `suiteType`, `# Verifies` linking the Feature, and the status below |
-| `<document name>.md` | The document's Markdown copy as a Reference, with the images it links |
+| `overview.md` | `suiteType`, `# Verifies` linking the Feature, the status below, and `# References` linking the document's Reference |
 | `TC-<name>.md` | One per case in the document |
 | `log.md` | One `**Import**` entry |
+
+and the document itself as the Reference `references/REF-<document name>/`
+(`SKILL.md` section 6).
 
 Rules:
 
@@ -27,7 +29,7 @@ Rules:
 - **`suiteType`** is the kind of test the cases describe: `integration`,
   `e2e`, `load` or `security`. Manual cases a tester performs through the
   user interface are `e2e`. Unit tests are never imported.
-- **The Reference** needs the person's approval of the whole body, so the
+- **The Reference** needs the person's approval of the whole folder, so the
   group that holds it cannot be saved as not checked.
 - **A case with no observable expected result is not written.** List it under
   "Could not determine". Never complete it by guessing.
@@ -40,11 +42,11 @@ Rules:
 - **`# Covers`** links the Requirements the document or the person names for
   the case, by full path and anchor; otherwise the Design concepts the case
   exercises.
-- The suite and every case name the Reference in `sources`
-  (`resource: <document name>.md`).
+- The suite links the Reference under `# References`; a case links it too
+  when its steps come from a part a tester should read.
 - **One document, several suites.** A document that holds cases of several
-  types, or for several Features, is imported one suite per run; the
-  Reference lives in the first suite's folder.
+  types, or for several Features, is imported one suite per run. The first
+  run writes the Reference; the later runs link it.
 
 ## 2. What to ask
 
@@ -59,4 +61,4 @@ Check by reading:
 
 - every case in the document is a TestCase or is in a list, with the reason;
 - every step has an expected result and a validation;
-- the Reference is the whole document.
+- the Reference's content file is the whole document.

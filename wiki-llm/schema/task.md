@@ -45,6 +45,7 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
 | `# Planned scope` | required | author | any Design type (any number) | `new`, `modified`, `removed` (required) |  |
 | `# Blocked by` | optional | author | Task (any number) |  |  |
 | `# Reviewers` | optional | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules

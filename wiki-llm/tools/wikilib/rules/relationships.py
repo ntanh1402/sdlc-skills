@@ -46,6 +46,23 @@ def check(bundle: Bundle) -> list[Finding]:
                             f"{name} may link {', '.join(legal)}; '{label}' is a {relation.kind}",
                         )
                     )
+                elif links.get("same_app") and relation.concept.app != concept.app:
+                    findings.append(
+                        Finding(
+                            "relationships.other-app",
+                            concept.rel,
+                            f"{name}: '{label}' belongs to application {relation.concept.app}; link a {relation.kind} of {concept.app}",
+                        )
+                    )
+                elif relation.concept.status in links.get("warn_statuses", []):
+                    findings.append(
+                        Finding(
+                            "relationships.target-status",
+                            concept.rel,
+                            f"{name}: '{label}' is {relation.concept.status}",
+                            "warning",
+                        )
+                    )
                 identity = (relation.path, relation.anchor)
                 if identity in seen:
                     findings.append(Finding("relationships.duplicate", concept.rel, f"{name}: '{label}' is listed more than once"))

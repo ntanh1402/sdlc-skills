@@ -37,6 +37,12 @@
     "feature_scope": ["Architecture"],
     "task_scope": ["Planned scope"]
   },
+  "references": {
+    "name": "References",
+    "presence": "optional",
+    "stamped": false,
+    "links": {"targets": ["Reference"], "min": 0, "same_app": true, "warn_statuses": ["Deprecated"]}
+  },
   "collections": [
     {"dir": "features", "title": "Features", "description": "Product capabilities, their requirements and target architecture.", "types": ["Feature"]},
     {"dir": "change-requests", "title": "Change requests", "description": "Requested changes to existing features.", "types": ["ChangeRequest"]},
@@ -51,7 +57,13 @@
     },
     {"dir": "channels", "title": "Channels", "description": "Message channels and their payload contracts.", "types": ["MessageChannel"]},
     {"dir": "externals", "title": "Externals", "description": "Third-party services and the operations called on them.", "types": ["ExternalService"]},
-    {"dir": "tests", "title": "Tests", "description": "Test suites and their test cases.", "types": ["TestSuite"]}
+    {"dir": "tests", "title": "Tests", "description": "Test suites and their test cases.", "types": ["TestSuite"]},
+    {
+      "dir": "references",
+      "title": "References",
+      "description": "Documents, pages and code examples to read while working.",
+      "types": ["Reference"]
+    }
   ],
   "types": {
     "Application": {
@@ -67,11 +79,11 @@
       "statuses": ["Active", "Archived"],
       "fields": {
         "ownerTeam": {"kind": "string", "required": true},
-        "appType": {"kind": "enum", "values": ["web", "mobile", "platform", "internal"]},
+        "appType": {"kind": "suggested", "values": ["web", "mobile", "platform", "internal"]},
         "criticality": {"kind": "string"}
       },
       "headings": [{"name": "Architecture", "presence": "required", "allow_none": true, "mermaid": "flowchart"}],
-      "owns": ["Convention", "Glossary", "Reference"]
+      "owns": ["Convention", "Glossary"]
     },
     "Feature": {
       "page": "feature.md",
@@ -115,7 +127,7 @@
           "generated": {"sources": [{"type": "ChangeRequest", "heading": ["Changes"]}], "when_empty": "none"}
         }
       ],
-      "owns": ["Reference", "UserStory", "Task"]
+      "owns": ["UserStory", "Task"]
     },
     "ChangeRequest": {
       "page": "change-request.md",
@@ -155,7 +167,7 @@
           ]
         }
       ],
-      "owns": ["Reference", "UserStory", "Task"]
+      "owns": ["UserStory", "Task"]
     },
     "UserStory": {
       "page": "user-story.md",
@@ -210,18 +222,27 @@
       ]
     },
     "Reference": {
-      "page": "source-document.md",
+      "page": "reference.md",
       "phase": "Source",
-      "path": "<app>/<name>.md, <app>/features/FEAT-*/<name>.md, <app>/change-requests/CR-*/<name>.md or <app>/tests/TS-*/<name>.md",
-      "shape": "file",
-      "plural": "Source documents",
-      "place": {"kind": "owned", "owners": ["Application", "Feature", "ChangeRequest", "TestSuite"]},
-      "lifecycle": false,
-      "title": "free",
-      "free_headings": true,
+      "path": "<app>/references/REF-<name>/",
+      "shape": "folder",
+      "plural": "References",
+      "prefix": "REF-",
+      "place": {"kind": "collection", "dir": "references"},
+      "lifecycle": true,
+      "statuses": ["Active", "Deprecated"],
       "human_verified": true,
+      "content_files": true,
       "fields": {},
-      "headings": []
+      "headings": [
+        {"name": "Contents", "presence": "required", "allow_none": true},
+        {
+          "name": "Referenced by",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {"sources": [{"type": "@any", "heading": ["References"]}], "when_empty": "none"}
+        }
+      ]
     },
     "Convention": {
       "page": "convention.md",
@@ -262,13 +283,13 @@
       "lifecycle": true,
       "statuses": ["Planned", "Active", "Modifying", "Removing", "Deprecated"],
       "fields": {
-        "serviceType": {"kind": "enum", "values": ["api", "worker", "cron", "consumer", "gateway"], "required": true},
+        "serviceType": {"kind": "suggested", "values": ["api", "worker", "cron", "consumer", "gateway"], "required": true},
         "ownerTeam": {"kind": "string", "required": true},
         "resource": {"kind": "uri", "required": true},
         "language": {"kind": "string"},
         "framework": {"kind": "string"},
         "runtime": {"kind": "string"},
-        "deployTarget": {"kind": "enum", "values": ["k8s", "lambda", "vm"]},
+        "deployTarget": {"kind": "suggested", "values": ["k8s", "lambda", "vm"]},
         "slaTier": {"kind": "string"},
         "version": {"kind": "string"},
         "port": {"kind": "integer"},
@@ -307,10 +328,10 @@
         "resource": {"kind": "uri", "required": true},
         "language": {"kind": "string"},
         "framework": {"kind": "string"},
-        "renderingMode": {"kind": "enum", "values": ["csr", "ssr", "ssg", "hybrid"]},
+        "renderingMode": {"kind": "suggested", "values": ["csr", "ssr", "ssg", "hybrid"]},
         "buildTool": {"kind": "string"},
         "packageManager": {"kind": "string"},
-        "deployTarget": {"kind": "enum", "values": ["static-host", "edge", "container", "serverless"]},
+        "deployTarget": {"kind": "suggested", "values": ["static-host", "edge", "container", "serverless"]},
         "baseUrl": {"kind": "string"},
         "version": {"kind": "string"},
         "browserSupport": {"kind": "string"}
@@ -343,13 +364,13 @@
       "fields": {
         "ownerTeam": {"kind": "string", "required": true},
         "resource": {"kind": "uri", "required": true},
-        "platform": {"kind": "enum", "values": ["ios", "android", "cross-platform"], "required": true},
+        "platform": {"kind": "suggested", "values": ["ios", "android", "cross-platform"], "required": true},
         "language": {"kind": "string"},
         "framework": {"kind": "string"},
         "minimumOsVersion": {"kind": "string"},
         "applicationId": {"kind": "string"},
         "bundleId": {"kind": "string"},
-        "distribution": {"kind": "enum", "values": ["app-store", "enterprise", "internal", "sideload"]},
+        "distribution": {"kind": "suggested", "values": ["app-store", "enterprise", "internal", "sideload"]},
         "buildTool": {"kind": "string"},
         "version": {"kind": "string"},
         "offlineCapable": {"kind": "boolean"}
@@ -385,7 +406,7 @@
         "method": {"kind": "string", "required": true},
         "path": {"kind": "string", "required": true},
         "protocol": {"kind": "enum", "values": ["http", "grpc", "graphql"], "required": true},
-        "authType": {"kind": "enum", "values": ["none", "apikey", "jwt", "oauth"]},
+        "authType": {"kind": "suggested", "values": ["none", "apikey", "jwt", "oauth"]},
         "rateLimit": {"kind": "string"},
         "idempotent": {"kind": "boolean"},
         "version": {"kind": "string"}
@@ -433,7 +454,7 @@
         "channelName": {"kind": "string", "required": true},
         "kind": {"kind": "string", "required": true},
         "channelType": {"kind": "enum", "values": ["topic", "queue"], "required": true},
-        "schemaFormat": {"kind": "enum", "values": ["avro", "protobuf", "json"]},
+        "schemaFormat": {"kind": "suggested", "values": ["avro", "protobuf", "json"]},
         "schemaVersion": {"kind": "string"},
         "schemaRegistryUrl": {"kind": "string"},
         "partitions": {"kind": "integer"},
@@ -528,7 +549,7 @@
         "engine": {"kind": "string", "required": true},
         "version": {"kind": "string"},
         "keyPattern": {"kind": "string"},
-        "dataType": {"kind": "enum", "values": ["string", "hash", "set", "zset", "json"]},
+        "dataType": {"kind": "suggested", "values": ["string", "hash", "set", "zset", "json"]},
         "evictionPolicy": {"kind": "string"},
         "ttlSeconds": {"kind": "integer"},
         "maxMemory": {"kind": "string"}
@@ -609,7 +630,7 @@
         "apiUrl": {"kind": "uri", "required": true},
         "authType": {"kind": "string"},
         "slaTier": {"kind": "string"},
-        "costModel": {"kind": "enum", "values": ["per-call", "subscription"]}
+        "costModel": {"kind": "suggested", "values": ["per-call", "subscription"]}
       },
       "headings": [{"name": "Fallback", "presence": "required"}],
       "owns": ["Operation"]
@@ -676,7 +697,7 @@
       "statuses": ["Draft", "Approved", "Implemented", "Deprecated"],
       "fields": {"suiteType": {"kind": "enum", "values": ["unit", "integration", "e2e", "load", "security"], "required": true}, "framework": {"kind": "string"}},
       "headings": [{"name": "Verifies", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest"], "min": 1}}],
-      "owns": ["TestCase", "Reference"]
+      "owns": ["TestCase"]
     },
     "TestCase": {
       "page": "test-case.md",

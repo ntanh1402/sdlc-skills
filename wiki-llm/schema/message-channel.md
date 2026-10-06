@@ -24,7 +24,7 @@ A topic or queue and the contract of the messages on it.
 | `channelName` | yes | text |
 | `kind` | yes | text |
 | `channelType` | yes | `topic`, `queue` |
-| `schemaFormat` | no | `avro`, `protobuf`, `json` |
+| `schemaFormat` | no | lower-case words joined by `-`; common: `avro`, `protobuf`, `json` |
 | `schemaVersion` | no | text |
 | `schemaRegistryUrl` | no | text |
 | `partitions` | no | whole number |
@@ -49,6 +49,7 @@ A topic or queue and the contract of the messages on it.
 | `## Header` | required | author |  |  |  |
 | `## Body` | required | author |  |  |  |
 | `# Payload example` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Publishers` | always | tool | mirrors Service `# Publishes` |  |  |
 | `# Subscribers` | always | tool | mirrors Subscription `# Consumes` |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |

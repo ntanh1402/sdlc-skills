@@ -1,6 +1,6 @@
 ---
 name: sdlc-edit-wiki
-description: Make a small edit to the project wiki that no lifecycle skill owns - fix a typo or wording, change the glossary or the conventions, mark a Feature released or deprecated, add a Task's or a user story's ticket link, add a Task's pull request link, or record that a person confirmed a file. Use for small corrections of wording and for these status and link changes. Not for requirements, architecture, tasks, test design, corrections against code or documents, or closing a Task - those belong to the lifecycle skills, and this skill names the right one.
+description: Make a small edit to the project wiki that no lifecycle skill owns - fix a typo or wording, change the glossary or the conventions, mark a Feature released or deprecated, add a Reference (a page, a document or a code example to consult) or link one from any concept, mark a Reference deprecated, add a Task's or a user story's ticket link, add a Task's pull request link, or record that a person confirmed a file. Use for small corrections of wording and for these status and link changes. Not for requirements, architecture, tasks, test design, corrections against code or documents, or closing a Task - those belong to the lifecycle skills, and this skill names the right one.
 ---
 
 # Edit the wiki
@@ -29,6 +29,9 @@ of each type you will edit, in the wiki's `.wiki-llm/schema/`.
 | A Task's `trackerKey`, `resource` and `prUrl` | The ticket and the pull request a person followed by hand. Never its status |
 | A user story's `trackerKey` and `resource` | The ticket a person made from the story's paste-ready copy |
 | A `verified` stamp | The person says they read the file and it is right: `$T verify <path>` in the draft worktree |
+| A new Reference | Material the person gives or points to: a page, a short document already in Markdown, a code location at a commit or tag. Section 2 says how |
+| A `# References` entry added to or removed from any concept | The entry links a Reference of the same Application, with a note on what to take from it. It changes no status |
+| A Reference's status to `Deprecated` | The person says it no longer applies. It is never deleted |
 
 | Refused | Say |
 |---|---|
@@ -41,6 +44,8 @@ of each type you will edit, in the wiki's `.wiki-llm/schema/`.
 | The wiki is wrong about what is built | `sdlc-import` on the code or the document: it compares and corrects |
 | A Feature's or ChangeRequest's status other than `Released` or `Deprecated` | The lifecycle skill of that step |
 | A question about the wiki | `sdlc-ask-wiki` |
+| A document to convert from PDF, Word or slides | `sdlc-convert-doc` first, then ask again |
+| A new version of a Reference's material, compared with the old one | `sdlc-import` (a reference source) |
 
 A refusal is not a question. Three rules decide the cases the tables do not
 name:
@@ -76,10 +81,28 @@ is neither `Approved` nor `InDev` while such an entry exists
 - for `Released`, an entry is left with no `Todo` Task: name the files; a
   close that is not merged yet usually explains it.
 
+**A new Reference.** Read `.wiki-llm/schema/reference.md`, and look in
+`references/index.md` for one that already covers the material: when one
+does, propose linking it instead. Otherwise draft the folder
+`references/REF-<name>/`, the key taken from the title:
+
+- `overview.md`: `type: Reference`, `status: Active`, a `description` that
+  names the subject and when to consult it, `resource` when the material
+  lives outside the wiki (code at a commit or tag, never a branch), and
+  `stale_after` when it moves; a summary under the title, saying what to
+  follow and what not to copy for a code example; `# Contents` listing the
+  content files, or `None`;
+- the content files, when the person gave the material itself;
+- `log.md` with a **Creation** entry.
+
+Propose the concepts that should link it under `# References`, with the
+note for each. The person approves the whole folder at the stop below.
+
 ## 3. One stop: the Intent and the Design gate
 
 Show the exact changes, file by file, as the old text and the new text, and
-what is refused and where it goes. Ask for approval.
+what is refused and where it goes. A new Reference is shown in full: its
+overview and every content file. Ask for approval.
 
 ```text
 Edit FEAT-catalog:
@@ -94,8 +117,9 @@ An edit here is shown again. A rejection writes nothing.
 ## 4. Write, finish and commit
 
 The draft key is `edit-<key>`: the key of the concept that holds the main
-file (`edit-FEAT-catalog`, `edit-TASK-sms-channel`, `edit-SVC-orders`), or a
-short name for an Application file (`edit-glossary`, `edit-conventions`).
+file (`edit-FEAT-catalog`, `edit-TASK-sms-channel`, `edit-SVC-orders`,
+`edit-REF-cancel-flow-example`), or a short name for an Application file
+(`edit-glossary`, `edit-conventions`).
 Start it as `references/write-protocol.md` section 3 says. The input paths
 are the files you edit.
 
@@ -105,6 +129,7 @@ concept folder you changed, saying what changed and who asked:
 ```markdown
 * **Edit**: Reworded the summary; no contract changed. Written by an AI model with sdlc-edit-wiki.
 * **Released**: The Feature is live since 2026-10-04. Written by an AI model with sdlc-edit-wiki.
+* **References**: Linked REF-cancel-flow-example for the idempotency handling. Written by an AI model with sdlc-edit-wiki.
 ```
 
 The Application's own files have no log; the commit message says what
@@ -124,7 +149,7 @@ skills" when part of the request was refused.
 - It never changes a Requirement, a contract, an acceptance item, a planned
   scope, a TestCase or a diagram's meaning.
 - It never changes a Task's status, and never a status other than a
-  Feature's `Released` or `Deprecated`.
+  Feature's `Released` or `Deprecated` and a Reference's `Deprecated`.
 - It never adds a `# Pending changes` entry or removes one.
 - It never reads code to decide what the wiki should say.
 

@@ -15,7 +15,7 @@ ORDER = 60
 REQ_HEADING_RE = re.compile(r"^REQ-")
 NAME = r"[a-z0-9]+(-[a-z0-9]+)*"
 # Keys of these types are unique only inside their owner, or are fixed names.
-LOCAL_KEYS = {"Application", "Reference", "Convention", "Glossary", "TestCase"}
+LOCAL_KEYS = {"Application", "Convention", "Glossary", "TestCase"}
 
 
 def requirement_ids(concept: Concept) -> list[str]:

@@ -58,8 +58,9 @@ $T coverage stories --feature FEAT-coupons      # or --change CR-sms-alerts
 
 Every state but `READY` is a refusal, not a question.
 
-Then read the Requirements, the PRD (`prd.md` or `change-prd.md`), the
-stories already in the folder, and the Tasks that link them. For a
+Then read the Requirements, the PRD (the Reference the Feature or
+ChangeRequest links under `# References`), the stories already in the
+folder, and the Tasks that link them. For a
 ChangeRequest, also read the changed Feature's stories that list a
 Requirement the ChangeRequest changes (same key).
 

@@ -54,8 +54,7 @@ FILES: dict[str, str] = {
     ),
     # --------------------------------------------------------------------- feature
     "pay/features/FEAT-pay/overview.md": page(
-        f"type: Feature\ntitle: Pay\ndescription: Pay for an order.\nstatus: InDev\nownerTeam: payments\n{G}\n"
-        "sources:\n  - id: prd\n    resource: prd.md\n    title: Pay PRD",
+        f"type: Feature\ntitle: Pay\ndescription: Pay for an order.\nstatus: InDev\nownerTeam: payments\n{G}",
         "# Pay\n\n# Requirements\n\n### REQ-pay-1\n\n**Must** — A shopper pays for an order. Functional. Verified by test.\n\n"
         "# Architecture\n\n## Context and constraints\n\nText.\n\n## High-level architecture\n\n"
         "```mermaid\nflowchart LR\n  Web --> Svc\n```\n\n"
@@ -65,13 +64,10 @@ FILES: dict[str, str] = {
         "## Decisions\n\n* [ADR-002](../../decisions/ADR-002.md)\n\n"
         "## Traceability\n\n| Requirement | Target concepts |\n|---|---|\n"
         "| [REQ-pay-1](#req-pay-1) | [EP-pay-create](../../services/SVC-pay/EP-pay-create.md), "
-        "[EP-pay-refund](../../services/SVC-pay/EP-pay-refund.md) |",
+        "[EP-pay-refund](../../services/SVC-pay/EP-pay-refund.md) |\n\n"
+        "# References\n\n* [REF-pay-prd](../../references/REF-pay-prd/overview.md) — the approved PRD.",
     ),
     "pay/features/FEAT-pay/log.md": LOG,
-    "pay/features/FEAT-pay/prd.md": page(
-        f"type: Reference\ntitle: Pay PRD\ndescription: Approved product requirements.\n{G}\n{V}",
-        "# Pay PRD\n\nShoppers pay for orders.",
-    ),
     "pay/features/FEAT-pay/TASK-pay-001.md": page(
         f"type: Task\ntitle: Create the payments table\ndescription: Add the table.\nstatus: Done\n{G}",
         "# Create the payments table\n\n# Acceptance\n\nTable exists. Satisfies [REQ-pay-1](overview.md#req-pay-1).\n\n"
@@ -89,7 +85,8 @@ FILES: dict[str, str] = {
         f"type: Task\ntitle: Build the refund endpoint\ndescription: Add refunds.\nstatus: Todo\n{G}",
         "# Build the refund endpoint\n\n# Acceptance\n\nRefund works.\n\n"
         "# Planned scope\n\n* [EP-pay-refund](../../services/SVC-pay/EP-pay-refund.md) — new — the endpoint.\n\n"
-        "# Blocked by\n\n* [TASK-pay-001](TASK-pay-001.md)",
+        "# Blocked by\n\n* [TASK-pay-001](TASK-pay-001.md)\n\n"
+        "# References\n\n* [REF-pay-prd](../../references/REF-pay-prd/overview.md) — the refund rules.",
     ),
     # -------------------------------------------------------------- change request
     "pay/change-requests/CR-1/overview.md": page(
@@ -235,6 +232,16 @@ FILES: dict[str, str] = {
         "| Step | Action | Expected result | Validation |\n|---|---|---|---|\n| 1 | Pay | Paid | Row exists |\n\n"
         "# Postconditions and cleanup\n\nDelete the payment.",
     ),
+    # ----------------------------------------------------------------- references
+    "pay/references/REF-pay-prd/overview.md": page(
+        f"type: Reference\ntitle: Pay PRD\ndescription: Approved product requirements; read before changing payments.\n"
+        f"status: Active\n{G}\n{V}",
+        "# Pay PRD\n\nThe product requirements for paying, as approved.\n\n"
+        "# Contents\n\n* [prd.md](prd.md) — the full PRD.",
+    ),
+    "pay/references/REF-pay-prd/log.md": LOG,
+    "pay/references/REF-pay-prd/prd.md": "# Pay PRD\n\nShoppers pay for orders.\n\n![Flow](images/flow.png)\n",
+    "pay/references/REF-pay-prd/images/flow.png": "not really a picture\n",
 }
 
 INDEX_DIRS = [
@@ -243,6 +250,7 @@ INDEX_DIRS = [
     "pay/channels/CHAN-pay-events", "pay/datastores", "pay/datastores/DB-main", "pay/datastores/CACHE-pay",
     "pay/datastores/BLOB-receipts", "pay/datastores/IDX-payments", "pay/externals", "pay/externals/EXT-bank",
     "pay/frontends", "pay/frontends/WEB-shop", "pay/frontends/MB-shop", "pay/tests", "pay/tests/TS-pay",
+    "pay/references", "pay/references/REF-pay-prd",
 ]
 
 

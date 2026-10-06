@@ -56,7 +56,10 @@ Rules:
   other service's name: "calls the payments service's capture endpoint; import
   its code".
 - **Fields the code does not state** (`serviceType`, `ownerTeam`, a table's
-  `pii`) are proposed and confirmed by the person.
+  `pii`) are proposed and confirmed by the person. For a field whose schema
+  page lists "common" values (`serviceType`, `deployTarget`, `platform`), the
+  proposal is a value the Application already uses, else a common one, else
+  a name the code suggests (`scheduler`); the person decides.
 - **`payload.example.json`** is built from the payload's fields with made-up
   values of the right type. Never copy a real message.
 - **A frontend's `# Architecture`** is one Mermaid `flowchart` of its main

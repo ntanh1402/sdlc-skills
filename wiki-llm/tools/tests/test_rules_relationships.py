@@ -1,3 +1,4 @@
+from . import fixture
 from .support import RuleTest
 
 SERVICE = "pay/services/SVC-pay/overview.md"
@@ -185,3 +186,56 @@ class RelationshipsTest(RuleTest):
             "1. [Charge](../../externals/EXT-bank/OP-charge.md) — through the bank.",
         )
         self.assertClean()
+
+REFERENCE = "pay/references/REF-pay-prd/overview.md"
+REFUND_TASK = "pay/features/FEAT-pay/TASK-pay-002.md"
+PRD_LINK = "* [REF-pay-prd](../../references/REF-pay-prd/overview.md) — the refund rules."
+
+
+class ReferencesTest(RuleTest):
+    def test_every_type_may_link_a_reference(self):
+        self.edit("pay/conventions.md", "Tests pass.", "Tests pass.\n\n# References\n\n* [REF-pay-prd](references/REF-pay-prd/overview.md) — terms.")
+        self.edit("pay/services/SVC-pay/overview.md", "the payment rail.", "the payment rail.\n\n# References\n\n* [REF-pay-prd](../../references/REF-pay-prd/overview.md)")
+        self.edit(REFERENCE, "the full PRD.", "the full PRD.\n\n# References\n\nNone.")
+        self.assertClean()
+
+    def test_references_link_only_references(self):
+        self.edit(REFUND_TASK, PRD_LINK, "* [TASK-pay-001](TASK-pay-001.md)")
+        self.assertRule("relationships.target-type", REFUND_TASK)
+
+    def test_references_in_a_free_heading_type_are_still_checked(self):
+        self.edit("pay/conventions.md", "Tests pass.", "Tests pass.\n\n# References\n\n* [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)")
+        self.assertRule("relationships.target-type", "pay/conventions.md")
+
+    def test_reference_of_another_application_is_refused(self):
+        self.write("shop/overview.md", fixture.FILES["pay/overview.md"].replace("title: Pay", "title: Shop").replace("# Pay", "# Shop"))
+        self.write("shop/index.md", fixture.INDEX)
+        self.write("shop/references/index.md", fixture.INDEX)
+        for name in ("overview.md", "log.md", "prd.md", "images/flow.png"):
+            self.write(f"shop/references/REF-shop-prd/{name}", fixture.FILES[f"pay/references/REF-pay-prd/{name}"])
+        self.write("shop/references/REF-shop-prd/index.md", fixture.INDEX)
+        self.edit(REFUND_TASK, PRD_LINK, "* [REF-shop-prd](/shop/references/REF-shop-prd/overview.md)")
+        self.assertRule("relationships.other-app", REFUND_TASK)
+
+    def test_deprecated_reference_is_a_warning(self):
+        self.edit(REFERENCE, "status: Active", "status: Deprecated")
+        found = [(item.rule, item.path, item.severity) for item in self.findings()]
+        self.assertEqual(
+            sorted(found),
+            [
+                ("relationships.target-status", "pay/features/FEAT-pay/TASK-pay-002.md", "warning"),
+                ("relationships.target-status", "pay/features/FEAT-pay/overview.md", "warning"),
+            ],
+        )
+
+    def test_referenced_by_is_written_by_sync(self):
+        from wikilib import sync
+
+        sync.write(self.root)
+        text = fixture.read(self.root, REFERENCE)
+        self.assertIn(
+            "# Referenced by\n\n* [Pay](../../features/FEAT-pay/overview.md)\n* [Build the refund endpoint](../../features/FEAT-pay/TASK-pay-002.md)\n",
+            text,
+        )
+        self.edit(REFUND_TASK, "\n\n# References\n\n" + PRD_LINK, "")
+        self.assertIn("generated.stale", {item.rule for item in self.findings(include_generated=True)})

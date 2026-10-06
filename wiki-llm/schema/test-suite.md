@@ -12,7 +12,7 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
 | Path | `<app>/tests/TS-<slug>/` |
 | Shape | Folder with `index.md`, `overview.md`, `log.md` |
 | Status | `Draft`, `Approved`, `Implemented`, `Deprecated` |
-| Owns | TestCase, Reference |
+| Owns | TestCase |
 
 ### Fields
 
@@ -37,6 +37,7 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Verifies` | required | author | Feature, ChangeRequest (1 or more) |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules
@@ -47,5 +48,5 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
   `Approved` once reviewed, `Implemented` when runnable tests exist. The wiki
   does not record pass and fail results.
 - `resource` is where the runnable tests live, once they exist.
-- A test plan the suite was written from is kept in the suite folder as a
-  [source document](source-document.md) and listed in `sources`.
+- A test plan the suite was written from is a [Reference](reference.md),
+  linked under `# References`.

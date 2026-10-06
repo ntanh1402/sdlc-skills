@@ -132,6 +132,7 @@ tracker.
 | Requirement (`REQ-…`) | One testable requirement inside a Feature or ChangeRequest |
 | Design files | Services, endpoints, events, tables, frontends and externals. A design not built yet is marked as pending (`Planned`, `Modifying`, `Removing`) until its Task is closed |
 | User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with Given/When/Then criteria, each citing a Requirement. Optional; no status, you follow it in your tracker |
+| Reference (`REF-…`) | Material to read while working: a PRD, a test plan, a domain page, a vendor document, a code example. A folder with a summary, linked from any file under `# References`. Context, never a contract |
 | Task (`TASK-…`) | One piece of build work. Only `Todo` or `Done`; you follow progress in your tracker, not in the wiki |
 | TestSuite (`TS-…`), TestCase (`TC-…`) | The test design. A suite is `Implemented` once its test code exists |
 | Draft | One skill run's changes, on a branch `wiki/<step>-<key>` of the wiki repository, for example `wiki/spec-FEAT-gift-cards`. The next step only sees it after you merge its pull request |
@@ -214,8 +215,9 @@ the names come from the sample wiki in
 
 - **Use when:** the project already exists. It brings in one source per run:
   a service's or frontend's code, an architecture document, a PRD, a built
-  capability with no document, a test suite, or a test plan. If the source is
-  already in the wiki, it compares the two instead.
+  capability with no document, a test suite, a test plan, or a page, document
+  or code example to keep as a Reference. If the source is already in the
+  wiki, it compares the two instead.
 - **Before:** the wiki is set up and the Application exists. A non-text
   document is converted with `sdlc-convert-doc` first.
 - **Say:** "Import the code of ../shop-orders", "Import docs/architecture.md",
@@ -235,8 +237,9 @@ the names come from the sample wiki in
 - **Say:** "Write the spec for gift cards: customers pay part or all of an
   order with a gift card balance", "Add SMS as a second notification
   channel".
-- **You get:** a new Feature (`FEAT-…`) with a PRD and Requirements, or a
-  ChangeRequest (`CR-…`) when the Feature is already designed. At the Design
+- **You get:** a new Feature (`FEAT-…`) with its Requirements and its PRD as
+  a Reference (`REF-…-prd`), or a ChangeRequest (`CR-…`) when the Feature is
+  already designed. At the Design
   gate you choose `ReqApproved` (ready for design) or keep it a draft.
 - **Next:** merge the spec pull request, then `sdlc-design-arch`, and
   `sdlc-write-stories` at the same time if you want user stories.
@@ -335,12 +338,13 @@ the names come from the sample wiki in
 
 - **Use when:** you need a small edit that no other skill owns: a typo or
   wording fix, the glossary or conventions, a Feature marked `Released` or
-  `Deprecated`, a Task's ticket or pull request link, or a record that a
-  person checked a file.
+  `Deprecated`, a Reference added, linked or marked `Deprecated`, a Task's
+  ticket or pull request link, or a record that a person checked a file.
 - **Before:** for `Released`, the Feature is `InDev`, no Task is `Todo`, and
   no design item is pending.
 - **Say:** "Mark FEAT-gift-cards released, shipped today", "Add ticket
-  SHOP-142 to TASK-gift-card-redeem".
+  SHOP-142 to TASK-gift-card-redeem", "Add our refund policy page as a
+  reference and link it from TASK-refund-endpoint".
 - **You get:** a small draft. Anything that changes what someone would build
   or test is refused, and the skill names the one to use instead.
 - **Next:** merge the pull request.

@@ -15,3 +15,4 @@
 * [Channels](channels/index.md) - Message channels and their payload contracts.
 * [Externals](externals/index.md) - Third-party services and the operations called on them.
 * [Tests](tests/index.md) - Test suites and their test cases.
+* [References](references/index.md) - Documents, pages and code examples to read while working.

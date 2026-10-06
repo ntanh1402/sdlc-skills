@@ -22,13 +22,13 @@ A native or cross-platform mobile application.
 | `description` | yes | text |
 | `status` | yes | `Planned`, `Active`, `Modifying`, `Removing`, `Deprecated` |
 | `ownerTeam` | yes | text |
-| `platform` | yes | `ios`, `android`, `cross-platform` |
+| `platform` | yes | lower-case words joined by `-`; common: `ios`, `android`, `cross-platform` |
 | `language` | no | text |
 | `framework` | no | text |
 | `minimumOsVersion` | no | text |
 | `applicationId` | no | text |
 | `bundleId` | no | text |
-| `distribution` | no | `app-store`, `enterprise`, `internal`, `sideload` |
+| `distribution` | no | lower-case words joined by `-`; common: `app-store`, `enterprise`, `internal`, `sideload` |
 | `buildTool` | no | text |
 | `version` | no | text |
 | `offlineCapable` | no | `true` or `false` |
@@ -54,6 +54,7 @@ A native or cross-platform mobile application.
 | `# Quality constraints` | required | author |  |  |  |
 | `# Delivery` | optional | author |  |  |  |
 | `# Observability` | optional | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

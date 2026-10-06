@@ -58,7 +58,8 @@ Every state but `READY` is a refusal, not a question.
 Then read the Requirements, the Feature's `# Architecture` or the
 ChangeRequest's `# Delta`, the decisions it links, every Design concept in
 scope with its `# Pending changes` entry, every existing Task in the folder,
-and every user story in the folder with the Requirements it lists.
+every user story in the folder with the Requirements it lists, and the
+References all of these link.
 
 Stories are optional and may not exist yet. Do not wait for them: when a
 `wiki/stories-<Key>` draft is open, say so in the first round, and say that
@@ -110,6 +111,11 @@ Follow `references/decomposition-rules.md` and `references/task-sizing.md`:
   Nonfunctional Requirement) has no `# Stories`. A Task links only stories of
   its own folder.
 - `# Blocked by` links the Tasks it waits for; no cycles.
+- `# References` links the References a developer needs for this Task: those
+  the Feature or ChangeRequest and the Design files in its `# Planned scope`
+  link, when they bear on its work, each with a note on what to take from
+  it. Do not create a Reference; when one is missing, say which in the
+  summary and name `sdlc-edit-wiki`.
 
 **One repository.** A Task changes one code repository. Work that spans two
 repositories is two Tasks, one blocked by the other when the order matters.
@@ -123,7 +129,8 @@ the Design gate.
 **Story links on any Task.** Adding a `# Stories` link, or dropping one to a
 story that no longer exists, is allowed on every Task, `Done` and started
 ones included: it is traceability, not scope, and it is the only edit made
-to those. A run whose only work is linking stories plans no new Task.
+to those, besides `# References`. A run whose only work is linking stories
+plans no new Task.
 
 ## 4. Run plan and the Design gate
 
@@ -166,7 +173,7 @@ review, also check that:
 - every `# Acceptance` states an observable result and links its
   Requirements;
 - no `Done` Task and no started Task was rewritten beyond its `# Stories`
-  links, and no Design concept or user story was touched.
+  and `# References` links, and no Design concept or user story was touched.
 
 Commit message: `tasks(<Key>): plan <n> tasks`. In the summary, "Next" names
 the Tasks of the first wave: the ones that can start once the pull request

@@ -81,7 +81,9 @@ it calls.
 When no Service or frontend matches, say so under "Not checked": "this
 repository is not in the wiki; import it with sdlc-import".
 
-**Always.** The Application's `conventions.md`, when it exists.
+**Always.** The Application's `conventions.md`, when it exists, and the
+References the Task and the Design files link under `# References`, as
+context only (`references/code-checks.md`).
 
 ## 3. Whose work a target is
 

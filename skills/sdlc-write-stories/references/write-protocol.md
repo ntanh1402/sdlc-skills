@@ -25,7 +25,9 @@ and the summary. This file adds what a draft needs at each of those steps.
 - Never edit another step's output, unless your `SKILL.md` says the edit is a
   correction, or it is the story fix of `user-story.md` or the TestCase fix
   of `test-case.md` after a removed Requirement. When you find that a later step's output is out of date, name
-  the skill to run again.
+  the skill to run again. Adding or removing a `# References` entry is not
+  an edit of the concept: any step may link a Reference from a file it
+  writes, and the tool does not stamp the change.
 - Keys are names taken from titles, never numbers: `TASK-refund-endpoint`,
   `ADR-idempotent-checkout`. A key on the default branch never changes. Before
   the pull request is merged, `$T rename <old> <new>` changes one.
@@ -119,6 +121,10 @@ same commands and writes no `plan.md`.
 
    * **Update**: Added the coupon Requirements. Written by an AI model with sdlc-write-spec.
    ```
+
+   A change to `# References` only is logged as a **References** entry. A new
+   or changed Reference needs a person's approval of its whole folder; the
+   Change-set gate is that approval.
 
 5. **Input check.** Check whether the input changed on the default branch
    since you read it:

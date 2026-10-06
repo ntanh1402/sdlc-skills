@@ -108,6 +108,27 @@ class FinishTest(DraftTest):
         self.assertEqual(result["missing_logs"], [])
         self.assertEqual(self.meta(worktree, TABLE)["generated"]["by"], "human:alice")
 
+    def test_content_file_change_stamps_its_reference_and_needs_its_log(self):
+        worktree = self.start()
+        root = self.bundle(worktree)
+        fixture.edit(root, "pay/references/REF-pay-prd/prd.md", "Shoppers pay for orders.", "Shoppers pay for orders in one step.")
+        fixture.write(root, "pay/references/REF-pay-prd/images/flow.png", "a new picture\n")
+        code, result = self.finish(worktree, "--verified-by", "human:bob")
+        self.assertEqual((code, result["missing_logs"]), (1, ["pay/references/REF-pay-prd/log.md"]), result)
+        fixture.edit(root, "pay/references/REF-pay-prd/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Update**: PRD wording.\n\n## 2026-09-01\n")
+        code, result = self.finish(worktree, "--verified-by", "human:bob")
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["stamped"], ["pay/references/REF-pay-prd/overview.md"])
+        self.assertEqual(self.meta(worktree, "pay/references/REF-pay-prd/overview.md")["verified"]["by"], "human:bob")
+
+    def test_references_edit_is_not_stamped_and_needs_no_log(self):
+        worktree = self.start()
+        root = self.bundle(worktree)
+        fixture.edit(root, "pay/features/FEAT-pay/TASK-pay-002.md", "the refund rules.", "the refund rules and their limits.")
+        code, result = self.finish(worktree)
+        self.assertEqual(code, 0, result)
+        self.assertEqual((result["stamped"], result["missing_logs"]), ([], []))
+
     def test_missing_log_entry_is_reported(self):
         worktree = self.start()
         self.edit_table(worktree, log=False)
@@ -262,9 +283,9 @@ class UnverifiedTest(DraftTest):
     def test_an_unverified_reference_fails_validation(self):
         worktree = self.start()
         root = self.bundle(worktree)
-        fixture.edit(root, "pay/features/FEAT-pay/prd.md", "Shoppers pay for orders.", "Shoppers pay for orders in one step.")
-        fixture.edit(root, "pay/features/FEAT-pay/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Update**: PRD wording.\n\n## 2026-09-01\n")
-        code, result = self.finish(worktree, "--verified-by", "--unverified", "wiki/pay/features/FEAT-pay/prd.md")
+        fixture.edit(root, "pay/references/REF-pay-prd/prd.md", "Shoppers pay for orders.", "Shoppers pay for orders in one step.")
+        fixture.edit(root, "pay/references/REF-pay-prd/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Update**: PRD wording.\n\n## 2026-09-01\n")
+        code, result = self.finish(worktree, "--verified-by", "--unverified", "wiki/pay/references/REF-pay-prd")
         self.assertEqual(code, 1)
         self.assertEqual([item["rule"] for item in result["validate"]["errors"]], ["frontmatter.reference-unverified"])
 

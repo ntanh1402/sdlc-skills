@@ -18,6 +18,7 @@ class Schema:
         self.design_types: list[str] = data["design_types"]
         self.qualifiers: dict[str, list[str]] = data["qualifiers"]
         self.pending: dict = data["pending"]
+        self.references: dict = data["references"]
         self.collections: list[dict] = data["collections"]
 
     @classmethod
@@ -76,8 +77,11 @@ class Schema:
     # --- headings --------------------------------------------------------
 
     def headings(self, name: str) -> list[dict]:
-        """Top-level headings in order, with Pending changes appended for Design types."""
+        """Top-level headings in order: the type's own, with `# References` before
+        the first tool-written one, and Pending changes appended for Design types."""
         result = [dict(entry) for entry in self.types[name].get("headings", [])]
+        position = next((index for index, entry in enumerate(result) if "generated" in entry), len(result))
+        result.insert(position, dict(self.references))
         if self.is_design(name):
             result.append(
                 {

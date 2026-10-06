@@ -263,6 +263,12 @@ def finish(
     stamping: dict[Path, str] = {}
     for path, status in changed.items():
         file = tree.path / path
+        holder = bundle.content_holder(file)
+        if holder is not None:
+            authored.add(file)  # a content file: its Reference is approved as a whole
+            if holder.path not in bundle.unreadable and not holder.fm_errors:
+                stamping[holder.path] = holder.path.relative_to(tree.path).as_posix()
+            continue
         if status == "D" or not _authored(tree, base_commit, path, status, schema):
             continue
         authored.add(file)
@@ -291,7 +297,10 @@ def finish(
         file = tree.path / path
         if file.name in ("log.md", "index.md") or (status != "D" and file not in authored):
             continue
-        if file.parent in logs:
+        holder = bundle.content_holder(file)
+        if holder is not None:
+            needing.add(holder.folder)
+        elif file.parent in logs:
             needing.add(file.parent)
     for folder in sorted(needing):
         log = logs[folder]

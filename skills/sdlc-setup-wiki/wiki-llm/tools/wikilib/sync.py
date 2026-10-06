@@ -108,7 +108,8 @@ def entries(bundle: Bundle, concept: Concept, spec: dict) -> list[str]:
     """List lines of one generated section of `concept`."""
     found: dict[Path, tuple[Concept, set[str]]] = {}
     for source in spec["generated"]["sources"]:
-        for candidate in bundle.of_type(source["type"]):
+        candidates = bundle.concepts if source["type"] == "@any" else bundle.of_type(source["type"])
+        for candidate in candidates:
             for relation in bundle.relations(candidate, source["heading"]):
                 if relation.concept is not concept:
                     continue

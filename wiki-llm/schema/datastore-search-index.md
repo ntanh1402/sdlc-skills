@@ -37,6 +37,7 @@ A search index. It is a derived read model, not a source of truth.
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Indexed fields` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Used by` | always | tool | mirrors Service `# Uses` |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->

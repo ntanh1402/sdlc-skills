@@ -82,7 +82,13 @@ worktree of its own and leaves the person's checkout as it is.
   `# Pending changes` entry for this Task's parent;
 - the parent's `# Architecture` or `# Delta`, and the decisions it links;
 - `<app>/conventions.md`: coding standards, branching, testing policy,
-  definition of done.
+  definition of done;
+- the References the Task, its parent and its Design files link under
+  `# References`, and those in `<app>/references/index.md` about the scope:
+  each overview, then the content or the code at `resource` it points to.
+  Follow what each note says to take from it. A Reference is an example, not
+  a contract: where it differs from the Task, a Design file or
+  `conventions.md`, those win.
 
 Note the wiki commit you read: `READ=$(git -C "$WIKI" rev-parse "$DEFAULT")`.
 

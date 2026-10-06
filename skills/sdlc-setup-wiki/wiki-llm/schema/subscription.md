@@ -41,6 +41,7 @@ One consumer of a MessageChannel, owned by a Service.
 | `# Idempotency` | required | author |  |  |  |
 | `# Failure behavior` | required | author |  |  |  |
 | `# Sequence diagram` | optional | author |  |  | Mermaid `sequenceDiagram` diagram |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

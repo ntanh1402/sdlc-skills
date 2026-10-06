@@ -26,7 +26,7 @@ A third-party service, or another application's service. It owns its Operations 
 | `apiUrl` | yes | URL or bundle path |
 | `authType` | no | text |
 | `slaTier` | no | text |
-| `costModel` | no | `per-call`, `subscription` |
+| `costModel` | no | lower-case words joined by `-`; common: `per-call`, `subscription` |
 | `generated` | yes | `{ by, at }` |
 | `verified` | no | `{ by, at }`, or a list of them |
 | `sources` | no | list of `{ id, resource, title }` |
@@ -40,6 +40,7 @@ A third-party service, or another application's service. It owns its Operations 
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Fallback` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

@@ -8,11 +8,12 @@ description: Write and approve the requirements of a new Feature, or of a Change
 This skill is the first lifecycle step. Its output is exactly one of:
 
 1. A **Feature**: `wiki/<app>/features/FEAT-<name>/` with `overview.md`
-   (Requirements, `# Architecture` `None`), a PRD `prd.md` and `log.md`.
+   (Requirements, `# Architecture` `None`) and `log.md`, and its PRD, the
+   Reference `wiki/<app>/references/REF-<name>-prd/`.
 2. A **ChangeRequest** to one existing Feature:
    `wiki/<app>/change-requests/CR-<name>/` with `overview.md` (Requirements,
-   `# Delta` `None — pending architecture`), a change PRD `change-prd.md` and
-   `log.md`.
+   `# Delta` `None — pending architecture`) and `log.md`, and its change PRD,
+   the Reference `wiki/<app>/references/REF-<name>-change-prd/`.
 
 Its draft prefix is `spec-`: the draft for `FEAT-coupons` is
 `wiki/spec-FEAT-coupons`.
@@ -23,7 +24,7 @@ Read, in this skill's folder, `references/read-protocol.md`,
 `references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
 steps of the run and the three gates; this file says what is this skill's own
 at each step. Then read the schema pages `schema.md`, `feature.md`,
-`change-request.md` and `source-document.md` in the wiki's `.wiki-llm/schema/`.
+`change-request.md` and `reference.md` in the wiki's `.wiki-llm/schema/`.
 When a revision removes a Requirement, also `user-story.md` and `test-case.md`.
 
 Other requests go elsewhere; say so and stop:
@@ -49,8 +50,10 @@ the request's terms (`wiki/index.md`, `wiki/<app>/features/index.md`), else
 the only one. None that exists: stop and route to `sdlc-setup-wiki`.
 
 **Search before asking.** Search the Application for the outcome, actors,
-domain words and any keys the user gave. Read the plausible Features, their
-PRDs, Requirements and Architecture, their open ChangeRequests, and the
+domain words and any keys the user gave. Read the plausible Features, the
+References they link (their PRDs among them), their Requirements and
+Architecture, their open ChangeRequests, the References in
+`references/index.md` about the subject, and the
 frontends, services, channels, externals and datastores they link.
 
 **Resolve an existing Feature** in this order, stopping at the first that
@@ -136,14 +139,15 @@ Application and, for a ChangeRequest, the target Feature's `overview.md`; it
 must be on the default branch.
 
 Prepare the PRD with `references/prd-templates.md` and write it straight to
-its file in the worktree (`prd.md` or `change-prd.md`, as section 4 shows).
-The PRD is the design and one of the outputs, so it is written once: the
-person approves the text that will be committed, and a resumed run still has
-it. Prepare a table mapping each Requirement to the PRD sections it comes
-from.
+its content file in the worktree (`prd.md` or `change-prd.md` in the
+Reference folder, as section 4 shows). The PRD is the design and one of the
+outputs, so it is written once: the person approves the text that will be
+committed, and a resumed run still has it. Prepare a table mapping each
+Requirement to the PRD sections it comes from.
 
-Write the Run plan: its `## Files` are `overview.md`, the PRD (already ticked)
-and `log.md` in the Feature's or ChangeRequest's folder.
+Write the Run plan: its `## Files` are `overview.md` and `log.md` in the
+Feature's or ChangeRequest's folder, and the PRD's Reference folder:
+`overview.md`, `log.md` and the content file (already ticked).
 
 **Design gate.** Show the full PRD as the file holds it and the mapping, never
 only a summary, then the Run plan, and ask two questions:
@@ -153,7 +157,8 @@ only a summary, then the Run plan, and ask two questions:
    to keep working on (`Draft` for a Feature, `Proposed` for a
    ChangeRequest)?
 
-Make any edit to the PRD in its file; it needs the gate again.
+Make any edit to the PRD in its file; it needs the gate again. The person's
+approval of the PRD is the approval the Reference needs.
 
 ## 4. Write
 
@@ -169,10 +174,6 @@ description: Let a customer pay with a gift card.
 status: ReqApproved
 ownerTeam: checkout
 priority: P1
-sources:
-  - id: prd
-    resource: prd.md
-    title: Gift cards PRD
 ---
 
 # Gift cards
@@ -189,9 +190,15 @@ Functional. Verified by test.
 # Architecture
 
 None
+
+# References
+
+* [REF-gift-cards-prd](../../references/REF-gift-cards-prd/overview.md) — the PRD these Requirements were written from.
 ```
 
-Keep `# Architecture` `None`. In a revision, keep everything you were not asked
+Keep `# Architecture` `None`. Write every Requirement out in full; none says
+"see the PRD". Link other References that apply to the Feature under
+`# References` too, with a note on what to take from each. In a revision, keep everything you were not asked
 to change, and set the status the Design gate decided.
 
 **Stories after a removed Requirement.** A revision that removes a
@@ -206,27 +213,42 @@ Design gate and log them.
 **New or revised ChangeRequest** `change-requests/CR-<name>/`: frontmatter
 `type: ChangeRequest`, `title`, `description`, `status` (`Proposed` or
 `ReqApproved`), `changeType`, `riskLevel`, optional `priority`,
-`requestedBy`, `sources` listing `change-prd.md`; then the headings of
-`change-request.md` in order: `# Changes` (one link to the Feature's
-`overview.md`), `# Reason`, `# Requirements` (added and changed ones only),
-`# Delta` with `None — pending architecture`. Never edit the target Feature.
+`requestedBy`; then the headings of `change-request.md` in order:
+`# Changes` (one link to the Feature's `overview.md`), `# Reason`,
+`# Requirements` (added and changed ones only), `# Delta` with
+`None — pending architecture`, and `# References` linking
+`REF-<name>-change-prd`. Never edit the target Feature.
 
-**The PRD** `prd.md` or `change-prd.md`, a Reference:
+**The PRD**, a Reference folder `references/REF-<name>-prd/` for a Feature or
+`references/REF-<name>-change-prd/` for a ChangeRequest, as `reference.md`
+says. In a revision, edit the content file of the existing Reference.
 
-```markdown
----
-type: Reference
-title: Gift cards PRD
-description: Product requirements for gift cards, approved at the Design gate.
----
+- `overview.md` summarises it and lists the content file:
 
-# Gift cards PRD
+  ```markdown
+  ---
+  type: Reference
+  title: Gift cards PRD
+  description: Product requirements for gift cards; read before changing how a customer pays with a gift card.
+  status: Active
+  ---
 
-## Objective
-...
-```
+  # Gift cards PRD
 
-**`log.md`** in the folder. A new folder starts with:
+  The product requirements the [Gift cards](../../features/FEAT-gift-cards/overview.md)
+  Feature was written from: <one or two sentences on the objective and scope>.
+
+  # Contents
+
+  * [prd.md](prd.md) — the PRD as approved.
+  ```
+
+- The content file `prd.md` or `change-prd.md` holds the PRD itself, with no
+  frontmatter: `# Gift cards PRD`, then the sections of
+  `references/prd-templates.md`.
+- `log.md` starts as below, with a **PRD** entry.
+
+**`log.md`** in each folder. A new folder starts with:
 
 ```markdown
 # Gift cards — change log
@@ -252,7 +274,8 @@ In the self review, also check that:
 
 - every Requirement is one testable behaviour or constraint, has a key,
   priority, type and verification, and maps to approved PRD text;
-- the PRD file was not changed after the Design gate;
+- the PRD's content file was not changed after the Design gate, and the
+  Feature or ChangeRequest links its Reference under `# References`;
 - a ChangeRequest left the target Feature unchanged, and its `# Delta` is
   `None — pending architecture`;
 - the status is the one the Design gate decided;

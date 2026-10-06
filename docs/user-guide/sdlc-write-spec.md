@@ -11,7 +11,7 @@ Feature. [Back to the user guide](user-guide.md).
 | **Use when** | You define a new capability, turn a brief into requirements, write a PRD, or change an existing Feature (a bug, a security, performance or refactor change), or revise requirements that are not designed yet |
 | **Needs first** | The Application exists. If the input is a PDF or Word file, convert it first with [sdlc-convert-doc](sdlc-convert-doc.md) |
 | **Say** | "Write the spec for gift cards: customers pay part or all of an order with a gift card balance", "Add SMS as a second notification channel" |
-| **You get** | A **Feature** (`FEAT-…`) with a PRD and Requirements, or a **ChangeRequest** (`CR-…`) when the Feature is already designed. Draft branch `wiki/spec-<Key>` |
+| **You get** | A **Feature** (`FEAT-…`) with its Requirements and its PRD as a Reference (`REF-<name>-prd`), or a **ChangeRequest** (`CR-…`) with its change PRD (`REF-<name>-change-prd`) when the Feature is already designed. Draft branch `wiki/spec-<Key>` |
 | **Next** | Merge the spec pull request. Then [sdlc-design-arch](sdlc-design-arch.md), and [sdlc-write-stories](sdlc-write-stories.md) at the same time if you want user stories |
 
 ## What the skill does
@@ -30,7 +30,7 @@ Feature. [Back to the user guide](user-guide.md).
 5. **Design gate:** shows the **full PRD** and the mapping, then asks two
    questions: is the PRD approved as written, and are the requirements
    **approved for design** (`ReqApproved`) or still a draft?
-6. Writes `overview.md`, the PRD and `log.md`, checks them, then the
+6. Writes `overview.md` and `log.md`, and the PRD's Reference folder, checks them, then the
    **Change-set gate** and the commit.
 
 ## What you do

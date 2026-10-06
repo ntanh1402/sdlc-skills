@@ -40,6 +40,7 @@ ChangeRequest whose Requirements it lists.
 | `# Requirements` | required | author | Requirement (1 or more) |  |  |
 | `# Affects` | optional | author | UserStory (any number) |  |  |
 | `# Notes` | optional | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Changed by` | when not empty | tool | mirrors UserStory `# Affects` |  |  |
 <!-- generated:schema end -->
 

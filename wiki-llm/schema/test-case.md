@@ -39,6 +39,7 @@ One test, written so a tester who did not design the system can run it.
 | `# Test data` | required | author |  |  |  |
 | `# Steps` | required | author |  |  | table with columns `Step`, `Action`, `Expected result`, `Validation` |
 | `# Postconditions and cleanup` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules

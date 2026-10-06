@@ -3,7 +3,7 @@
 One run reads one document that states what a capability must do (a PRD, a
 functional spec) for something that is built and running. It writes one
 as-built Feature per capability. Read these schema pages in
-`.wiki-llm/schema/` first: `feature.md` and `source-document.md`.
+`.wiki-llm/schema/` first: `feature.md` and `reference.md`.
 
 Before anything else, check the prerequisite: every service the document's
 capability uses has a Service page on the default branch. If one is missing,
@@ -15,9 +15,11 @@ For each capability, `features/FEAT-<name>/` with:
 
 | File | Content |
 |---|---|
-| `overview.md` | `status: Released`, the Requirements, and `# Architecture` |
-| `<document name>.md` | The document's Markdown copy as a Reference, with the images it links |
+| `overview.md` | `status: Released`, the Requirements, `# Architecture`, and `# References` linking the document's Reference |
 | `log.md` | One `**Import**` entry |
+
+and the document itself once, as the Reference `references/REF-<document name>/`
+(`SKILL.md` section 6).
 
 Rules:
 
@@ -45,10 +47,9 @@ Rules:
   its code".
 - **Never design.** Write only links to Design files that exist. Never write
   or change a Design file in this run.
-- **One document, several Features.** The Reference lives in the first
-  Feature's folder. The other Features name it in `sources` by relative path
-  (`resource: ../FEAT-checkout/checkout-prd.md`). The draft key is then
-  `import-<document name>`.
+- **One document, several Features.** Every Feature links the one Reference
+  under `# References`, each with a note naming its part of the document.
+  The draft key is then `import-<document name>`.
 - `releasedAt` is written only when the person gives the date.
 
 ## 2. What to ask
@@ -65,5 +66,5 @@ Check by reading:
 
 - every Requirement appears in `## Traceability`;
 - every concept in `## Services` and `## Frontends` appears in the flowchart;
-- the Reference is the whole document;
+- the Reference's content file is the whole document;
 - every Requirement left out is in the list for a ChangeRequest.

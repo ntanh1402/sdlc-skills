@@ -28,6 +28,9 @@ its tests.
   would decide it.
 - Style, naming or design taste is not a finding unless `conventions.md`
   states the rule.
+- A Reference is context, never evidence: code that differs from a code
+  example, or from a document a Reference holds, is not a finding unless the
+  Task, a Design file or `conventions.md` states the same rule.
 - Never copy a secret or personal data from the code into a report, a Run
   plan or a commit message.
 

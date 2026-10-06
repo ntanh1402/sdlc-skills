@@ -15,10 +15,6 @@ class IdsTest(RuleTest):
         self.write("pay/change-requests/CR-1/TASK-pay-001.md", fixture.FILES["pay/features/FEAT-pay/TASK-pay-001.md"])
         self.assertIn("ids.duplicate-key", self.rules())
 
-    def test_reference_filenames_may_repeat_across_owners(self):
-        self.write("pay/change-requests/CR-1/prd.md", fixture.FILES["pay/features/FEAT-pay/prd.md"])
-        self.assertClean()
-
     def test_requirement_key_is_the_feature_name_and_a_name(self):
         self.edit(FEATURE, "REQ-pay-1", "REQ-pay-take-payment")
         self.edit(FEATURE, "#req-pay-1", "#req-pay-take-payment")

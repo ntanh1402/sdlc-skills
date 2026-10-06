@@ -6,9 +6,9 @@ from .support import RuleTest
 
 OVERVIEW = "---\ntype: Service\ntitle: X\ndescription: X.\n---\n\n# X\n"
 REFERENCE = (
-    "---\ntype: Reference\ntitle: Architecture overview\ndescription: The system as built.\n"
+    "---\ntype: Reference\ntitle: Architecture overview\ndescription: The system as built.\nstatus: Active\n"
     "generated: { by: human:alice, at: 2026-09-01T09:00:00Z }\n"
-    "verified: { by: human:bob, at: 2026-09-02T09:00:00Z }\n---\n\n# Architecture overview\n\nText.\n"
+    "verified: { by: human:bob, at: 2026-09-02T09:00:00Z }\n---\n\n# Architecture overview\n\nText.\n\n# Contents\n\nNone.\n"
 )
 
 
@@ -87,36 +87,38 @@ class LayoutTest(RuleTest):
         self.write("pay/services/SVC-pay/notes.txt", "x")
         self.assertRule("layout.non-markdown", "pay/services/SVC-pay/notes.txt")
 
-    def test_non_markdown_file_linked_from_a_reference_is_allowed(self):
-        self.write("pay/features/FEAT-pay/flow.png", "x")
-        self.edit("pay/features/FEAT-pay/prd.md", "Shoppers pay for orders.", "Shoppers pay. ![flow](flow.png)")
+    def test_reference_folder_holds_any_file_and_folder(self):
+        self.write("pay/references/REF-pay-prd/checkout-prd.pdf", "x")
+        self.write("pay/references/REF-pay-prd/drafts/notes.md", "# Notes\n\n## Anything\n\nFree text.\n")
+        self.write("pay/references/REF-pay-prd/drafts/old.txt", "x")
         self.assertClean()
 
-    def test_reference_in_an_application_folder(self):
+    def test_reference_content_file_has_free_headings_and_no_frontmatter(self):
+        self.write("pay/references/REF-pay-prd/prd.md", "Intro.\n\n# Goals\n\n# References\n\n* [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110)\n")
+        self.assertClean()
+
+    def test_link_in_a_reference_content_file_must_resolve(self):
+        self.edit("pay/references/REF-pay-prd/prd.md", "images/flow.png", "images/gone.png")
+        self.assertRule("links.unresolved", "pay/references/REF-pay-prd/prd.md")
+
+    def test_reference_folder_key_needs_the_prefix(self):
+        shutil.copytree(self.root / "pay/references/REF-pay-prd", self.root / "pay/references/pay-prd")
+        self.assertReported("layout.unknown-path", "pay/references/pay-prd")
+
+    def test_reference_outside_the_references_collection_is_refused(self):
         self.write("pay/architecture-overview.md", REFERENCE)
-        self.assertClean()
-
-    def test_reference_in_a_test_suite_folder(self):
         self.write("pay/tests/TS-pay/test-plan.md", REFERENCE)
-        self.assertClean()
+        found = {(item.rule, item.path) for item in self.findings()}
+        self.assertEqual(
+            found,
+            {("layout.unknown-path", "pay/architecture-overview.md"), ("layout.unknown-path", "pay/tests/TS-pay/test-plan.md")},
+        )
 
-    def test_reference_in_a_service_folder_is_refused(self):
-        self.write("pay/services/SVC-pay/architecture-overview.md", REFERENCE)
-        self.assertRule("layout.unknown-path", "pay/services/SVC-pay/architecture-overview.md")
-
-    def test_reference_in_an_application_folder_needs_a_person(self):
-        self.write("pay/architecture-overview.md", REFERENCE.replace("by: human:bob", "by: process:nightly"))
-        self.assertRule("frontmatter.reference-unverified", "pay/architecture-overview.md")
-
-    def test_image_in_an_application_folder_linked_from_a_reference_is_allowed(self):
+    def test_non_markdown_file_outside_a_reference_is_refused(self):
         self.write("pay/system.png", "x")
-        self.write("pay/architecture-overview.md", REFERENCE.replace("Text.", "![system](system.png)"))
-        self.assertClean()
-
-    def test_unlinked_non_markdown_file_in_an_application_folder(self):
-        self.write("pay/system.png", "x")
-        self.write("pay/architecture-overview.md", REFERENCE)
-        self.assertRule("layout.non-markdown", "pay/system.png")
+        self.write("pay/features/FEAT-pay/flow.png", "x")
+        found = {(item.rule, item.path) for item in self.findings()}
+        self.assertEqual(found, {("layout.non-markdown", "pay/system.png"), ("layout.non-markdown", "pay/features/FEAT-pay/flow.png")})
 
     def test_frontmatter_type_must_match_location(self):
         self.edit("pay/datastores/DB-main/TBL-payments.md", "type: Table", "type: Endpoint")

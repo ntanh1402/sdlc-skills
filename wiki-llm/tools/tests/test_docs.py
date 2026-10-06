@@ -56,7 +56,7 @@ class DocsTest(unittest.TestCase):
     def test_type_block_lists_fields_from_the_schema(self):
         block = docs.type_block(self.schema, "Service")
         self.assertIn("| Status | `Planned`, `Active`, `Modifying`, `Removing`, `Deprecated` |", block)
-        self.assertIn("| `serviceType` | yes | `api`, `worker`, `cron`, `consumer`, `gateway` |", block)
+        self.assertIn("| `serviceType` | yes | lower-case words joined by `-`; common: `api`, `worker`, `cron`, `consumer`, `gateway` |", block)
         self.assertIn("| `resource` | yes | URL or bundle path |", block)
         self.assertIn("| `generated` | yes | `{ by, at }` |", block)
         self.assertLess(block.index("`status`"), block.index("`serviceType`"))
@@ -68,6 +68,14 @@ class DocsTest(unittest.TestCase):
         self.assertIn("| `# Uses` | optional | author | Cache, BlobStore, SearchIndex (any number) | `read`, `write`, `rw` (required) |  |", block)
         self.assertIn("| `# Depends on` | optional | author | ExternalService (any number) | `critical` (optional) |  |", block)
         self.assertIn("| `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |", block)
+        self.assertLess(block.index("`# References`"), block.index("`# Pending changes`"))
+
+    def test_every_type_may_link_references_before_its_tool_sections(self):
+        row = "| `# References` | optional | author | Reference (any number) |  |  |"
+        for name in self.schema.types:
+            self.assertIn(row, docs.type_block(self.schema, name), name)
+        feature = docs.type_block(self.schema, "Feature")
+        self.assertLess(feature.index("`# References`"), feature.index("`# Change history`"))
 
     def test_type_block_shows_nested_and_generated_headings(self):
         change = docs.type_block(self.schema, "ChangeRequest")
@@ -111,9 +119,15 @@ class DocsTest(unittest.TestCase):
 
     def test_document_types_and_fixed_titles(self):
         self.assertIn("| Status | None; this type has no `status` field |", docs.type_block(self.schema, "TestCase"))
+        convention = docs.type_block(self.schema, "Convention")
+        self.assertIn("Any other headings are allowed.", convention)
         reference = docs.type_block(self.schema, "Reference")
-        self.assertNotIn("<title>", reference)
-        self.assertIn("Any other headings are allowed.", reference)
+        self.assertIn("| Status | `Active`, `Deprecated` |", reference)
+        self.assertIn("| Shape | Folder with `index.md`, `overview.md`, `log.md`, and any content files and folders |", reference)
+        self.assertIn("| `verified` | yes, by a `human:` actor | `{ by, at }`, or a list of them |", reference)
+        self.assertIn("| `# Contents` | required; may be `None` | author |  |  |  |", reference)
+        self.assertIn("| `# Referenced by` | always | tool | mirrors any type `# References` |  |  |", reference)
+        self.assertNotIn("Any other headings are allowed.", reference)
         channel = docs.type_block(self.schema, "MessageChannel")
         self.assertIn("| `# Overview` | required; first heading | author |  |  |  |", channel)
         self.assertIn("| `## Dead letter` | required | author |  |  |  |", channel)

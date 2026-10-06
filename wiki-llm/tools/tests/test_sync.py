@@ -45,17 +45,17 @@ class SyncTest(RuleTest):
     def test_fixture_is_in_sync(self):
         self.assertEqual(sync.write(self.root), [])
 
-    def test_indexes_list_a_reference_in_an_application_and_a_suite(self):
-        reference = (
-            "---\ntype: Reference\ntitle: Test plan\ndescription: The manual cases.\n"
-            "generated: { by: human:alice, at: 2026-09-01T09:00:00Z }\n"
-            "verified: { by: human:bob, at: 2026-09-02T09:00:00Z }\n---\n\n# Test plan\n"
-        )
-        self.write("pay/test-plan.md", reference)
-        self.write("pay/tests/TS-pay/test-plan.md", reference)
+    def test_indexes_list_references_and_skip_their_content(self):
+        self.write("pay/references/REF-pay-prd/drafts/notes.md", "# Notes\n")
         sync.write(self.root)
-        self.assertIn("* [Test plan](test-plan.md) - The manual cases.", self.text("pay/index.md"))
-        self.assertIn("# Source documents\n\n* [Test plan](test-plan.md) - The manual cases.", self.text("pay/tests/TS-pay/index.md"))
+        self.assertIn("* [References](references/index.md) - Documents, pages and code examples to read while working.", self.text("pay/index.md"))
+        self.assertIn(
+            "# References\n\n* [Pay PRD](REF-pay-prd/overview.md) - Approved product requirements; read before changing payments.",
+            self.text("pay/references/index.md"),
+        )
+        self.assertIn("# History\n\n* [Change log](log.md)", self.text("pay/references/REF-pay-prd/index.md"))
+        self.assertFalse((self.root / "pay/references/REF-pay-prd/drafts/index.md").exists())
+        self.assertFalse((self.root / "pay/references/REF-pay-prd/images/index.md").exists())
 
     def test_sync_is_idempotent(self):
         self.edit(SERVICE, "# Reads\n\n* [TBL-payments](../../datastores/DB-main/TBL-payments.md)\n\n", "")

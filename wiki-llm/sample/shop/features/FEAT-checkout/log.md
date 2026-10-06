@@ -2,6 +2,10 @@
 
 Append-only history. Newest first.
 
+## 2026-10-06
+
+* **References**: Moved the PRD to [REF-checkout-prd](../../references/REF-checkout-prd/overview.md) and linked it, and linked [REF-idempotency-key-handling](../../references/REF-idempotency-key-handling/overview.md) from [TASK-order-creation-endpoint](TASK-order-creation-endpoint.md).
+
 ## 2026-10-05
 
 * **Stories**: Added the user stories [STORY-checkout-pay-and-confirm](STORY-checkout-pay-and-confirm.md) and [STORY-checkout-retry-safely](STORY-checkout-retry-safely.md), and linked them from [TASK-order-creation-endpoint](TASK-order-creation-endpoint.md).

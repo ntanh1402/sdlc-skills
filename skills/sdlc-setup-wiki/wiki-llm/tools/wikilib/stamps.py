@@ -42,7 +42,8 @@ def add_verified(text: str, stamp: dict) -> str:
 
 def authored_view(text: str, schema: Schema) -> str:
     """The part of a concept file a writer owns: frontmatter without the
-    provenance fields, and the body without its generated sections."""
+    provenance fields, and the body without its generated sections and the
+    sections whose edits are not a change of content (`# References`)."""
     lines, body = frontmatter.split(text)
     kept = []
     skipping = False
@@ -58,7 +59,7 @@ def authored_view(text: str, schema: Schema) -> str:
         specs = schema.headings(type_name)
         order = [spec["name"] for spec in specs]
         for spec in specs:
-            if "generated" in spec:
+            if "generated" in spec or spec.get("stamped") is False:
                 body = sync.apply_section(body, spec["name"], None, order)
     return "\n".join(kept) + "\n---\n" + body.strip()
 

@@ -1,7 +1,7 @@
 from .support import RuleTest
 
 SERVICE = "pay/services/SVC-pay/overview.md"
-PRD = "pay/features/FEAT-pay/prd.md"
+PRD = "pay/references/REF-pay-prd/overview.md"
 
 
 class FieldsTest(RuleTest):
@@ -43,7 +43,15 @@ class FieldsTest(RuleTest):
         self.assertRule("frontmatter.unknown-field", "pay/tests/TS-pay/TC-pay-ok.md")
 
     def test_enum_value(self):
-        self.edit(SERVICE, "serviceType: api", "serviceType: daemon")
+        self.edit("pay/tests/TS-pay/overview.md", "suiteType: e2e", "suiteType: smoke")
+        self.assertRule("frontmatter.bad-value", "pay/tests/TS-pay/overview.md")
+
+    def test_suggested_value_may_be_any_name(self):
+        self.edit(SERVICE, "serviceType: api", "serviceType: scheduler\ndeployTarget: ecs-fargate")
+        self.assertClean()
+
+    def test_suggested_value_must_be_lower_case_words(self):
+        self.edit(SERVICE, "serviceType: api", "serviceType: Background Worker")
         self.assertRule("frontmatter.bad-value", SERVICE)
 
     def test_status_value(self):
@@ -84,8 +92,8 @@ class FieldsTest(RuleTest):
         self.assertClean()
 
     def test_source_needs_a_resource(self):
-        self.edit("pay/features/FEAT-pay/overview.md", "    resource: prd.md\n", "")
-        self.assertRule("frontmatter.bad-value", "pay/features/FEAT-pay/overview.md")
+        self.edit(SERVICE, "serviceType: api", "serviceType: api\nsources:\n  - id: spec\n    title: Pay spec")
+        self.assertRule("frontmatter.bad-value", SERVICE)
 
     def test_tags_must_be_a_list(self):
         self.edit(SERVICE, "serviceType: api", "serviceType: api\ntags: payments")
@@ -98,6 +106,10 @@ class FieldsTest(RuleTest):
     def test_reference_verified_only_by_a_process_is_rejected(self):
         self.edit(PRD, "by: human:bob", "by: process:nightly")
         self.assertRule("frontmatter.reference-unverified", PRD)
+
+    def test_reference_needs_a_status(self):
+        self.edit(PRD, "status: Active\n", "")
+        self.assertRule("frontmatter.missing-field", PRD)
 
     def test_stale_concept_is_a_warning_not_an_error(self):
         self.edit(SERVICE, "serviceType: api", "serviceType: api\nstale_after: 2020-01-01T00:00:00Z")

@@ -32,6 +32,7 @@ The engineering rules every repository of the application follows. Build and rev
 | Heading | Presence | Written by | Links to | Qualifier | Content |
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 
 Any other headings are allowed.
 <!-- generated:schema end -->

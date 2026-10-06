@@ -12,7 +12,7 @@ A requested change to exactly one existing Feature: new behavior, a fix, a refac
 | Path | `<app>/change-requests/CR-<name>/` |
 | Shape | Folder with `index.md`, `overview.md`, `log.md` |
 | Status | `Proposed`, `ReqApproved`, `Approved`, `Implemented`, `Rejected` |
-| Owns | Reference, UserStory, Task |
+| Owns | UserStory, Task |
 
 ### Fields
 
@@ -47,6 +47,7 @@ A requested change to exactly one existing Feature: new behavior, a fix, a refac
 | `## Runtime sequences` | required | author |  |  | Mermaid `sequenceDiagram` diagram |
 | `## Decisions` | required | author | ArchitectureDecision (any number) |  |  |
 | `## Traceability` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules
@@ -54,8 +55,9 @@ A requested change to exactly one existing Feature: new behavior, a fix, a refac
 - `# Reason` states why the change is wanted, in prose.
 - `# Requirements` holds the Requirements this request adds or changes, in the
   Feature's format. A changed Requirement reuses the Feature's key; a new one
-  gets a new name. A removed Requirement is described in the source
-  document, not rewritten as a new positive Requirement.
+  gets a new name. A removed Requirement is described in the change brief, a
+  [Reference](reference.md) linked under `# References`, not rewritten as a new
+  positive Requirement.
 - The Feature's copy of a Requirement is the current text. This request's copy
   records what was asked for and is not updated afterwards.
 - Status is `Proposed` while the request is written, and `ReqApproved` once its

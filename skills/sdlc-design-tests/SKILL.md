@@ -48,8 +48,10 @@ Every state but `READY` is a refusal, not a question.
 
 Then read the Requirements, the Architecture or Delta, the decisions, every
 Endpoint, Channel, Subscription, Table and External contract in scope, the
-quality targets and risks, and the existing TestSuites that verify the target
-(`grep -rl "<Key>" wiki/<app>/tests/`). List:
+quality targets and risks, the References they link and those about testing
+in `references/index.md` (a test plan the user gave is one), and the existing
+TestSuites that verify the target (`grep -rl "<Key>" wiki/<app>/tests/`).
+List:
 
 - every Requirement and acceptance outcome;
 - every new, changed or removed contract;
@@ -120,6 +122,10 @@ added by hand. The design is:
 
 Write the Run plan. Its `## Files` are each new suite's `overview.md`, one
 line per case file with what it covers, and the `log.md` of each suite.
+When the user gave a test plan that the wiki does not hold yet, add its
+Reference folder `references/REF-<name>-test-plan/` (`overview.md`, `log.md`
+and the plan as a content file); the Design gate is the person's approval of
+it.
 
 **Design gate.** Show the design in full, never only a summary, then the Run
 plan. Ask for approval. Approval with an uncovered in-scope row is allowed
@@ -133,6 +139,9 @@ In the draft worktree, under `wiki/<app>/tests/`:
   `status: Approved`, `suiteType`, `# Verifies` linking the Feature or
   ChangeRequest) and `log.md`;
 - one `TC-<name>.md` per new case;
+- `# References` on a suite that links the test plan it was written from,
+  and any other Reference a tester needs, with a note on what to take from
+  it;
 - an entry in each changed suite's `log.md`, for example
   `* **Test design**: Added 9 cases for FEAT-coupons. Written by an AI model with sdlc-design-tests.`
 

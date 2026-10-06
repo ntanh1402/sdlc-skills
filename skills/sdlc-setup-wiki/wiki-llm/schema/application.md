@@ -12,7 +12,7 @@ One product or system. Its folder holds everything known about it.
 | Path | `<app>/` |
 | Shape | Folder with `index.md`, `overview.md` |
 | Status | `Active`, `Archived` |
-| Owns | Convention, Glossary, Reference |
+| Owns | Convention, Glossary |
 
 ### Fields
 
@@ -23,7 +23,7 @@ One product or system. Its folder holds everything known about it.
 | `description` | yes | text |
 | `status` | yes | `Active`, `Archived` |
 | `ownerTeam` | yes | text |
-| `appType` | no | `web`, `mobile`, `platform`, `internal` |
+| `appType` | no | lower-case words joined by `-`; common: `web`, `mobile`, `platform`, `internal` |
 | `criticality` | no | text |
 | `generated` | yes | `{ by, at }` |
 | `verified` | no | `{ by, at }`, or a list of them |
@@ -38,6 +38,7 @@ One product or system. Its folder holds everything known about it.
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Architecture` | required; may be `None` | author |  |  | Mermaid `flowchart` diagram |
+| `# References` | optional | author | Reference (any number) |  |  |
 <!-- generated:schema end -->
 
 ## Rules
@@ -48,6 +49,6 @@ One product or system. Its folder holds everything known about it.
   any design exists.
 - The Application lists nothing by hand. Its `index.md` lists its collections.
 - `resource` is the application's main repository or organisation URL.
-- Optional files: [conventions](convention.md), a [glossary](glossary.md), and
-  [source documents](source-document.md) about the whole application, such as an
-  architecture document.
+- Optional files: [conventions](convention.md) and a [glossary](glossary.md).
+  Documents, pages and code examples, such as an architecture document, are
+  [References](reference.md) in the `references` collection.

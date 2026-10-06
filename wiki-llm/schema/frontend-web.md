@@ -24,10 +24,10 @@ A browser application.
 | `ownerTeam` | yes | text |
 | `language` | no | text |
 | `framework` | no | text |
-| `renderingMode` | no | `csr`, `ssr`, `ssg`, `hybrid` |
+| `renderingMode` | no | lower-case words joined by `-`; common: `csr`, `ssr`, `ssg`, `hybrid` |
 | `buildTool` | no | text |
 | `packageManager` | no | text |
-| `deployTarget` | no | `static-host`, `edge`, `container`, `serverless` |
+| `deployTarget` | no | lower-case words joined by `-`; common: `static-host`, `edge`, `container`, `serverless` |
 | `baseUrl` | no | text |
 | `version` | no | text |
 | `browserSupport` | no | text |
@@ -51,6 +51,7 @@ A browser application.
 | `# Quality constraints` | required | author |  |  |  |
 | `# Delivery` | optional | author |  |  |  |
 | `# Observability` | optional | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

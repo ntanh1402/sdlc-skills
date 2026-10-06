@@ -8,7 +8,7 @@ it. [Back to the user guide](user-guide.md).
 | | |
 |---|---|
 | **Who** | Tech lead and architect (code, architecture documents, requirement documents); QA (test suites) |
-| **Use when** | The project already exists and the wiki does not describe it yet (onboarding); or the wiki and the code may no longer agree; or a test suite has been written and its TestSuite must be marked `Implemented` |
+| **Use when** | The project already exists and the wiki does not describe it yet (onboarding); or the wiki and the code may no longer agree; or a test suite has been written and its TestSuite must be marked `Implemented`; or a page, document or piece of code should be kept as a Reference for others to consult |
 | **Needs first** | The wiki is set up and the Application exists. A non-text document is converted first with [sdlc-convert-doc](sdlc-convert-doc.md). Its prerequisites are merged (see the order below) |
 | **Say** | "Import the code of ../shop-orders", "Import docs/architecture.md", "Check the wiki against ../shop-orders" |
 | **You get** | As-built Design files, `Released` Features, decisions and TestSuites, which you confirm group by group. In a compare run, you decide each difference |
@@ -29,6 +29,7 @@ One source per run:
 | **A built capability with no document** | One as-built Feature | `Released` |
 | **Test code** (end-to-end, integration, load, security) | One TestSuite and one TestCase per test | `Implemented` |
 | **Test document** (test plan, sheet of manual cases) | One TestSuite and its TestCases, with the document as a Reference | `Approved` (`Implemented` if you say the runnable tests exist) |
+| **A reference** (a page, a document or a code location to consult) | One Reference, and the links to it from the files you name | `Active` |
 
 **The order for a new project:** design first, then Features, then tests. Import
 the code or architecture document first, then the requirement document or
@@ -78,7 +79,7 @@ capability, then the tests. Import the code of a folder before its tests.
 | **A document is partly out of date** | Leaves that part out and lists it | Tell it which part, and decide what to do with it |
 | **A document is a PDF or Word file** | Asks for the Markdown | Run [sdlc-convert-doc](sdlc-convert-doc.md) first |
 | **A required field is missing** (an owner team, an idempotency note, a fallback) | Asks before showing the group. With no answer, a prose section gets the line "Not determined by the import." and you can fill it in; a section that must hold a table or a diagram cannot, so that file is not written | Answer, or accept the gap |
-| **A group contains a Reference** (a document copy) | Does not allow "save unchecked": the schema needs a person's confirmation on a Reference | Read it and approve |
+| **A group contains a Reference** (a document and its summary) | Does not allow "save unchecked": the schema needs a person's confirmation on a Reference | Read it and approve |
 | **The source is already in the wiki** | Switches to a **compare** run | See the next rows |
 | **Compare: a file matches** | Reports it. You may confirm it | Confirm if you checked |
 | **Compare: a difference the wiki marks as not built yet** | Reports it as expected | Nothing |

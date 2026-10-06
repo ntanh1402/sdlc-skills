@@ -1,6 +1,6 @@
 ---
 name: sdlc-ask-wiki
-description: Answer questions from the project wiki without changing it - list an application's Features with status, owner, priority, design readiness and open ChangeRequests; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show a user story or print its paste-ready copy for the tracker; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
+description: Answer questions from the project wiki without changing it - list an application's Features with status, owner, priority, design readiness and open ChangeRequests; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show a user story or print its paste-ready copy for the tracker; list the References (documents, pages, code examples) that apply to a subject; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
 ---
 
 # Ask the wiki
@@ -65,10 +65,11 @@ For exactly one Feature:
    it publishes, the tables and stores it uses, and the externals it calls.
 6. Decisions under `## Decisions`, with their consequences.
 7. `## Traceability`, Requirement by Requirement.
-8. Not live: every concept with a `# Pending changes` entry for this Feature or
+8. References the Feature links under `# References`, with their notes.
+9. Not live: every concept with a `# Pending changes` entry for this Feature or
    one of its ChangeRequests, with the entry's text; and the open
    ChangeRequests.
-9. Gaps found while reading: links that do not resolve, Requirements missing
+10. Gaps found while reading: links that do not resolve, Requirements missing
    from Traceability, differences between the wiki and code you also read
    (`sdlc-import` on that code compares them file by file).
 
@@ -90,7 +91,13 @@ nothing else.
 ## Free-form questions
 
 - "What uses X?": open X and read its tool-written reverse section
-  (`# Used by`, `# Publishers`, `# Subscribers`), else `grep -rl "<KEY>" wiki/`.
+  (`# Used by`, `# Publishers`, `# Subscribers`, a Reference's
+  `# Referenced by`), else `grep -rl "<KEY>" wiki/`.
+- "What should I read about X?", "is there an example of Y?": the References
+  in `wiki/<app>/references/index.md` whose title or description matches,
+  and those the concepts about X link under `# References`. Give each one's
+  description, status and `resource`, and say when it is `Deprecated` or
+  past its `stale_after`.
 - "What is not live?": `grep -rl "^# Pending changes" wiki/`, then read the
   entries.
 - "What is not tested, not planned or has no story?": `coverage tests`,

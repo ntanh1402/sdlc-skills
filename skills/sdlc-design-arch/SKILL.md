@@ -56,10 +56,12 @@ Accept one `FEAT-*` or `CR-*` key; if the user named none, find the
 Every state but `READY`, `AMBIGUOUS` and `CONFLICT` is a refusal, not a
 question.
 
-Then read the PRD, every Requirement, the target Feature's current
-Architecture (for a ChangeRequest), the accepted decisions in `decisions/`,
-and every Design concept the requirements touch: search the Application's
-indexes and `grep -rl` for the domain words. For existing components, read
+Then read the PRD and every Reference the Feature or ChangeRequest links,
+every Requirement, the target Feature's current Architecture (for a
+ChangeRequest), the accepted decisions in `decisions/`, every Design concept
+the requirements touch, and the References in `references/index.md` about
+the subject (an architecture document, a domain page, a code example): search
+the Application's indexes and `grep -rl` for the domain words. For existing components, read
 their linked repository, OpenAPI or AsyncAPI contracts when they are
 available, read-only.
 
@@ -122,6 +124,19 @@ Go Requirement by Requirement and flow step by flow step, and decide with
   decision.
 
 Do not pick a technology before a constraint requires it.
+
+**Descriptive fields.** A field whose schema page lists values as "common"
+(`serviceType`, `deployTarget`, `platform`, `authType` and the like) is the
+person's to choose. Suggest the values the Application already uses for it,
+then the common ones, and ask in a question round when the evidence does not
+settle it.
+
+**References.** Link the References a later step will need from the Design
+files and the Feature or ChangeRequest you write, under `# References`, with
+a note on what to take from each: a code example of a pattern the design
+reuses, a vendor document behind an Operation. Do not create a Reference;
+when the design needs one the wiki lacks, say so at the Intent gate and name
+`sdlc-edit-wiki` or `sdlc-import`.
 
 ## 4. Run plan and the Design gate
 

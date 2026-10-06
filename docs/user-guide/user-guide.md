@@ -143,6 +143,7 @@ Task. Marking a Feature released goes with your release.
 | Requirement (`REQ-…`) | One testable requirement inside a Feature or ChangeRequest |
 | Design files | Services, endpoints, events, tables, frontends and externals. A design not built yet is marked as pending (`Planned`, `Modifying`, `Removing`) until its Task is closed |
 | User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with Given/When/Then criteria, each citing a Requirement. Optional; no status, you follow it in your tracker |
+| Reference (`REF-…`) | Material to read while working: a PRD, a test plan, a domain page, a vendor document, a code example. A folder with a summary, linked from any file under `# References`. Context, never a contract |
 | Task (`TASK-…`) | One piece of build work. Only `Todo` or `Done`; you follow progress in your tracker, not in the wiki |
 | TestSuite (`TS-…`), TestCase (`TC-…`) | The test design. A suite is `Implemented` once its test code exists |
 | Draft | One skill run's changes, on a branch `wiki/<step>-<key>` of the wiki repository. The next step only sees it after you merge its pull request |

@@ -54,9 +54,14 @@ def _field_rows(schema: Schema, name: str) -> list[list[str]]:
             values = f"`{name}`"
         elif spec["kind"] == "enum":
             values = _codes(spec["values"])
+        elif spec["kind"] == "suggested":
+            values = f"lower-case words joined by `-`; common: {_codes(spec['values'])}"
         else:
             values = KIND_TEXT[spec["kind"]]
-        rows.append([f"`{key}`", "yes" if spec.get("required") else "no", values])
+        required = "yes" if spec.get("required") else "no"
+        if key == "verified" and schema.types[name].get("human_verified"):
+            required = "yes, by a `human:` actor"
+        rows.append([f"`{key}`", required, values])
     return rows
 
 
@@ -95,7 +100,10 @@ def _heading_rows(schema: Schema, specs: list[dict], depth: int) -> list[list[st
         marker = "#" * depth
         generated = spec.get("generated")
         if generated:
-            sources = ", ".join(f"{source['type']} `{'#' * len(source['heading'])} {source['heading'][-1]}`" for source in generated["sources"])
+            sources = ", ".join(
+                f"{'any type' if source['type'] == '@any' else source['type']} `{'#' * len(source['heading'])} {source['heading'][-1]}`"
+                for source in generated["sources"]
+            )
             presence = "when not empty" if generated.get("when_empty") == "omit" else "always"
             rows.append([f"`{marker} {spec['name']}`", presence, "tool", f"mirrors {sources}", "", ""])
         else:
@@ -119,6 +127,8 @@ def type_block(schema: Schema, name: str) -> str:
         files = ["index.md", "overview.md"] + (["log.md"] if spec.get("log", True) else [])
         files += [entry["name"] for entry in spec.get("extra_files", [])]
         shape = f"Folder with {_codes(files)}"
+        if spec.get("content_files"):
+            shape += ", and any content files and folders"
     else:
         shape = "One file"
     facts = [

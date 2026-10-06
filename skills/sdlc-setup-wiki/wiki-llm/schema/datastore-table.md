@@ -40,6 +40,7 @@ One table of a Database.
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Schema` | required | author |  |  |  |
 | `# Indexes` | optional | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Used by` | always | tool | mirrors Service `# Reads`, Service `# Writes` |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->

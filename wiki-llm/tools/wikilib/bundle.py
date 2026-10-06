@@ -93,6 +93,17 @@ class Bundle:
     def owned(self, owner: Concept, *names: str) -> list[Concept]:
         return [c for c in self.concepts if c.owner is owner and (not names or c.type in names)]
 
+    def content_holder(self, path: Path) -> Concept | None:
+        """The concept whose folder holds `path` as a content file: any file below
+        a Reference folder except its own overview.md, log.md and index.md."""
+        for concept in self.concepts:
+            folder = concept.folder
+            if folder is None or not self.schema.types[concept.type].get("content_files"):
+                continue
+            if folder in path.parents and not (path.parent == folder and path.name in RESERVED):
+                return concept
+        return None
+
     def text(self, path: Path) -> str:
         """Text of a bundle file, decoded once. A file that is not UTF-8 becomes a
         layout.encoding problem and is marked unreadable; its bad bytes are
@@ -227,6 +238,8 @@ class Bundle:
         concept = self._read(overview, type_name, folder.name, app, folder, None)
         if spec.get("log", True) and not (folder / "log.md").is_file():
             self._problem("layout.missing-file", folder / "log.md", f"{type_name} folder needs log.md")
+        if spec.get("content_files"):
+            return  # any other file or folder is content of the concept; nothing below needs an index
         extra = {entry["name"] for entry in spec.get("extra_files", [])}
         for name in sorted(extra):
             if not (folder / name).is_file():
@@ -249,14 +262,7 @@ class Bundle:
         self._check_other_files(folder, other)
 
     def _check_other_files(self, folder: Path, other: list[Path]) -> None:
-        """A file that is not Markdown may sit in a folder only when a Reference
-        of that folder links it: the images of a converted document."""
-        linked = {
-            self.resolve(reference.path, target)[0]
-            for reference in self.of_type("Reference")
-            if reference.path.parent == folder
-            for _, target in markdown.links(reference.body, images=True)
-        }
+        """A file that is not Markdown may sit in a folder only when the schema
+        declares it; a document's images and originals belong in a Reference."""
         for entry in other:
-            if entry not in linked:
-                self._problem("layout.non-markdown", entry, "non-Markdown file is neither declared nor linked from a Reference")
+            self._problem("layout.non-markdown", entry, "non-Markdown file is not declared here; put a document's files in a Reference folder")

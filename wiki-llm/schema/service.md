@@ -22,12 +22,12 @@ A deployable backend unit. It owns its Endpoints and Subscriptions as files in i
 | `title` | yes | text |
 | `description` | yes | text |
 | `status` | yes | `Planned`, `Active`, `Modifying`, `Removing`, `Deprecated` |
-| `serviceType` | yes | `api`, `worker`, `cron`, `consumer`, `gateway` |
+| `serviceType` | yes | lower-case words joined by `-`; common: `api`, `worker`, `cron`, `consumer`, `gateway` |
 | `ownerTeam` | yes | text |
 | `language` | no | text |
 | `framework` | no | text |
 | `runtime` | no | text |
-| `deployTarget` | no | `k8s`, `lambda`, `vm` |
+| `deployTarget` | no | lower-case words joined by `-`; common: `k8s`, `lambda`, `vm` |
 | `slaTier` | no | text |
 | `version` | no | text |
 | `port` | no | whole number |
@@ -50,6 +50,7 @@ A deployable backend unit. It owns its Endpoints and Subscriptions as files in i
 | `# Writes` | optional | author | Table (any number) |  |  |
 | `# Uses` | optional | author | Cache, BlobStore, SearchIndex (any number) | `read`, `write`, `rw` (required) |  |
 | `# Depends on` | optional | author | ExternalService (any number) | `critical` (optional) |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

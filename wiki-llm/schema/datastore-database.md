@@ -39,6 +39,7 @@ A relational database. It owns its Tables as files in its folder.
 | Heading | Presence | Written by | Links to | Qualifier | Content |
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
 

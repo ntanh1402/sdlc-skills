@@ -3,7 +3,7 @@
 Use this after part 2 of the Intent gate, to write the PRD and its Requirement
 mapping for the Design gate.
 
-## Feature PRD (`prd.md`)
+## Feature PRD (`references/REF-<name>-prd/prd.md`)
 
 Use these headings, in this order, under the `# <Feature> PRD` title:
 
@@ -24,7 +24,7 @@ Use these headings, in this order, under the `# <Feature> PRD` title:
 ## Out of scope
 ```
 
-## Change PRD (`change-prd.md`)
+## Change PRD (`references/REF-<name>-change-prd/change-prd.md`)
 
 Under the `# <Change> PRD` title:
 

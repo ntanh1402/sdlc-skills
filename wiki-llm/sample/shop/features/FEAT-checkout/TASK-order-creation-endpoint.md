@@ -36,3 +36,7 @@ Jira `SHOP-123`. Broken out of
 
 This is the **planned** scope. Actual scope is whatever the merged change-set
 touched; the delta is drift.
+
+# References
+
+* [REF-idempotency-key-handling](../../references/REF-idempotency-key-handling/overview.md) — how a repeated create request returns the first order.

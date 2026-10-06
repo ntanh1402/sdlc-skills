@@ -52,8 +52,19 @@ class LinksTest(RuleTest):
         self.assertClean()
 
     def test_relative_source_resource_must_exist(self):
-        self.edit(FEATURE, "resource: prd.md", "resource: brief.md")
-        self.assertRule("links.resource", FEATURE)
+        self.edit(SERVICE, "ownerTeam: payments", "ownerTeam: payments\nsources:\n  - id: brief\n    resource: brief.md")
+        self.assertRule("links.resource", SERVICE)
+
+    def test_source_may_not_be_a_reference(self):
+        for resource in ("../../references/REF-pay-prd/overview.md", "/pay/references/REF-pay-prd/prd.md"):
+            with self.subTest(resource=resource):
+                self.edit(FEATURE, "ownerTeam: payments", f"ownerTeam: payments\nsources:\n  - id: prd\n    resource: {resource}")
+                self.assertRule("links.source-reference", FEATURE)
+                self.edit(FEATURE, f"ownerTeam: payments\nsources:\n  - id: prd\n    resource: {resource}", "ownerTeam: payments")
+
+    def test_a_reference_may_point_at_its_own_content(self):
+        self.edit("pay/references/REF-pay-prd/overview.md", "status: Active", "status: Active\nresource: prd.md")
+        self.assertClean()
 
     def test_relative_resource_must_exist(self):
         self.edit(SERVICE, "resource: https://example.com/acme/pay", "resource: ../../code/pay")

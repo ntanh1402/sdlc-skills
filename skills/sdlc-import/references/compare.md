@@ -21,7 +21,10 @@ yet, and such a difference is expected, not Drift:
   them and ask which one this folder is. A match by key alone (the page has
   another `resource`, for example after the repository moved) is still the
   match, and `resource` is then one of the differences.
-- **A document.** A Reference with the document's name.
+- **A document, or a reference source.** The Reference whose `resource` is
+  the source's URL, or, when the source has none (a local file), whose key is
+  the one you would propose. Its content file is compared with the new
+  version of the material.
 - **Otherwise** the Feature or TestSuite the person names.
 
 Name the match at the Intent gate ("SVC-orders is already in the wiki; I will
@@ -85,7 +88,10 @@ Rules for "take what the Import source says":
   decisions), put the line
   `Correction: <path>, checked against <the commit or the document>` in the
   commit message.
-- Add the Import source to the file's `sources`.
+- Name the Import source on the file: code in `sources`, a document by
+  linking its Reference under `# References`.
+- A corrected Reference gets the new material in its content file and the
+  person's approval of the whole folder again.
 - A file a person had confirmed before stays confirmed: the person saw the
   difference. A file nobody had confirmed is shown in full, and the person
   approves it or it is saved as not checked (`--unverified`). Seeing one

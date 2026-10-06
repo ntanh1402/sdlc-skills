@@ -12,7 +12,7 @@ A capability a user or the business can recognise, with its requirements and app
 | Path | `<app>/features/FEAT-<slug>/` |
 | Shape | Folder with `index.md`, `overview.md`, `log.md` |
 | Status | `Draft`, `ReqApproved`, `Approved`, `InDev`, `Released`, `Deprecated` |
-| Owns | Reference, UserStory, Task |
+| Owns | UserStory, Task |
 
 ### Fields
 
@@ -49,6 +49,7 @@ A capability a user or the business can recognise, with its requirements and app
 | `## Runtime sequences` | required | author |  |  | Mermaid `sequenceDiagram` diagram |
 | `## Decisions` | required | author | ArchitectureDecision (any number) |  |  |
 | `## Traceability` | required | author |  |  |  |
+| `# References` | optional | author | Reference (any number) |  |  |
 | `# Change history` | always | tool | mirrors ChangeRequest `# Changes` |  |  |
 <!-- generated:schema end -->
 
@@ -80,6 +81,6 @@ A capability a user or the business can recognise, with its requirements and app
   Requirements change only through a ChangeRequest or, once `Released`, a
   [correction](schema.md#corrections).
 - A new Draft Feature has at least one Requirement.
-- Source documents are listed in `sources`. A local one is a
-  [Reference](source-document.md) file in this folder.
+- The PRD is a [Reference](reference.md), linked under `# References`. The
+  Requirements are written out in full here; none defers to the PRD.
 - Tasks for the Feature's first build are files in this folder.

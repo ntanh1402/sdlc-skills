@@ -39,6 +39,10 @@ folder, link the Feature's copy:
 # Blocked by
 
 * [TASK-refunds-table](TASK-refunds-table.md)
+
+# References
+
+* [REF-cancel-flow-example](../../references/REF-cancel-flow-example/overview.md) — take the idempotency-key handling; ignore its legacy retry loop.
 ```
 
 - `status` starts at `Todo`. Leave `trackerKey` and `resource` out unless the
@@ -51,4 +55,5 @@ folder, link the Feature's copy:
 - `# Stories` links user stories of this Task's own folder, and is left out
   when the Task serves none.
 - `# Blocked by` is left out when the Task has no blocker.
+- `# References` is last, and left out when no Reference bears on the Task.
 - Do not write `generated` or `verified`; `draft finish` does.

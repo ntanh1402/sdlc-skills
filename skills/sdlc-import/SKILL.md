@@ -247,11 +247,14 @@ commit.
    a value. The schema still requires some of what is missing:
    - a required field was asked before its group was shown. With no answer
      the file was not written;
-   - a required section of prose (a Subscription's `# Idempotency`, an
-     external's `# Fallback`, a decision's `# Alternatives`) gets the one line
-     `Not determined by the import.`; the person may fill it in now;
-   - a required section that must hold a table or a diagram cannot take that
-     line, so the file is not written.
+   - a required section of prose or rules (a Subscription's `# Idempotency`,
+     an Endpoint's `# Validations`, an external's `# Fallback`, a decision's
+     `# Alternatives`) gets the one line `Not determined by the import.`,
+     after any rules found; the person may fill it in now;
+   - a required section whose schema page names a fixed table or a diagram
+     cannot take that line, so the file is not written. An Endpoint's or
+     Subscription's `# Flowchart` and `# Sequence diagram` are always drawn
+     from the handler as read.
 
    List every such file and section.
 2. **Not modelled.** Things the schema has no type for, such as a scheduled

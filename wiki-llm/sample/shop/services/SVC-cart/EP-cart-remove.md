@@ -39,11 +39,30 @@ Responses `204`, `401`, and `404` have no response body.
 | 401 | missing or expired session |
 | 404 | line id not in the caller's cart |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| `Authorization` carries a valid session | `401` |
+| The line id belongs to the caller's cart | `404` |
+
 # Behavior
 
 Deletes the row from [cart_items](../../datastores/DB-shop/TBL-cart-items.md) only
 if it belongs to the caller's cart — a line id from someone else's cart returns
 `404`, never a cross-customer delete.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[DELETE /cart/items/id] --> B{Valid session?}
+    B -- no --> X401[401]
+    B -- yes --> C{Line in the caller's cart?}
+    C -- no --> X404[404]
+    C -- yes --> D[Delete the cart_items row]
+    D --> X204[204]
+```
 
 # Sequence diagram
 

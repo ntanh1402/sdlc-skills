@@ -60,6 +60,10 @@ _Avoid_: board, backlog, issue system
 One actor's goal in a Feature or ChangeRequest, written as "As a …, I want …, so that …" with Given/When/Then acceptance criteria that each cite a Requirement it lists; a file `STORY-<name>.md`, optional, with no status.
 _Avoid_: story (unqualified, in skill text), epic, use case
 
+**Reference**:
+Material a person approved for others to read while they work: a PRD, a change brief, a test plan, an architecture document, a page explaining a domain term, a vendor's documentation or a code example; a folder `references/REF-<name>/` of one Application whose `overview.md` summarises it, linked from any concept under `# References`. It is context, never a contract.
+_Avoid_: source document, attachment, doc
+
 **Run plan**:
 The list of things one run of one skill has to do to produce its output, with what is done so far; it belongs to the run and is never part of the Bundle.
 _Avoid_: spec (the output of `sdlc-write-spec`), task plan (the output of `sdlc-plan-tasks`), todo list

@@ -26,6 +26,16 @@ its tests.
 - An acceptance item that reading cannot decide (a performance number, a
   behaviour only a running system shows) goes to "Not checked": say what
   would decide it.
+- For every Endpoint and Subscription in scope, each rule under
+  `# Validations` is enforced in the code, and each exit of `# Flowchart`
+  (a status code; `ack`, `drop`, `retry` or `dead letter`) exists in the
+  code. A missing rule, a missing exit, or an exit the code has and the
+  flowchart lacks is a Contract finding, `must fix`, citing the heading.
+- A rule or exit enforced outside the changed code (security configuration,
+  a middleware or filter, a gateway, the framework's own error handling) is
+  not checked by reading the change: it goes to "Not checked", with what
+  would decide it. It is a finding only when the change removes or bypasses
+  it.
 - Style, naming or design taste is not a finding unless `conventions.md`
   states the rule.
 - A Reference is context, never evidence: code that differs from a code

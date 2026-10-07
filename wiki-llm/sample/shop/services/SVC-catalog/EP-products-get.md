@@ -45,11 +45,35 @@ Responses `404`, `410`, and `429` have no response body.
 | 410 | product archived |
 | 429 | rate limit exceeded |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| Request is under the rate limit | `429` |
+| `id` identifies an existing product | `404` |
+| The product is not `archived` | `410` |
+
 # Behavior
 
 On a cache miss, reads [products](../../datastores/DB-shop/TBL-products.md), fills
 the cache, and returns. An `archived` product returns 410 rather than 404 — the
 URL was once valid, which matters for SEO and for old links.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[GET /products/id] --> B{Under the rate limit?}
+    B -- no --> X429[429]
+    B -- yes --> C{Cache hit?}
+    C -- no --> D[Read products, fill cache]
+    C -- yes --> E{Product exists?}
+    D --> E
+    E -- no --> X404[404]
+    E -- yes --> F{Archived?}
+    F -- yes --> X410[410]
+    F -- no --> X200[200 product]
+```
 
 # Sequence diagram
 

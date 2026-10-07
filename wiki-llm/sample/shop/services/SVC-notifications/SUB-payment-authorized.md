@@ -22,6 +22,10 @@ payment receipt — distinct from the order-placed confirmation that
 
 * [payment.authorized](../../channels/CHAN-payment-authorized/overview.md)
 
+# Validations
+
+No validations.
+
 # Handler
 
 1. Read the customer from
@@ -36,28 +40,23 @@ payment receipt — distinct from the order-placed confirmation that
    [OP-mail-send](../../externals/EXT-sendgrid/OP-mail-send.md); mark `sent` or
    `failed`.
 
-# Idempotency
+# Flowchart
 
-| | |
-|---|---|
-| Key | `(order_id, 'receipt')` |
-| Enforced by | the unique index on [notifications](../../datastores/DB-shop/TBL-notifications.md) |
-
-Same durable-state idempotency as the order-created handler: the `receipt`
-channel value keeps a receipt from colliding with the order confirmation for the
-same order. A `sent` row deduplicates a redelivery; `pending` and `failed` rows
-allow the configured retries to continue.
-
-# Failure behavior
-
-| | |
-|---|---|
-| Retry | exponential backoff, 1s base |
-| Max attempts | 5 |
-| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-payment-authorized/overview.md#dead-letter) |
-
-A failed receipt never affects the payment or the order — it is a downstream
-courtesy, decoupled by the event just like the order confirmation.
+```mermaid
+flowchart TD
+    A[Deliver payment.authorized] --> B[Read customer]
+    B --> C[Insert pending row or load by order_id and receipt]
+    C --> D{Row already sent?}
+    D -- yes --> ACK1[ack]
+    D -- no --> E[Send receipt via OP-mail-send]
+    E --> F{Sent?}
+    F -- yes --> G[Mark sent]
+    G --> ACK2[ack]
+    F -- no --> H[Mark failed]
+    H --> I{Attempts left?}
+    I -- yes --> RETRY[retry]
+    I -- no --> DL[dead letter]
+```
 
 # Sequence diagram
 
@@ -98,3 +97,27 @@ sequenceDiagram
         end
     end
 ```
+
+# Idempotency
+
+| | |
+|---|---|
+| Key | `(order_id, 'receipt')` |
+| Enforced by | the unique index on [notifications](../../datastores/DB-shop/TBL-notifications.md) |
+
+Same durable-state idempotency as the order-created handler: the `receipt`
+channel value keeps a receipt from colliding with the order confirmation for the
+same order. A `sent` row deduplicates a redelivery; `pending` and `failed` rows
+allow the configured retries to continue.
+
+# Failure behavior
+
+| | |
+|---|---|
+| Retry | exponential backoff, 1s base |
+| Max attempts | 5 |
+| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-payment-authorized/overview.md#dead-letter) |
+
+A failed receipt never affects the payment or the order — it is a downstream
+courtesy, decoupled by the event just like the order confirmation.
+

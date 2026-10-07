@@ -53,11 +53,12 @@ Responses `400`, `401`, `402`, and `422` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `cartId` | must be an `open` cart owned by `customerId`, non-empty |
-| `customerId` | must exist in [customers](../../datastores/DB-shop/TBL-customers.md) |
-| `paymentMethod` | present |
+| `Authorization` carries a valid session | `401` |
+| The body is well-formed and `cartId`, `customerId`, `paymentMethod` and `clientToken` are present | `400` |
+| `customerId` exists in [customers](../../datastores/DB-shop/TBL-customers.md) | `422` |
+| `cartId` is an `open`, non-empty cart owned by `customerId` | `422` |
 
 # Behavior
 
@@ -78,6 +79,27 @@ Idempotency is by `(customerId, clientToken)`: a retried submit hits the unique
 index on [orders](../../datastores/DB-shop/TBL-orders.md) and returns the existing
 order (`409`) instead of creating or paying twice. Clients must send a token, not
 blind-retry.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /orders] --> B{Valid session?}
+    B -- no --> X401[401]
+    B -- yes --> C{Body well-formed?}
+    C -- no --> X400[400]
+    C -- yes --> D{Customer exists and owns an open non-empty cart?}
+    D -- no --> X422[422]
+    D -- yes --> E[Write order as pending_payment]
+    E --> F{Unique index on customerId and clientToken hit?}
+    F -- yes --> X409[409 existing order]
+    F -- no --> G[Call EP-payments-authorize]
+    G --> H{Authorized?}
+    H -- no --> X402[402]
+    H -- yes --> I[Mark order confirmed and cart ordered]
+    I --> J[Publish CHAN-order-created]
+    J --> X201[201 orderId and status]
+```
 
 # Sequence diagram
 

@@ -44,12 +44,29 @@ Response `401` has no response body.
 | 200 | cart returned (possibly empty) |
 | 401 | missing or expired session |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| `Authorization` carries a valid session | `401` |
+
 # Behavior
 
 Resolves the session via
 [CACHE-session](../../datastores/CACHE-session/overview.md). If the customer has
 no open cart, returns `200` with an empty cart rather than `404` — an empty cart
 is a valid state, not a missing resource.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[GET /cart] --> B{Valid session?}
+    B -- no --> X401[401]
+    B -- yes --> C{Open cart exists?}
+    C -- no --> X200a[200 empty cart]
+    C -- yes --> X200b[200 cart with lines and total]
+```
 
 # Sequence diagram
 

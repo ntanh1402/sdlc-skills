@@ -47,11 +47,29 @@ Responses `401` and `404` have no response body.
 | 401 | missing or expired session |
 | 404 | no such order for this customer |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| `Authorization` carries a valid session | `401` |
+| The order belongs to the session's customer | `404` |
+
 # Behavior
 
 Reads [orders](../../datastores/DB-shop/TBL-orders.md). An order that belongs to a
 different customer returns `404`, never another customer's order — ownership is
 checked against the session, not just the id.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[GET /orders/id] --> B{Valid session?}
+    B -- no --> X401[401]
+    B -- yes --> C{Order exists for this customer?}
+    C -- no --> X404[404]
+    C -- yes --> X200[200 order]
+```
 
 # Sequence diagram
 

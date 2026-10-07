@@ -7,6 +7,9 @@
   side effects, idempotency, dependency failures, compatibility.
 - Subscription and Channel: schema, ordering, duplicates, retry, exhaustion,
   dead letters, replay, poison messages, acknowledgement.
+- Every exit of an Endpoint's or Subscription's `# Flowchart` and every rule
+  of its `# Validations` is covered by at least one TestCase. The packet's
+  coverage check lists them.
 - Data: constraints, transactions, concurrency, migration, rollback, retention.
 - External: timeout, rate limit, malformed response, retry, fallback, recovery.
 - Decision or quality target: prove the promised quality, or say which suite

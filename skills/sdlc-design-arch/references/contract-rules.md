@@ -20,7 +20,9 @@ rules say what a good contract puts in them.
 - Complete request and response field tables, with conditional rules.
 - Authentication, validation, idempotency, errors, compatibility and rate
   limits.
-- Behaviour and the sequence diagram cover every outcome.
+- `# Validations` names every rule and the status code it fails with.
+- `# Behavior`, `# Flowchart` and `# Sequence diagram` cover every outcome,
+  and every status code is an exit of the flowchart.
 
 ## Calls between services
 
@@ -34,6 +36,9 @@ rules say what a good contract puts in them.
   the Channel's `# Publishers` and `# Subscribers` are written by the tool.
 - Consumer group, delivery guarantee, idempotency, retry, dead letters and
   replay safety.
+- A Subscription's `# Validations` says, for each rule, whether a failing
+  message ends in `drop`, `retry` or `dead letter`. `# Handler`, `# Flowchart`
+  and `# Sequence diagram` cover every outcome.
 
 ## Data
 

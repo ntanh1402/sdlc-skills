@@ -47,10 +47,11 @@ Responses `409`, `422`, and `429` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `email` | RFC 5322, unique in [customers](../../datastores/DB-shop/TBL-customers.md) |
-| `password` | ≥ 12 chars; checked against a breached-password list |
+| Fewer than the allowed attempts from this IP | `429` |
+| `password` has at least 12 characters and is not on the breached-password list | `422` |
+| `email` is not already in [customers](../../datastores/DB-shop/TBL-customers.md) | `409` |
 
 # Behavior
 
@@ -58,6 +59,21 @@ Hashes the password with Argon2id and writes the row. On a duplicate email it
 returns `409` **without** revealing whether the address was already registered in
 the response timing — the same work is done either way, so registration cannot be
 used to enumerate accounts.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /accounts] --> B{Under the attempt limit for this IP?}
+    B -- no --> X429[429]
+    B -- yes --> C{Password at least 12 chars and not breached?}
+    C -- no --> X422[422]
+    C -- yes --> D[Hash with Argon2id, same work either way]
+    D --> E{Email already registered?}
+    E -- yes --> X409[409]
+    E -- no --> F[Write customer row]
+    F --> X201[201 customerId]
+```
 
 # Sequence diagram
 

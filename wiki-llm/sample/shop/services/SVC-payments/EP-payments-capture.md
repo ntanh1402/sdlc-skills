@@ -47,12 +47,38 @@ Responses `401`, `404`, `409`, and `502` have no response body.
 | 409 | payment not in `authorized` state |
 | 502 | Stripe unavailable after retry |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| `Authorization` carries a valid calling-service token | `401` |
+| The payment exists | `404` |
+| The payment is `authorized`, or already `captured` | `409` |
+
 # Behavior
 
 Reads the [payments](../../datastores/DB-shop/TBL-payments.md) row, calls
 [OP-payment-intents-capture](../../externals/EXT-stripe/OP-payment-intents-capture.md),
 and moves the row to `captured`. Capturing an already-captured payment returns
 `200` unchanged — capture is idempotent per Stripe intent.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /payments/id/capture] --> B{Valid calling-service token?}
+    B -- no --> X401[401]
+    B -- yes --> C{Payment exists?}
+    C -- no --> X404[404]
+    C -- yes --> D{Status?}
+    D -- captured --> X200a[200 unchanged]
+    D -- other than authorized --> X409[409]
+    D -- authorized --> E[Call OP-payment-intents-capture]
+    E --> F{Stripe answers?}
+    F -- unavailable after retry --> X502[502]
+    F -- captured --> G[Move row to captured]
+    G --> X200b[200 captured]
+```
 
 # Sequence diagram
 

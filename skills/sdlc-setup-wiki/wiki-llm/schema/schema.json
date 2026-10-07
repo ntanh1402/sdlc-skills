@@ -414,9 +414,10 @@
       "headings": [
         {"name": "Request", "presence": "required"},
         {"name": "Response", "presence": "required", "nested": [{"name": "Status codes", "presence": "required"}]},
-        {"name": "Validations", "presence": "optional"},
+        {"name": "Validations", "presence": "required"},
         {"name": "Behavior", "presence": "required"},
-        {"name": "Sequence diagram", "presence": "optional", "mermaid": "sequenceDiagram"}
+        {"name": "Flowchart", "presence": "required", "mermaid": "flowchart"},
+        {"name": "Sequence diagram", "presence": "required", "mermaid": "sequenceDiagram"}
       ]
     },
     "Subscription": {
@@ -432,10 +433,12 @@
       "fields": {"consumerGroup": {"kind": "string", "required": true}, "maxAttempts": {"kind": "integer"}, "concurrency": {"kind": "integer"}},
       "headings": [
         {"name": "Consumes", "presence": "required", "links": {"targets": ["MessageChannel"], "min": 1, "max": 1}},
+        {"name": "Validations", "presence": "required"},
         {"name": "Handler", "presence": "required"},
+        {"name": "Flowchart", "presence": "required", "mermaid": "flowchart"},
+        {"name": "Sequence diagram", "presence": "required", "mermaid": "sequenceDiagram"},
         {"name": "Idempotency", "presence": "required"},
-        {"name": "Failure behavior", "presence": "required"},
-        {"name": "Sequence diagram", "presence": "optional", "mermaid": "sequenceDiagram"}
+        {"name": "Failure behavior", "presence": "required"}
       ]
     },
     "MessageChannel": {

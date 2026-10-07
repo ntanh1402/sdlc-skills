@@ -101,7 +101,9 @@ class DocsTest(unittest.TestCase):
         self.assertIn("| `# Delta` | required; may be `None` | author |  |  | `None` only while status is `Proposed` or `ReqApproved` or `Rejected` |", change)
         case = docs.type_block(self.schema, "TestCase")
         self.assertIn("| `# Steps` | required | author |  |  | table with columns `Step`, `Action`, `Expected result`, `Validation` |", case)
-        self.assertIn("| `# Sequence diagram` | optional | author |  |  | Mermaid `sequenceDiagram` diagram |", docs.type_block(self.schema, "Endpoint"))
+        endpoint = docs.type_block(self.schema, "Endpoint")
+        self.assertIn("| `# Flowchart` | required | author |  |  | Mermaid `flowchart` diagram |", endpoint)
+        self.assertIn("| `# Sequence diagram` | required | author |  |  | Mermaid `sequenceDiagram` diagram |", endpoint)
 
     def test_content_cell_joins_several_rules(self):
         spec = {"name": "Parts", "presence": "required", "table": ["A", "B"], "mermaid": "flowchart", "none_statuses": ["Draft"]}

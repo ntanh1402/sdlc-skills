@@ -90,6 +90,11 @@ worktree of its own and leaves the person's checkout as it is.
   a contract: where it differs from the Task, a Design file or
   `conventions.md`, those win.
 
+Take every rule under `# Validations` and every exit of `# Flowchart` of
+each Endpoint and Subscription in scope as a checklist: the plan names where
+each is coded and the unit test that covers it, and the check before the
+commit ticks each one off.
+
 Note the wiki commit you read: `READ=$(git -C "$WIKI" rev-parse "$DEFAULT")`.
 
 Then read the code folder: how it is laid out, where each scope item lives or

@@ -24,6 +24,10 @@ Satisfies [REQ-order-notifications-confirmation-sent](../../features/FEAT-order-
 
 * [order.created](../../channels/CHAN-order-created/overview.md)
 
+# Validations
+
+No validations.
+
 # Handler
 
 1. Read the customer from
@@ -41,33 +45,28 @@ Satisfies [REQ-order-notifications-confirmation-sent](../../features/FEAT-order-
    4. On success mark `sent`; on failure mark `failed`, record `last_error`, and
       let the retry policy redeliver.
 
-# Idempotency
+# Flowchart
 
-| | |
-|---|---|
-| Key | `(order_id, channel)` |
-| Enforced by | the unique index on [notifications](../../datastores/DB-shop/TBL-notifications.md) |
-
-The broker guarantees **at-least-once**, so a redelivery is normal, not
-exceptional. The unique index gives every `(order_id, channel)` one durable state
-row. A `sent` row suppresses a duplicate send; a `pending` or `failed` row is
-reused by a retry. The database state, not the broker or a dedupe cache, decides
-whether work remains.
-
-Ordering is not required: notifications for two different orders are independent,
-which is why `concurrency: 8` is safe.
-
-# Failure behavior
-
-| | |
-|---|---|
-| Retry | exponential backoff, 1s base |
-| Max attempts | 5 |
-| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-order-created/overview.md#dead-letter) |
-
-A failure is **never** acked back to
-[SVC-orders](../SVC-orders/overview.md) — the order stands regardless.
-A customer who never gets an email still has an order.
+```mermaid
+flowchart TD
+    A[Deliver order.created] --> B[Read customer preferences]
+    B --> C[Next enabled channel: insert pending row or load by order_id and channel]
+    C --> D{Row already sent?}
+    D -- yes --> E[Skip this channel]
+    D -- no --> F[Send via OP-mail-send or OP-messages-create]
+    F --> G{Sent?}
+    G -- yes --> H[Mark sent]
+    G -- no --> I[Mark failed, record last_error]
+    E --> J{More enabled channels?}
+    H --> J
+    I --> J
+    J -- yes --> C
+    J -- no --> K{Any channel failed?}
+    K -- no --> ACK[ack]
+    K -- yes --> L{Attempts left?}
+    L -- yes --> RETRY[retry]
+    L -- no --> DL[dead letter]
+```
 
 # Sequence diagram
 
@@ -116,6 +115,34 @@ sequenceDiagram
         end
     end
 ```
+
+# Idempotency
+
+| | |
+|---|---|
+| Key | `(order_id, channel)` |
+| Enforced by | the unique index on [notifications](../../datastores/DB-shop/TBL-notifications.md) |
+
+The broker guarantees **at-least-once**, so a redelivery is normal, not
+exceptional. The unique index gives every `(order_id, channel)` one durable state
+row. A `sent` row suppresses a duplicate send; a `pending` or `failed` row is
+reused by a retry. The database state, not the broker or a dedupe cache, decides
+whether work remains.
+
+Ordering is not required: notifications for two different orders are independent,
+which is why `concurrency: 8` is safe.
+
+# Failure behavior
+
+| | |
+|---|---|
+| Retry | exponential backoff, 1s base |
+| Max attempts | 5 |
+| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-order-created/overview.md#dead-letter) |
+
+A failure is **never** acked back to
+[SVC-orders](../SVC-orders/overview.md) — the order stands regardless.
+A customer who never gets an email still has an order.
 
 # Pending changes
 

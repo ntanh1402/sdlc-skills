@@ -46,6 +46,13 @@ Responses `401` and `429` have no response body.
 | 401 | bad credentials (indistinguishable for unknown email vs wrong password) |
 | 429 | too many attempts for this account |
 
+# Validations
+
+| Rule | Fails with |
+|---|---|
+| Fewer than 5 attempts per minute for the account | `429` |
+| The Argon2id hash matches; an unknown email takes the same path and time | `401` |
+
 # Behavior
 
 Verifies the Argon2id hash and, on success, writes a session hash to
@@ -53,6 +60,18 @@ Verifies the Argon2id hash and, on success, writes a session hash to
 bad email and a bad password return the **same** `401` and take the same time —
 no user enumeration. Login is rate-limited per account (5/min) to blunt
 credential-stuffing.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /accounts/login] --> B{Under 5 attempts per minute?}
+    B -- no --> X429[429]
+    B -- yes --> C{Email known and Argon2id hash matches?}
+    C -- no --> X401[401]
+    C -- yes --> D[Write session hash to CACHE-session, TTL 24h]
+    D --> X200[200 token]
+```
 
 # Sequence diagram
 

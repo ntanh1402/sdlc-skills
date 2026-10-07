@@ -26,7 +26,8 @@ merged.
 3. Reads the Task (acceptance, linked Requirements, planned scope, design
    files), or, without a Task, the Service or frontend that matches this
    repository and the design files the change touches, plus `conventions.md`.
-4. Checks five groups and reports them in order: **Acceptance**, **Contract**,
+4. Checks five groups, including that each validation rule and each flowchart
+   exit of an endpoint or consumer in scope exists in the code, and reports them in order: **Acceptance**, **Contract**,
    **Outside the scope**, **Convention**, **Not checked**.
 5. Prints the report. The last line counts the findings, and names the wiki
    commit it read.

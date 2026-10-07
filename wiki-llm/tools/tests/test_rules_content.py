@@ -58,8 +58,12 @@ class TableAndDiagramTest(RuleTest):
         self.edit("pay/overview.md", "```mermaid\nflowchart LR\n  Web --> Svc\n```", "None")
         self.assertClean()
 
-    def test_optional_sequence_diagram_must_be_one_when_present(self):
-        self.edit(ENDPOINT, "# Pending changes", "# Sequence diagram\n\nSee the service.\n\n# Pending changes")
+    def test_sequence_diagram_must_be_one(self):
+        self.edit(ENDPOINT, "```mermaid\nsequenceDiagram\n    Client->>Service: Call\n    Service-->>Client: 201\n```", "See the service.")
+        self.assertRule("content.mermaid", ENDPOINT)
+
+    def test_flowchart_must_be_a_flowchart(self):
+        self.edit(ENDPOINT, "flowchart TD\n    A[Request] --> B[201 Created]", "sequenceDiagram\n    A->>B: Call")
         self.assertRule("content.mermaid", ENDPOINT)
 
 

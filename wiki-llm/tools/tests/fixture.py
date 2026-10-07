@@ -132,20 +132,20 @@ FILES: dict[str, str] = {
     "pay/services/SVC-pay/EP-pay-create.md": page(
         f"type: Endpoint\ntitle: Create payment\ndescription: POST /payments.\nstatus: Modifying\nmethod: POST\n"
         f"path: /payments\nprotocol: http\n{G}",
-        "# Create payment\n\n# Request\n\nNo request fields.\n\n# Response\n\nNo body.\n\n## Status codes\n\n| Code | When |\n|---|---|\n| 201 | Created. |\n\n# Behavior\n\n1. Charge.\n\n"
+        "# Create payment\n\n# Request\n\nNo request fields.\n\n# Response\n\nNo body.\n\n## Status codes\n\n| Code | When |\n|---|---|\n| 201 | Created. |\n\n# Validations\n\nNo validations.\n\n# Behavior\n\n1. Charge.\n\n# Flowchart\n\n```mermaid\nflowchart TD\n    A[Request] --> B[201 Created]\n```\n\n# Sequence diagram\n\n```mermaid\nsequenceDiagram\n    Client->>Service: Call\n    Service-->>Client: 201\n```\n\n"
         "# Pending changes\n\n* [CR-1](../../change-requests/CR-1/overview.md) — modified — adds `couponCode`.",
     ),
     "pay/services/SVC-pay/EP-pay-refund.md": page(
         f"type: Endpoint\ntitle: Refund payment\ndescription: POST /refunds.\nstatus: Planned\nmethod: POST\n"
         f"path: /refunds\nprotocol: http\n{G}",
-        "# Refund payment\n\n# Request\n\nNo request fields.\n\n# Response\n\nNo body.\n\n## Status codes\n\n| Code | When |\n|---|---|\n| 201 | Created. |\n\n# Behavior\n\n1. Refund.\n\n"
+        "# Refund payment\n\n# Request\n\nNo request fields.\n\n# Response\n\nNo body.\n\n## Status codes\n\n| Code | When |\n|---|---|\n| 201 | Created. |\n\n# Validations\n\nNo validations.\n\n# Behavior\n\n1. Refund.\n\n# Flowchart\n\n```mermaid\nflowchart TD\n    A[Request] --> B[201 Created]\n```\n\n# Sequence diagram\n\n```mermaid\nsequenceDiagram\n    Client->>Service: Call\n    Service-->>Client: 201\n```\n\n"
         "# Pending changes\n\n* [FEAT-pay](../../features/FEAT-pay/overview.md) — new — not built yet.",
     ),
     "pay/services/SVC-pay/SUB-pay-events.md": page(
         f"type: Subscription\ntitle: On payment event\ndescription: Sends a receipt.\nstatus: Active\n"
         f"consumerGroup: receipts\nmaxAttempts: 5\n{G}",
         "# On payment event\n\n# Consumes\n\n* [CHAN-pay-events](../../channels/CHAN-pay-events/overview.md)\n\n"
-        "# Handler\n\n1. Send.\n\n# Idempotency\n\nBy payment id.\n\n# Failure behavior\n\nRetry five times.",
+        "# Validations\n\nNo validations.\n\n# Handler\n\n1. Send.\n\n# Flowchart\n\n```mermaid\nflowchart TD\n    A[Message] --> B[ack]\n```\n\n# Sequence diagram\n\n```mermaid\nsequenceDiagram\n    Channel->>Service: Deliver\n    Service-->>Channel: ack\n```\n\n# Idempotency\n\nBy payment id.\n\n# Failure behavior\n\nRetry five times.",
     ),
     # -------------------------------------------------------------------- channel
     "pay/channels/CHAN-pay-events/overview.md": page(

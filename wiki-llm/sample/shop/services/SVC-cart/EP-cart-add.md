@@ -49,11 +49,12 @@ Responses `401`, `404`, `409`, and `422` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `productId` | must be an `active` product in [products](../../datastores/DB-shop/TBL-products.md) |
-| `quantity` | 1–99 |
-| stock | requested quantity ≤ `stock_qty`, else 409 |
+| `Authorization` carries a valid session | `401` |
+| `quantity` is 1-99; it defaults to 1 | `422` |
+| `productId` is an `active` product in [products](../../datastores/DB-shop/TBL-products.md) | `404` |
+| Requested quantity is at most `stock_qty` | `409` |
 
 # Behavior
 
@@ -63,6 +64,23 @@ upserts the line, snapshotting `price_usd` into `unit_price_usd`. Adding the sam
 product twice increments quantity via the unique index on
 [cart_items](../../datastores/DB-shop/TBL-cart-items.md) — it never creates a
 duplicate line.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /cart/items] --> B{Valid session?}
+    B -- no --> X401[401]
+    B -- yes --> C{Quantity 1-99?}
+    C -- no --> X422[422]
+    C -- yes --> D{Active product exists?}
+    D -- no --> X404[404]
+    D -- yes --> E{Quantity within stock_qty?}
+    E -- no --> X409[409]
+    E -- yes --> F[Create open cart if missing]
+    F --> G[Upsert line, snapshot price]
+    G --> X201[201 cartId and item]
+```
 
 # Sequence diagram
 

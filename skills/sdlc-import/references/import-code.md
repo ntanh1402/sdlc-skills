@@ -62,6 +62,14 @@ Rules:
   a name the code suggests (`scheduler`); the person decides.
 - **`payload.example.json`** is built from the payload's fields with made-up
   values of the right type. Never copy a real message.
+- **Validations and diagrams.** Each Endpoint's and Subscription's
+  `# Validations` comes from the request schema, validators and guard
+  clauses of its handler. The `# Flowchart` and `# Sequence diagram` are
+  drawn from the handler as read, with every branch and exit. Validation the
+  import cannot read (a framework middleware, generated code) gets the line
+  `Not determined by the import.` after the rules found, and is asked once at
+  the gate. A diagram cannot take that line, so it is always drawn from what
+  was read.
 - **A frontend's `# Architecture`** is one Mermaid `flowchart` of its main
   modules and the services it calls, drawn from the code.
 - **Not modelled.** A scheduled job, a store that is not relational, or
@@ -74,8 +82,9 @@ Rules:
 
 - The owner team, the service type, and whether each table holds personal data.
 - For every required section the code cannot fill (a Subscription's
-  `# Idempotency`, an external's `# Fallback`): ask once at the gate; with no
-  answer write `Not determined by the import.`
+  `# Idempotency`, an external's `# Fallback`, an Endpoint's validations that
+  sit in middleware): ask once at the gate; with no answer write
+  `Not determined by the import.`
 - When a route exists in the code but is switched off or unreachable: whether
   it is live. Import only what runs.
 
@@ -85,5 +94,8 @@ Check by reading:
 
 - every endpoint, consumer, table and vendor call you found is in a file or in
   one of the three lists;
+- every Endpoint and Subscription has `# Validations`, and a `# Flowchart`
+  whose exits are every status code of `## Status codes` (an Endpoint) or
+  every outcome its handler reaches (a Subscription);
 - every link resolves to a file that is in the wiki or in this draft;
 - no file holds a secret, a credential or a real person's data.

@@ -5,6 +5,7 @@ FEATURE = "pay/features/FEAT-pay/overview.md"
 CHANGE = "pay/change-requests/CR-1/overview.md"
 CHANNEL = "pay/channels/CHAN-pay-events/overview.md"
 ENDPOINT = "pay/services/SVC-pay/EP-pay-create.md"
+SUBSCRIPTION = "pay/services/SVC-pay/SUB-pay-events.md"
 
 
 class HeadingsTest(RuleTest):
@@ -42,6 +43,14 @@ class HeadingsTest(RuleTest):
     def test_missing_required_heading(self):
         self.edit(ENDPOINT, "# Behavior\n\n1. Charge.\n\n", "")
         self.assertRule("headings.missing", ENDPOINT)
+
+    def test_missing_flowchart_on_a_subscription(self):
+        self.edit(SUBSCRIPTION, "# Flowchart\n\n```mermaid\nflowchart TD\n    A[Message] --> B[ack]\n```\n\n", "")
+        self.assertRule("headings.missing", SUBSCRIPTION)
+
+    def test_validations_after_handler_is_out_of_order(self):
+        self.edit(SUBSCRIPTION, "# Validations\n\nNo validations.\n\n# Handler\n\n1. Send.\n\n", "# Handler\n\n1. Send.\n\n# Validations\n\nNo validations.\n\n")
+        self.assertRule("headings.order", SUBSCRIPTION)
 
     def test_undeclared_top_level_heading(self):
         self.edit(SERVICE, "# Publishes", "# Endpoints\n\nNone.\n\n# Publishes")

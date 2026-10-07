@@ -1,6 +1,6 @@
 ---
 name: sdlc-ask-wiki
-description: Answer questions from the project wiki without changing it - list an application's Features with status, owner, priority, design readiness and open ChangeRequests; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show a user story or print its paste-ready copy for the tracker; list the References (documents, pages, code examples) that apply to a subject; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
+description: Answer questions from the project wiki without changing it - list an application's Features with status, owner, priority, design readiness and open ChangeRequests; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show one Endpoint or consumer with its input, output, validations and diagrams; show a user story or print its paste-ready copy for the tracker; list the References (documents, pages, code examples) that apply to a subject; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
 ---
 
 # Ask the wiki
@@ -75,6 +75,20 @@ For exactly one Feature:
 
 A Feature with `# Architecture` `None` is not an error: say it is not designed
 yet and that `sdlc-design-arch` designs it once it is `ReqApproved`.
+
+## Recipe: show an endpoint or a consumer
+
+For exactly one Endpoint or Subscription:
+
+1. Summary: title, status, its Service, and `method` and `path`, or the
+   channel it consumes.
+2. Input: `# Request`, or the channel's payload linked from `# Consumes`.
+3. Output: `# Response` with `## Status codes`, or the side effects named in
+   `# Handler`.
+4. `# Validations`, as stored.
+5. `# Behavior` or `# Handler`.
+6. The stored `# Flowchart` and `# Sequence diagram`, as they are.
+7. `# Pending changes`, when present, with each entry's text.
 
 ## Recipe: show a user story
 

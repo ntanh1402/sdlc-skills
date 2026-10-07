@@ -21,6 +21,10 @@ as consumer group `search-indexer`, for
 
 * [product.updated](../../channels/CHAN-product-updated/overview.md)
 
+# Validations
+
+No validations.
+
 # Handler
 
 1. Read the current product from
@@ -32,30 +36,21 @@ as consumer group `search-indexer`, for
 The handler always reads the **current** row rather than trusting the event body,
 so a redelivered or out-of-order event converges to the true state.
 
-# Idempotency
+# Flowchart
 
-| | |
-|---|---|
-| Key | `productId` + the row's `updated_at` |
-| Enforced by | OpenSearch `version` / external versioning on upsert |
-
-Upserting by document id is naturally idempotent; using the row's `updated_at` as
-the external version means a **stale** event (an older update arriving after a
-newer one) is dropped by the index rather than clobbering fresh data. This is why
-the topic is ordered per product — belt and braces against re-ranking on a stale
-title.
-
-# Failure behavior
-
-| | |
-|---|---|
-| Retry | exponential backoff, 2s base |
-| Max attempts | 10 |
-| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-product-updated/overview.md#dead-letter) |
-
-A dead-lettered product is simply stale in search until the next edit or a bulk
-reindex — search being briefly wrong is tolerable, which is why this is `tier-2`,
-not `tier-1`.
+```mermaid
+flowchart TD
+    A[Deliver product.updated] --> B[Read current product by productId]
+    B --> C{Product active?}
+    C -- yes --> D[Upsert in IDX-products with updated_at version]
+    C -- no --> E[Remove the document; already absent is fine]
+    D --> F{Index call succeeded, or stale version ignored?}
+    E --> F
+    F -- yes --> ACK[ack]
+    F -- no --> G{Attempts left?}
+    G -- yes --> RETRY[retry]
+    G -- no --> DL[dead letter]
+```
 
 # Sequence diagram
 
@@ -94,3 +89,29 @@ sequenceDiagram
         end
     end
 ```
+
+# Idempotency
+
+| | |
+|---|---|
+| Key | `productId` + the row's `updated_at` |
+| Enforced by | OpenSearch `version` / external versioning on upsert |
+
+Upserting by document id is naturally idempotent; using the row's `updated_at` as
+the external version means a **stale** event (an older update arriving after a
+newer one) is dropped by the index rather than clobbering fresh data. This is why
+the topic is ordered per product — belt and braces against re-ranking on a stale
+title.
+
+# Failure behavior
+
+| | |
+|---|---|
+| Retry | exponential backoff, 2s base |
+| Max attempts | 10 |
+| Then | dead-letter, following the channel's [dead-letter policy](../../channels/CHAN-product-updated/overview.md#dead-letter) |
+
+A dead-lettered product is simply stale in search until the next edit or a bulk
+reindex — search being briefly wrong is tolerable, which is why this is `tier-2`,
+not `tier-1`.
+

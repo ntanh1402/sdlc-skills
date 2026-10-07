@@ -29,7 +29,8 @@ are approved. [Back to the user guide](user-guide.md).
 4. Prepares the **design packet**: context, a ledger of every concept (new,
    modified, removed or reused, with the reason), the high-level diagram, a
    sequence diagram per main flow with its failure branches, the contract of
-   every new or changed concept, decisions with alternatives, traceability,
+   every new or changed concept (an endpoint or a consumer also gets its
+   validations and a flowchart of every branch and exit), decisions with alternatives, traceability,
    drift/risks/rollout/rollback, and downstream freshness.
 5. **Design gate:** shows the full packet and the Run plan.
 6. Writes the files. New concepts are written as the full target with status

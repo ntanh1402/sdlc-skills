@@ -19,7 +19,8 @@ code. [Back to the user guide](user-guide.md).
 1. Checks readiness and builds the **inventory**: every Requirement, every new,
    changed or removed contract, every frontend route with its empty, loading,
    error and offline states, happy, alternate, validation and failure
-   branches, security boundaries, retry/timeout/idempotency/ordering rules, data
+   branches (every flowchart exit and validation rule of an endpoint or
+   consumer), security boundaries, retry/timeout/idempotency/ordering rules, data
    integrity and migration, and the performance and security risks.
 2. Asks the first round: which **suite types** to build (it recommends the ones
    the evidence calls for), the seams each suite tests at, and the exclusions.

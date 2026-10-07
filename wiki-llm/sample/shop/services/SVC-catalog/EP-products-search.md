@@ -51,10 +51,10 @@ Responses `400` and `429` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `q` | 1–200 chars; empty falls back to a category browse |
-| `minPrice`/`maxPrice` | ≥ 0; min ≤ max |
+| Request is under the rate limit | `429` |
+| `minPrice` is at most `maxPrice` | `400` |
 
 # Behavior
 
@@ -63,6 +63,21 @@ products out, so search can never surface something the detail page would 410.
 The search index is eventually consistent with Postgres (see
 [SVC-search-indexer](../SVC-search-indexer/overview.md)); a product
 edited a second ago may take a moment to re-rank.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[GET /products/search] --> B{Under the rate limit?}
+    B -- no --> X429[429]
+    B -- yes --> C{minPrice greater than maxPrice?}
+    C -- yes --> X400[400]
+    C -- no --> D{q empty?}
+    D -- yes --> E[Browse by category]
+    D -- no --> F[Query the search index, active only]
+    E --> X200[200 results and facets]
+    F --> X200
+```
 
 # Sequence diagram
 

@@ -48,16 +48,29 @@ Responses `404` and `429` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `pageSize` | 1–100; over 100 is clamped, not rejected |
-| `category` | must resolve to a category slug, else 404 |
+| Request is under the rate limit | `429` |
+| `category`, when given, resolves to a category slug | `404` |
 
 # Behavior
 
-Served from [CACHE-catalog](../../datastores/CACHE-catalog/overview.md); only
+A `pageSize` over 100 is clamped to 100, not rejected. Served from [CACHE-catalog](../../datastores/CACHE-catalog/overview.md); only
 `active` products appear. Each item carries a signed
 [image](../../datastores/BLOB-product-images/overview.md) URL for the `card` size.
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[GET /products] --> B{Under the rate limit?}
+    B -- no --> X429[429]
+    B -- yes --> C[Clamp pageSize to 100]
+    C --> D{Category given and unknown?}
+    D -- yes --> X404[404]
+    D -- no --> E[Read active products from CACHE-catalog]
+    E --> X200[200 page]
+```
 
 # Sequence diagram
 

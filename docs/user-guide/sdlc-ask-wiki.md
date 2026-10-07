@@ -36,6 +36,7 @@ Ask. Name the Application or Feature if there are several.
 |---|---|---|
 | **"List the features."** | One row per Feature: key and title, status, owner and priority, whether it is designed, how many design items are not live, and open ChangeRequests. Explains an empty list | Ask "show the architecture of FEAT-x" for detail |
 | **"Show the architecture of a Feature."** | Gives a summary, the requirements, the stored diagrams, the frontends, the services with their endpoints and subscriptions, the decisions, the traceability from each Requirement, what is not live yet, and gaps it noticed (broken links, requirements missing from traceability) | Read it. If it reports a difference with code, run [sdlc-import](sdlc-import.md) on that code to compare |
+| **"Show an endpoint or a consumer."** | Gives its input, output with status codes, validations, behavior, and the stored flowchart and sequence diagram | Use it. Ask for it by key, for example `EP-orders-create` |
 | **The Feature has no architecture yet** | Says it is not designed yet, and that [sdlc-design-arch](sdlc-design-arch.md) designs it once it is `ReqApproved` | Merge the spec, then design |
 | **"Show me a user story."** | Gives the sentence, criteria, Requirements, the Tasks that link it, and its change history | Use it |
 | **"Give me the story for the tracker."** | Prints the paste-ready copy of each story asked for, and nothing else | Paste it into a ticket. To record the ticket link in the wiki, ask [sdlc-edit-wiki](sdlc-edit-wiki.md) |

@@ -66,7 +66,7 @@ capability, then the tests. Import the code of a folder before its tests.
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **Onboarding a code folder** | Records the service or frontend, endpoints, subscriptions and the data it uses. Names every source as the repository URL, the path and the commit it read | Confirm each group. Provide the owner team, which code does not say |
+| **Onboarding a code folder** | Records the service or frontend, endpoints, subscriptions and the data it uses. Each endpoint and consumer gets its validations, a flowchart and a sequence diagram drawn from the handler; validation it cannot read is marked `Not determined by the import.` and asked once. Names every source as the repository URL, the path and the commit it read | Confirm each group. Provide the owner team, which code does not say |
 | **The repository holds several services** | Imports one service per run and asks for the URL of that service's folder | Give it, then repeat for the other services |
 | **The code folder has uncommitted changes** | Says the recorded commit will not match the files it read, and asks whether to go on | Commit first, or accept |
 | **The code has no git remote** | Asks for the repository URL | Give it |

@@ -53,10 +53,11 @@ Responses `401`, `409`, `422`, and `502` have no response body.
 
 # Validations
 
-| Field | Constraint |
+| Rule | Fails with |
 |---|---|
-| `orderId` | must reference an order in `pending_payment` |
-| `amountUsd` | must equal the order total server-side — never trust the client amount |
+| `Authorization` carries a valid calling-service token | `401` |
+| `orderId` references an order in `pending_payment` | `409` |
+| `amountUsd` equals the order total server-side | `422` |
 
 # Behavior
 
@@ -66,6 +67,25 @@ Idempotent on `orderId`: the row in
 to [OP-payment-intents-create](../../externals/EXT-stripe/OP-payment-intents-create.md),
 so a retry never double-authorizes. On success, publishes
 [CHAN-payment-authorized](../../channels/CHAN-payment-authorized/overview.md).
+
+# Flowchart
+
+```mermaid
+flowchart TD
+    A[POST /payments/authorize] --> B{Valid calling-service token?}
+    B -- no --> X401[401]
+    B -- yes --> C{Order in pending_payment?}
+    C -- no --> X409[409]
+    C -- yes --> D{Amount equals order total?}
+    D -- no --> X422[422]
+    D -- yes --> E[Insert payments row, key = orderId]
+    E --> F[Call OP-payment-intents-create]
+    F --> G{Stripe answers?}
+    G -- unavailable after retry --> X502[502]
+    G -- declined --> X402[402 declineCode]
+    G -- authorized --> H[Publish CHAN-payment-authorized]
+    H --> X200[200 authorized]
+```
 
 # Sequence diagram
 

@@ -31,6 +31,8 @@ It writes code, never the wiki. It never changes a Task's status.
 5. Creates a worktree on a new branch, so your own checkout is not touched, and
    writes a **Run plan** (`plan.md`) that lists each code and test file with the
    scope item and acceptance item it serves.
+   For each endpoint or consumer in scope, the plan also names where each
+   validation rule and flowchart exit is coded and tested.
 6. **Design gate:** the Run plan, in full. For code, the plan is the design.
 7. Writes the code and unit tests to match the code around it.
 8. Self review by reading (acceptance, contract, outside the scope,

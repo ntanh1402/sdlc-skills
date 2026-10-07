@@ -37,10 +37,12 @@ One consumer of a MessageChannel, owned by a Service.
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Consumes` | required | author | MessageChannel (exactly 1) |  |  |
+| `# Validations` | required | author |  |  |  |
 | `# Handler` | required | author |  |  |  |
+| `# Flowchart` | required | author |  |  | Mermaid `flowchart` diagram |
+| `# Sequence diagram` | required | author |  |  | Mermaid `sequenceDiagram` diagram |
 | `# Idempotency` | required | author |  |  |  |
 | `# Failure behavior` | required | author |  |  |  |
-| `# Sequence diagram` | optional | author |  |  | Mermaid `sequenceDiagram` diagram |
 | `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
@@ -55,3 +57,18 @@ One consumer of a MessageChannel, owned by a Service.
   last retry, link the channel's dead-letter policy instead of repeating it.
 - The channel states what the broker guarantees. Write here only what this
   consumer does differently or additionally.
+- A message ends in one of four outcomes: `ack` (processed), `drop` (acked
+  without processing, and logged), `retry` (redelivered), or `dead letter`.
+- `# Validations` lists every rule the handler checks on a message in a
+  `Rule | Fails with` table: the payload fields it needs and the state
+  checks of `# Handler`, one rule per row. "Fails with" is `drop`, `retry`
+  or `dead letter`; for retry details link `# Failure behavior`. A
+  redelivered message already processed is not a failed rule: it belongs in
+  `# Idempotency`. With no rules, write `No validations.`
+- `# Flowchart` is one Mermaid `flowchart` of every branch of `# Handler`,
+  duplicates included, and every validation failure. Every path ends in one
+  of the four outcomes.
+- `# Sequence diagram` shows the channel, this service and every concept
+  `# Handler` names, in order.
+- Both diagrams agree with `# Handler`; the prose and tables are
+  authoritative.

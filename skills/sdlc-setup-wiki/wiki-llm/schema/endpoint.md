@@ -43,9 +43,10 @@ One synchronous operation a Service exposes.
 | `# Request` | required | author |  |  |  |
 | `# Response` | required | author |  |  |  |
 | `## Status codes` | required | author |  |  |  |
-| `# Validations` | optional | author |  |  |  |
+| `# Validations` | required | author |  |  |  |
 | `# Behavior` | required | author |  |  |  |
-| `# Sequence diagram` | optional | author |  |  | Mermaid `sequenceDiagram` diagram |
+| `# Flowchart` | required | author |  |  | Mermaid `flowchart` diagram |
+| `# Sequence diagram` | required | author |  |  | Mermaid `sequenceDiagram` diagram |
 | `# References` | optional | author | Reference (any number) |  |  |
 | `# Pending changes` | conditional | author | Feature, ChangeRequest (1 or more) | `new`, `modified`, `removed` (required) |  |
 <!-- generated:schema end -->
@@ -61,8 +62,19 @@ One synchronous operation a Service exposes.
   code or protocol outcome with when it occurs. State explicitly when an
   outcome has no body.
 - `# Behavior` lists the processing steps in order, with their branches.
-- `# Sequence diagram` is worth adding when the behavior involves two or more
-  other concepts. When present it must agree with `# Behavior`; the prose and
-  tables are authoritative.
+- `# Validations` lists every rule the endpoint enforces in a `Rule | Fails
+  with` table: required fields, types and formats from `# Request`, and the
+  state checks of `# Behavior`, one rule per row. "Fails with" is one status
+  code from `## Status codes`. A rule that cannot fail (a default, a clamp)
+  belongs in `# Behavior`, and a duplicate request answered from earlier
+  work belongs in `# Behavior`'s idempotency, not here. With no rules, write
+  `No validations.`
+- `# Flowchart` is one Mermaid `flowchart` of every branch of `# Behavior`
+  and every validation failure. Every path ends in a status code, and every
+  code in `## Status codes` is an exit of the flowchart.
+- `# Sequence diagram` shows the caller, this service and every concept
+  `# Behavior` names, in order.
+- Both diagrams agree with `# Behavior`; the prose and tables are
+  authoritative.
 - `resource` points at the handler in code, or at the operation in an OpenAPI
   document, when known.

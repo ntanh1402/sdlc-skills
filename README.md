@@ -352,10 +352,12 @@ the names come from the sample wiki in
 ### sdlc-ask-wiki
 
 - **Use when:** you have a question: the list of Features with their status,
-  one Feature's architecture, what is not built yet, which tests cover a
+  one Feature's architecture, one endpoint's or consumer's validations and
+  diagrams, what is not built yet, which tests cover a
   Requirement, or a user story's paste-ready copy for a ticket.
 - **Before:** nothing.
-- **Say:** "List the features", "Show the checkout architecture", "What is
+- **Say:** "List the features", "Show the checkout architecture", "Show
+  EP-orders-create", "What is
   left to build for CR-sms-notifications?"
 - **You get:** an answer with the wiki files it read. Nothing is changed.
 

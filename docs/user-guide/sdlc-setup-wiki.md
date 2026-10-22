@@ -48,7 +48,7 @@ pull request.
 | **Another folder should use the same wiki** and the wiki is up to date | Only writes the note into that folder's `AGENTS.md` / `CLAUDE.md`. If the note is already there it says "already linked" | Commit the note if teammates should share it |
 | **You updated the skills** and the wiki is older | Shows the old and new release, and whether the schema version changes. Writes the new tool copy on `wiki/setup-<version>`; if the schema changes it also migrates the wiki files | Approve, then merge the pull request |
 | **Someone edited `.wiki-llm/` by hand** | Lists the added, missing and changed files and says they will be replaced | Check the list. If a change was deliberate, stop and talk to the person who made it. Otherwise approve |
-| **The wiki was set up by a newer release** than your skills | Refuses and writes nothing | Update your skills (`git pull`, run `install-skills.sh`), then run again |
+| **The wiki was set up by a newer release** than your skills | Refuses and writes nothing | Update your skills (run `npx skills add ntanh1402/sdlc-skills -g`), then run again |
 | **An earlier upgrade branch still exists.** Its pull request is merged or closed | Discards the old branch and starts again | Approve |
 | **An earlier upgrade's pull request is still open** | Stops | Finish that pull request first |
 | **No migration exists** for the schema jump | Tells you the wiki cannot be upgraded with this release and discards its draft | Ask the maintainers of the skills for a release that migrates your wiki |

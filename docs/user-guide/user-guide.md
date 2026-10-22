@@ -29,16 +29,13 @@ Two rules hold for every skill:
 
 ## Install the skills and set up the wiki
 
-Clone the repository once and install the skills for your agent:
+Install the skills for your agent:
 
 ```bash
-git clone https://github.com/ntanh1402/sdlc-skills
-sdlc-skills/install-skills.sh --agent claude            # no arguments lists the agent names
+npx skills add ntanh1402/sdlc-skills -g
 ```
 
-Skills need Python 3.11 or newer and git. To update, run `git pull` in the
-clone and run the script again (with `--link` the script links instead of
-copying, so `git pull` alone updates).
+Skills need Python 3.11 or newer and git. To update, run the same command again.
 
 Then, in the folder you work in (your *workspace*, usually a code repository),
 ask the agent to set up the wiki. See [sdlc-setup-wiki](sdlc-setup-wiki.md).
@@ -240,7 +237,7 @@ Skills refuse rather than guess. The common refusals:
 |---|---|---|
 | No project wiki is linked to this folder | Your workspace has no note pointing to the wiki | Run `sdlc-setup-wiki` in this folder |
 | The wiki's tool is older than this skill | You updated the skills, but not the wiki | Run `sdlc-setup-wiki` to upgrade the wiki, then merge its draft |
-| The wiki was set up by a newer release | Someone upgraded the wiki with newer skills | Update your installed skills (`git pull`, then `install-skills.sh` again) |
+| The wiki was set up by a newer release | Someone upgraded the wiki with newer skills | Update your installed skills (run `npx skills add ntanh1402/sdlc-skills -g` again) |
 | The wiki's tool copy was edited by hand | Files in `.wiki-llm/` were changed | Run `sdlc-setup-wiki` to restore them |
 | `<Key>` is in draft `wiki/…`, not on `main` | The previous step's pull request is not merged | Merge it, then run the skill again |
 | The Feature or ChangeRequest is not `Approved`, so the Task cannot be closed | Its Requirements are still a draft, or its design is behind the spec | Agree the requirements with `sdlc-write-spec`, then run `sdlc-design-arch` if it says so |
@@ -257,7 +254,4 @@ to run the tool's `refresh` on the other draft, and merge that one.
 ## More
 
 - [README](../../README.md): the short version.
-- [docs/runbook.md](../runbook.md): the wiki repository, the tool's commands and
-  how to change a wiki by hand.
 - [CONTEXT.md](../../CONTEXT.md): the terms used here.
-- [docs/adr/](../adr/): the decisions behind the design.

@@ -1,6 +1,6 @@
 ---
 name: sdlc-edit-wiki
-description: Make a small edit to the project wiki that no lifecycle skill owns - fix a typo or wording, change the glossary or the conventions, mark a Feature released or deprecated, add a Reference (a page, a document or a code example to consult) or link one from any concept, mark a Reference deprecated, add a Task's or a user story's ticket link, add a Task's pull request link, or record that a person confirmed a file. Use for small corrections of wording and for these status and link changes. Not for requirements, architecture, tasks, test design, corrections against code or documents, or closing a Task - those belong to the lifecycle skills, and this skill names the right one.
+description: Make a small edit to the project wiki that no lifecycle skill owns - fix a typo or wording, change the glossary or the conventions, mark a Feature released or deprecated, add a Reference (a page, a document or a code example to consult) or link one from any concept, mark a Reference deprecated, add a Task's or a user story's ticket link, add a Task's pull request link, record that a person confirmed a file, or record that a design, story, Task or TestSuite is still current for a new spec version. Use for small corrections of wording and for these status and link changes. Not for requirements, architecture, tasks, test design, corrections against code or documents, or closing a Task - those belong to the lifecycle skills, and this skill names the right one.
 ---
 
 # Edit the wiki
@@ -23,12 +23,13 @@ of each type you will edit, in the wiki's `.wiki-llm/schema/`.
 
 | Allowed | Rule |
 |---|---|
-| A typo or a wording fix in any file a person writes | The meaning of a contract, a Requirement or an acceptance item does not change |
+| A typo or a wording fix in any file a person writes | The meaning of a contract, a Requirement or an acceptance item does not change, so a Feature's or ChangeRequest's `version` stays as it is |
 | The Application's `glossary.md` and `conventions.md` | Terms, roles and rules, added, changed or removed |
 | A Feature's status to `Released` or `Deprecated` | Only when none of its Tasks is `Todo` and no Design file has a pending entry for it; `Released` only from `InDev`, with `releasedAt` set to the time the person gives |
 | A Task's `trackerKey`, `resource` and `prUrl` | The ticket and the pull request a person followed by hand. Never its status |
 | A user story's `trackerKey` and `resource` | The ticket a person made from the story's paste-ready copy |
 | A `verified` stamp | The person says they read the file and it is right: `$T verify <path>` in the draft worktree |
+| Still current for a new spec version | The person says a file `$T outdated` lists needs no change for the new version. Set its record to the target's current version: `designBasedOn` on a Feature or ChangeRequest, `basedOn` on a Task or story, the target's `basedOn` entry on a TestSuite, each `{ version, at }` copied from the target's `version` and `versionDate`. Add a log entry naming the person, for example `* **Still current**: TASK-refund-endpoint checked against version 3 by human:ana; no change.` Nothing else in the file changes |
 | A new Reference | Material the person gives or points to: a page, a short document already in Markdown, a code location at a commit or tag. Section 2 says how |
 | A `# References` entry added to or removed from any concept | The entry links a Reference of the same Application, with a note on what to take from it. It changes no status |
 | A Reference's status to `Deprecated` | The person says it no longer applies. It is never deleted |
@@ -69,9 +70,8 @@ with your proposal.
 For `Released` or `Deprecated`, read the Feature's Tasks, and find the
 Design files that still have a pending entry for it:
 `grep -rl "features/<Feature key>/overview.md" "wiki/<app>"`, then keep those
-whose `# Pending changes` section links it. `validate` refuses a Feature that
-is neither `Approved` nor `InDev` while such an entry exists
-(`pending.parent-open`), and this skill never removes an entry. So refuse when:
+whose `# Pending changes` section links it. `validate` refuses a `Released` or
+`Deprecated` Feature while such an entry exists (`pending.parent-open`), and this skill never removes an entry. So refuse when:
 
 - for `Released`, a Task is `Todo`: name the Tasks, and say each is closed
   with `sdlc-close-task` after its code is merged;

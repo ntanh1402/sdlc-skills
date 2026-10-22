@@ -10,7 +10,7 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
 | Type | `TestSuite` |
 | Phase | Verify |
 | Path | `<app>/tests/TS-<slug>/` |
-| Shape | Folder with `index.md`, `overview.md`, `log.md` |
+| Shape | Folder with `index.md`, `overview.md`, `log.md`, `checklist.csv` |
 | Status | `Draft`, `Approved`, `Implemented`, `Deprecated` |
 | Owns | TestCase |
 
@@ -23,6 +23,7 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
 | `description` | yes | text |
 | `status` | yes | `Draft`, `Approved`, `Implemented`, `Deprecated` |
 | `suiteType` | yes | `unit`, `integration`, `e2e`, `load`, `security` |
+| `basedOn` | yes | list of `{ id, version, at }`, one per target under `# Verifies` |
 | `framework` | no | text |
 | `generated` | yes | `{ by, at }` |
 | `verified` | no | `{ by, at }`, or a list of them |
@@ -44,6 +45,13 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
 
 - Prose after the title says what the suite exercises and against what
   environment.
+- `basedOn` has one entry per Feature or ChangeRequest under `# Verifies`:
+  its key as `id`, and the version the cases were designed from. See
+  [Spec versions](schema.md#spec-versions).
+- `checklist.csv` is written by the tool from the TestCases: columns `No`,
+  `Title`, `Description`, `Covers`, `Purpose`; one row per case, highest
+  `risk` first, then by title; `Covers` holds the keys of everything the case
+  covers, joined by `; `. Nobody edits it.
 - `status` is the suite's design lifecycle: `Draft` while cases are being written,
   `Approved` once reviewed, `Implemented` when runnable tests exist. The wiki
   does not record pass and fail results.

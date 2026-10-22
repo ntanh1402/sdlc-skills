@@ -295,6 +295,12 @@ schema pages require. For every file:
   beside it, an `overview.md` that summarises the document and lists the copy
   under `# Contents`, and `log.md`. `resource` is the document's URL when it
   has one.
+- **Spec versions.** A Feature this run creates has `version: 1`,
+  `versionDate` today and, with its `# Architecture`,
+  `designBasedOn: { version: 1, at: <today> }`. A TestSuite has `basedOn`
+  with one entry per target under `# Verifies`, each copying that target's
+  `version` and `versionDate`. A correction to an existing Feature keeps its
+  `version`.
 - **`resource`** of a Service or frontend is the repository URL of section 4.
   A TestSuite written from test code has `resource` set to where its tests
   live.

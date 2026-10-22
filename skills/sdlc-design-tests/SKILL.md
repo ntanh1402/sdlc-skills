@@ -1,13 +1,13 @@
 ---
 name: sdlc-design-tests
-description: Design traceable TestSuites and TestCases for an Approved Feature or ChangeRequest in the project wiki - unit, integration, e2e, load or security suites, one case per file with risk, concrete data, steps and explicit validations, covering every requirement, contract and failure branch. Use when QA, developers, security or performance roles need test design or test coverage from an approved design. Does not write runnable test code; not for requirements, architecture or tasks.
+description: Design traceable TestSuites and TestCases for a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - unit, integration, e2e, load or security suites, one case per file with risk, numbered concrete data, steps with request and response payloads and explicit validations, and a generated checklist per suite, covering every requirement, contract and failure branch. Use when QA, developers, security or performance roles need test design or test coverage from a design, or when the spec changed after the tests were designed. Does not write runnable test code; not for requirements, architecture or tasks.
 ---
 
 # Design the tests
 
 This skill is a lifecycle step after the design. It takes a Feature or
-ChangeRequest with status `Approved` (a Feature may also be `InDev`) and writes
-TestSuites in `wiki/<app>/tests/TS-<name>/`, each with one `TC-<name>.md` file
+ChangeRequest whose design is merged, whether its Requirements are a draft or
+agreed, and writes TestSuites in `wiki/<app>/tests/TS-<name>/`, each with one `TC-<name>.md` file
 per case. It never writes runnable test code or touches a code repository.
 
 Its draft prefix is `tests-`: the draft for `FEAT-coupons` is
@@ -39,8 +39,8 @@ Accept one `FEAT-*` or `CR-*` key. Read it on the default branch:
 
 | State | When | Do |
 |---|---|---|
-| `READY` | `Approved` (or `InDev` Feature) | Go on |
-| `NEEDS_DESIGN` | `Draft`, `Proposed` or `ReqApproved` | Stop: route to `sdlc-design-arch` |
+| `READY` | A Feature `Draft`, `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`, whose `# Architecture` or `# Delta` is not `None` | Go on |
+| `NEEDS_DESIGN` | `# Architecture` or `# Delta` is `None` | Stop: route to `sdlc-design-arch` |
 | `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft |
 | `CLOSED` | A Feature that is `Released` or `Deprecated`, or a ChangeRequest that is `Implemented` or `Rejected` | Stop: say it is closed; a change to a Released Feature goes through a ChangeRequest (`sdlc-write-spec`); route nowhere else |
 
@@ -51,7 +51,11 @@ Endpoint, Channel, Subscription, Table and External contract in scope, the
 quality targets and risks, the References they link and those about testing
 in `references/index.md` (a test plan the user gave is one), and the existing
 TestSuites that verify the target (`grep -rl "<Key>" wiki/<app>/tests/`).
-List:
+Run `$T outdated --feature <Key>` (or `--change <Key>`): a suite it lists was
+designed from an older version of the spec. When the design itself is listed
+(`designBasedOn` older than `version`), say in the first round that the
+design is behind the spec and recommend `sdlc-design-arch` first; go on only
+when the person says so. List:
 
 - every Requirement and acceptance outcome;
 - every new, changed or removed contract;
@@ -88,6 +92,8 @@ cases".
   SLO is blocked until the user gives one. Ask for it; never invent it.
 - A contract or Requirement that cannot be tested as written is another
   skill's change: `sdlc-write-spec`.
+- When the Requirements are still a draft (`Draft`, `Proposed`), say so: the
+  cases may have to change when the spec does.
 
 **Intent gate.** Restate the target, the inventory, the chosen types, the
 seams, the exclusions and the residual risk the person accepted. Ask for
@@ -101,6 +107,13 @@ requirement, contract and risk partitions, not every combination of inputs.
 
 One suite per target and type: `TS-<target words>-<type>`, for example
 `TS-coupons-e2e`. If one exists, add to it; if several match, stop and ask.
+
+**A suite designed from an older version.** Compare the spec at the version
+in its `basedOn` with the current one (`git log -p` on the `overview.md`).
+Revise the cases the change affects, add the cases it needs, and delete the
+cases of removed Requirements as the last rule of `test-case.md` says; leave
+the other cases as they are. Show each revised case in full at the Design
+gate.
 Each case is a file `TC-<behaviour words>.md` in the suite folder, written with
 `references/case-format.md`.
 
@@ -136,8 +149,11 @@ only when the user explicitly accepts that gap as residual risk.
 In the draft worktree, under `wiki/<app>/tests/`:
 
 - a new suite folder `TS-<name>/` with `overview.md` (`type: TestSuite`,
-  `status: Approved`, `suiteType`, `# Verifies` linking the Feature or
-  ChangeRequest) and `log.md`;
+  `status: Approved`, `suiteType`, `basedOn`, `# Verifies` linking the
+  Feature or ChangeRequest) and `log.md`;
+- `basedOn` with one entry per target under `# Verifies`:
+  `{ id: <key>, version: <its version>, at: <its versionDate> }`. On an
+  existing suite, update the entry of the target you designed for;
 - one `TC-<name>.md` per new case;
 - `# References` on a suite that links the test plan it was written from,
   and any other Reference a tester needs, with a note on what to take from
@@ -146,7 +162,8 @@ In the draft worktree, under `wiki/<app>/tests/`:
   `* **Test design**: Added 9 cases for FEAT-coupons. Written by an AI model with sdlc-design-tests.`
 
 Every step and validation must make sense to a tester who did not design the
-system. Do not write `index.md`.
+system. Do not write `index.md` or `checklist.csv`: `draft finish` writes
+both.
 
 ## 6. Self review, finish and commit
 
@@ -157,13 +174,18 @@ review, also check that:
   worktree, reports nothing uncovered except the gaps the user accepted;
 - every case has its risk, concrete data, complete steps, a validation for
   each step that needs one, clean-up and links;
-- no suite or case is written twice, no existing case was changed, and no
-  runnable code was written;
+- no suite or case is written twice, no existing case was changed except
+  those a newer spec version affects, and no runnable code was written;
+- each step that calls an API or publishes to a channel has its request and
+  expected response, and `# Test data` is numbered from 1;
+- each suite's `basedOn` names the current version of each target it was
+  designed for;
 - each accepted risk or gap is recorded in its suite's `log.md`.
 
 Commit message: `tests(<Key>): design <n> cases`. In the summary, "Not done"
 names each gap the user accepted, and "Next" says the suites can be turned
-into runnable tests once the pull request is merged.
+into runnable tests once the pull request is merged, and that each suite's
+`checklist.csv` lists its cases.
 
 ## Done when
 

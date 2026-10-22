@@ -1,6 +1,6 @@
 ---
 name: sdlc-ask-wiki
-description: Answer questions from the project wiki without changing it - list an application's Features with status, owner, priority, design readiness and open ChangeRequests; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show one Endpoint or consumer with its input, output, validations and diagrams; show a user story or print its paste-ready copy for the tracker; list the References (documents, pages, code examples) that apply to a subject; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
+description: Answer questions from the project wiki without changing it - list an application's Features with status, spec version, owner, priority, design readiness and open ChangeRequests; list what was written from an older version of a spec; show one Feature's approved architecture with its diagrams, services, frontends, contracts, decisions, traceability and what is not built yet; show one Endpoint or consumer with its input, output, validations and diagrams; show a user story or print its paste-ready copy for the tracker; list the References (documents, pages, code examples) that apply to a subject; or answer any free-form question about requirements, user stories, architecture, tasks, tests, dependencies and history. Use for read-only questions about the sdlc-skills wiki. Not for writing or changing it.
 ---
 
 # Ask the wiki
@@ -43,8 +43,9 @@ per Feature:
 |---|---|
 | Key and title | frontmatter |
 | Status | `status` (the values are on the Feature schema page) |
+| Version | `version` and `versionDate` |
 | Owner, priority | `ownerTeam`, `priority` |
-| Designed | `# Architecture` is not `None` |
+| Designed | `# Architecture` is not `None`; "from v<n>" with `designBasedOn`, marked outdated when it is older than `version` |
 | Not live | number of Design concepts whose `# Pending changes` links this Feature |
 | Open changes | ChangeRequests listed in its `# Change history` whose status is in `pending.open_requests` of `.wiki-llm/schema/schema.json` |
 
@@ -54,8 +55,11 @@ Explain an empty list. Offer "show the architecture of FEAT-x" for detail.
 
 For exactly one Feature:
 
-1. Summary: title, status, owner, and whether it is designed (`Approved` or
-   later) or still at requirements (`Draft`, `ReqApproved`).
+1. Summary: title, status, version, owner, and the design state: not
+   designed yet, designed from version `designBasedOn` (outdated when that is
+   older than `version`), or `Approved`. A Feature that is designed but not
+   `Approved` has Requirements that are a draft or a design that is behind;
+   say which.
 2. Requirements: key, priority and one line each.
 3. The stored diagrams from `## High-level architecture` and
    `## Runtime sequences`, as they are.
@@ -69,12 +73,25 @@ For exactly one Feature:
 9. Not live: every concept with a `# Pending changes` entry for this Feature or
    one of its ChangeRequests, with the entry's text; and the open
    ChangeRequests.
-10. Gaps found while reading: links that do not resolve, Requirements missing
+10. Outdated: `$T outdated --feature <key>` lists the design, stories, Tasks
+   and TestSuites written from an older version, with the skill that rewrites
+   each (`sdlc-design-arch`, `sdlc-write-stories`, `sdlc-plan-tasks`,
+   `sdlc-design-tests`). Leave this out when it is empty.
+11. Gaps found while reading: links that do not resolve, Requirements missing
    from Traceability, differences between the wiki and code you also read
    (`sdlc-import` on that code compares them file by file).
 
 A Feature with `# Architecture` `None` is not an error: say it is not designed
-yet and that `sdlc-design-arch` designs it once it is `ReqApproved`.
+yet and that `sdlc-design-arch` can design it now, even while its
+Requirements are a draft.
+
+## Recipe: what is outdated
+
+"What must be redone since the spec changed?" Run
+`$T outdated --feature <key>` (or `--change <key>`). Report the target's
+version and date, then one row per file it lists: the path, what it is, the
+version it was written from, and the skill that rewrites it. A person may
+instead confirm that a file is still current with `sdlc-edit-wiki`.
 
 ## Recipe: show an endpoint or a consumer
 

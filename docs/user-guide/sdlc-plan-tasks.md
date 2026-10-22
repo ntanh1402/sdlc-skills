@@ -7,7 +7,7 @@ Plan the build Tasks of an approved design. [Back to the user guide](user-guide.
 | | |
 |---|---|
 | **Who** | Tech lead |
-| **Use when** | An `Approved` design needs build Tasks; a changed design needs its Tasks planned again; or stories were written afterwards and the Tasks must link them |
+| **Use when** | A design, draft or agreed, needs build Tasks; a changed design or spec needs its Tasks planned again; or stories were written afterwards and the Tasks must link them |
 | **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-design-tests](sdlc-design-tests.md) |
 | **Say** | "Plan the tasks for gift cards" |
 | **You get** | `TASK-…` files, each with its acceptance, planned scope, size, dependencies and parallel wave. Every design item that is added, changed or removed is covered by exactly one Task, and every user story is linked by at least one Task. Draft branch `wiki/tasks-<Key>` |
@@ -48,8 +48,9 @@ one Task; no dependency cycles; every acceptance item is an observable result.
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **The design is `Approved`** (or an `InDev` Feature) and something is uncovered | Goes on | Answer the rounds |
-| **The design is not approved** (`Draft`, `Proposed`, `ReqApproved`) | Refuses and routes to [sdlc-design-arch](sdlc-design-arch.md) | Design first |
+| **The design is merged**, whatever the requirement status, and something is uncovered | Goes on. For a draft spec it says the Tasks can be built but closed only once the spec is `Approved` | Answer the rounds |
+| **There is no design yet** | Refuses and routes to [sdlc-design-arch](sdlc-design-arch.md) | Design first |
+| **Tasks were planned from an older spec version** | Checks each against the new version and gives it the current `basedOn`. A started Task, or one whose code is merged, is left as built: a new Task covers the difference, so the old one can still be closed | Say which Tasks started or have merged code |
 | **The design is in an unmerged draft** | Refuses and names the draft | Merge it |
 | **The Feature is `Released` or `Deprecated`, or the ChangeRequest `Implemented` or `Rejected`** | Says it is closed. A change to a Released Feature goes through a ChangeRequest | Run [sdlc-write-spec](sdlc-write-spec.md) |
 | **Everything is already covered and the Tasks match the design** | Reports the existing plan and stops | Nothing |

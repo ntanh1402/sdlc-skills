@@ -23,6 +23,9 @@ A capability a user or the business can recognise, with its requirements and app
 | `description` | yes | text |
 | `status` | yes | `Draft`, `ReqApproved`, `Approved`, `InDev`, `Released`, `Deprecated` |
 | `ownerTeam` | yes | text |
+| `version` | yes | whole number |
+| `versionDate` | yes | `YYYY-MM-DD` |
+| `designBasedOn` | no | `{ version, at }`: a spec version and its `YYYY-MM-DD` |
 | `priority` | no | `P0`, `P1`, `P2`, `P3` |
 | `targetRelease` | no | text |
 | `epicKey` | no | text |
@@ -74,12 +77,19 @@ A capability a user or the business can recognise, with its requirements and app
   its failure branches. `## Traceability` maps every Requirement to the Design
   concepts that satisfy it.
 - `## Frontends` appears only when the Feature has a user interface.
-- Status is `Draft` while the Requirements are written, `ReqApproved` once they
-  are approved for design, and `Approved` once the Architecture is approved.
-  `# Architecture` is `None` only while `Draft` or `ReqApproved`. Editing a
-  `ReqApproved` Feature sets it back to `Draft`. From `Approved` on, the
-  Requirements change only through a ChangeRequest or, once `Released`, a
-  [correction](schema.md#corrections).
+- Status is `Draft` while the Requirements are written and `ReqApproved` once
+  they are agreed. Neither is a gate: the architecture, stories, Tasks and
+  TestSuites may be written while the Feature is `Draft`. The status becomes
+  `Approved` once the Requirements are agreed, the Architecture is approved,
+  and the Architecture was designed from the current version
+  (`basis.approved`). `# Architecture` is `None` only while `Draft` or
+  `ReqApproved`. Editing a `ReqApproved` Feature sets it back to `Draft`. From
+  `Approved` on, the Requirements change only through a ChangeRequest or, once
+  `Released`, a [correction](schema.md#corrections).
+- `version` counts the revisions of the Requirements and the PRD, from 1, and
+  `versionDate` is the day the current one was written. `designBasedOn` is
+  the version `# Architecture` was designed from; it is present exactly when
+  `# Architecture` is not `None`. See [Spec versions](schema.md#spec-versions).
 - A new Draft Feature has at least one Requirement.
 - The PRD is a [Reference](reference.md), linked under `# References`. The
   Requirements are written out in full here; none defers to the PRD.

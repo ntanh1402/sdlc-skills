@@ -21,6 +21,7 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
 | `title` | yes | text |
 | `description` | yes | text |
 | `status` | yes | `Todo`, `Done` |
+| `basedOn` | yes | `{ version, at }`: a spec version and its `YYYY-MM-DD` |
 | `trackerKey` | no | text |
 | `taskType` | no | `dev`, `test`, `design`, `spike` |
 | `estimate` | no | text |
@@ -70,3 +71,7 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
   or writes the tracker.
 - `mergedAt` and `mergeCommitSha` are written when the Task is closed. A
   person may add `prUrl`.
+- `basedOn` is the version of the parent the Task was planned from. A Task is
+  closed only when its parent is `Approved` (or a Feature `InDev`) and
+  `basedOn` is the parent's current version. A `Done` Task is never reported
+  as outdated. See [Spec versions](schema.md#spec-versions).

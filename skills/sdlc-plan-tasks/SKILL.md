@@ -1,13 +1,13 @@
 ---
 name: sdlc-plan-tasks
-description: Plan the build Tasks of an Approved Feature or ChangeRequest in the project wiki - ordered, independently verifiable Tasks with planned scope, acceptance, size, dependencies and parallel waves, covering every concept its design adds, changes or removes, each Task linked to the user stories it serves. Use when approved architecture needs a task breakdown, implementation plan or backlog, when a design changed and its Tasks must be replanned, or when user stories were written and the Tasks must link them. Not for requirements, architecture, test design, tracker sync or code.
+description: Plan the build Tasks of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - ordered, independently verifiable Tasks with planned scope, acceptance, size, dependencies and parallel waves, covering every concept its design adds, changes or removes, each Task linked to the user stories it serves. Use when an architecture needs a task breakdown, implementation plan or backlog, when a design or spec changed and its Tasks must be replanned, or when user stories were written and the Tasks must link them. Not for requirements, architecture, test design, tracker sync or code.
 ---
 
 # Plan the tasks
 
 This skill is a lifecycle step after the design. It takes a Feature or
-ChangeRequest with status `Approved` (a Feature may also be `InDev`) and writes
-`TASK-<name>.md` files into its folder, so that every Design concept its
+ChangeRequest whose design is merged, whether its Requirements are a draft or
+agreed, and writes `TASK-<name>.md` files into its folder, so that every Design concept its
 design adds, changes or removes is planned by exactly one Task, and every
 user story in the folder is linked by at least one Task.
 
@@ -43,15 +43,22 @@ Accept one `FEAT-*` or `CR-*` key. Read it on the default branch:
 
 | State | When | Do |
 |---|---|---|
-| `READY` | `Approved` (or `InDev` Feature) and `coverage tasks` reports uncovered concepts or stories no Task links, or the design changed under `Todo` Tasks | Go on |
-| `NEEDS_DESIGN` | `Draft`, `Proposed` or `ReqApproved` | Stop: route to `sdlc-design-arch` |
+| `READY` | A Feature `Draft`, `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`, whose `# Architecture` or `# Delta` is not `None`; and `coverage tasks` reports uncovered concepts or stories no Task links, the design changed under `Todo` Tasks, or `outdated` lists a Task | Go on |
+| `NEEDS_DESIGN` | `# Architecture` or `# Delta` is `None` | Stop: route to `sdlc-design-arch` |
 | `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft |
 | `CLOSED` | A Feature that is `Released` or `Deprecated`, or a ChangeRequest that is `Implemented` or `Rejected` | Stop: say it is closed; a change to a Released Feature goes through a ChangeRequest (`sdlc-write-spec`); route nowhere else |
-| `ALREADY_CURRENT` | `coverage tasks` reports nothing and every Task matches the design | Report the existing plan and stop |
+| `ALREADY_CURRENT` | `coverage tasks` and `outdated` report nothing and every Task matches the design | Report the existing plan and stop |
 
 ```bash
 $T coverage tasks --feature FEAT-coupons      # or --change CR-sms-alerts
+$T outdated --feature FEAT-coupons            # Tasks planned from an older spec version
 ```
+
+When `outdated` also lists the design itself (`designBasedOn` older than
+`version`), say in the first round that the design is behind the spec and
+recommend `sdlc-design-arch` first; go on only when the person says so. When
+the Requirements are still a draft, say that the Tasks can be built but not
+closed until they are agreed (`sdlc-close-task` refuses).
 
 Every state but `READY` is a refusal, not a question.
 
@@ -80,8 +87,9 @@ repository each concept is built in when the wiki does not say, the order
 when two orders are possible, and what a spike must answer. It also holds:
 
 - **started Tasks**, when Tasks exist. The wiki does not know whether a
-  `Todo` Task has started: list the `Todo` Tasks the design changes and ask
-  which have started;
+  `Todo` Task has started or its code is already merged: list the `Todo`
+  Tasks the design or the new spec version changes and ask which have
+  started, and which have merged code;
 - the wiki question. The usual answer is "nothing: only Task files and the
   folder's log"; a gap in the design that the planning found is another
   skill's change (`sdlc-write-spec` for a ChangeRequest, `sdlc-import` for a
@@ -122,9 +130,19 @@ repositories is two Tasks, one blocked by the other when the order matters.
 
 **Replanning.** Keep each existing Task's key. A `Done` Task is never
 rewritten. A `Todo` Task that has not started may be changed to match the new
-design. A Task the person said has started is treated like a `Done` one: if
-the design changed under it, add a new Task for the difference and say so at
-the Design gate.
+design. A Task the person said has started, or whose code is merged, is
+treated like a `Done` one: if the design or the spec changed under it, add a
+new Task for the difference, `# Blocked by` the old one, and say so at the
+Design gate.
+
+**Spec version.** Each Task's `basedOn` is
+`{ version: <the parent's version>, at: <its versionDate> }`. Write it on
+every new Task and on every Task you replan. A started or merged Task that
+got a Task for the difference also gets the current `basedOn`: together they
+cover the new version, so the old one can be closed. Its log entry says it
+was built from the older version and names the new Task. A Task the new
+version does not change gets the current `basedOn` too, once you have
+checked it against the change.
 
 **Story links on any Task.** Adding a `# Stories` link, or dropping one to a
 story that no longer exists, is allowed on every Task, `Done` and started
@@ -173,11 +191,14 @@ review, also check that:
 - every `# Acceptance` states an observable result and links its
   Requirements;
 - no `Done` Task and no started Task was rewritten beyond its `# Stories`
-  and `# References` links, and no Design concept or user story was touched.
+  and `# References` links and its `basedOn`, and no Design concept or user
+  story was touched;
+- `$T outdated` lists no Task of the folder that is not `Done`.
 
 Commit message: `tasks(<Key>): plan <n> tasks`. In the summary, "Next" names
 the Tasks of the first wave: the ones that can start once the pull request
-is merged.
+is merged. When the Requirements are still a draft, add that the Tasks can
+be built but are closed only once the target is `Approved`.
 
 ## Done when
 
@@ -187,7 +208,9 @@ is merged.
   and every user story of the folder is linked by a Task.
 - No XL Task, no dependency cycle, no duplicate scope, no Task without
   observable acceptance.
-- No Task that had started was rewritten, beyond its `# Stories` links.
+- No Task that had started was rewritten, beyond its `# Stories` links and
+  its `basedOn`.
+- Every Task that is not `Done` has the parent's current `basedOn`.
 - The self review found nothing it could not fix, or the person accepted what
   was left at the Change-set gate.
 - `coverage tasks` reports nothing, `draft finish` was `ok`, the change set was

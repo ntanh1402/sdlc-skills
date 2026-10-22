@@ -9,7 +9,7 @@ Record in the wiki that a Task's code is merged.
 |---|---|
 | **Who** | Developer |
 | **Use when** | A Task's code pull request is merged |
-| **Needs first** | The merge is on the code repository's default branch, with the `Task: <key>` line that [sdlc-build-task](sdlc-build-task.md) wrote in the commit message |
+| **Needs first** | The merge is on the code repository's default branch, with the `Task: <key>` line that [sdlc-build-task](sdlc-build-task.md) wrote in the commit message. The Feature or ChangeRequest is `Approved` (a Feature may be `InDev`), and the Task was planned from its current spec version |
 | **Say** | "Close TASK-gift-card-redeem; the code is in ../shop-orders" |
 | **You get** | The Task `Done` with its merge commit and time; the design files it covered marked as built (live); and the Feature `InDev`, or the ChangeRequest `Implemented` once all its Tasks are `Done`. Draft branch `wiki/close-<TASK key>` |
 | **Next** | Merge the close pull request. Close the ticket in your tracker yourself |
@@ -56,6 +56,8 @@ The changes it writes:
 | **The folder has no remote** the skill can read, or the fetch fails | Refuses | Give a folder with a remote |
 | **The Task is already `Done`** | Says so and names its merge commit if it has one | Nothing |
 | **The Task is not on the default branch** | Names the draft that holds it | Merge it |
+| **The Feature or ChangeRequest is not `Approved`** (its Requirements are a draft, or its design is behind the spec) | Refuses. The Task stays `Todo` with its code merged | Agree the requirements with [sdlc-write-spec](sdlc-write-spec.md), then [sdlc-design-arch](sdlc-design-arch.md) if it says so; then close again |
+| **The Task was planned from an older spec version** | Refuses | Run [sdlc-plan-tasks](sdlc-plan-tasks.md) again, or confirm the Task is still current with [sdlc-edit-wiki](sdlc-edit-wiki.md); then close again |
 | **You answer "No" to "Was this change reviewed?"** | Says [sdlc-review-code](sdlc-review-code.md) checks a change against the wiki, and asks: review first, or close anyway? "Review first" ends the run. "Close anyway" goes on | Choose |
 | **Another Task of the same parent also covers a design file** | Leaves that file's pending entry. It stays until the last Task covering it is closed | Nothing |
 | **A design file still has an entry from another Feature or ChangeRequest** | Keeps the section and the status | Nothing |

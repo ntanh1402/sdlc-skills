@@ -6,28 +6,28 @@
   },
   "sdlc-write-spec": {
     "display_name": "SDLC Write Spec",
-    "short_description": "Turn intent into approved wiki requirements",
+    "short_description": "Turn intent into wiki requirements",
     "default_prompt": "Use $sdlc-write-spec to write and approve a Feature or ChangeRequest specification."
   },
   "sdlc-write-stories": {
     "display_name": "SDLC Write Stories",
-    "short_description": "Break approved requirements into user stories",
-    "default_prompt": "Use $sdlc-write-stories to write the user stories of a ReqApproved or Approved Feature or ChangeRequest."
+    "short_description": "Break requirements into user stories",
+    "default_prompt": "Use $sdlc-write-stories to write the user stories of a Feature or ChangeRequest."
   },
   "sdlc-design-arch": {
     "display_name": "SDLC Design Architecture",
-    "short_description": "Design target architecture from approved requirements",
-    "default_prompt": "Use $sdlc-design-arch to design the target architecture of a ReqApproved Feature or ChangeRequest."
+    "short_description": "Design the target architecture of a spec",
+    "default_prompt": "Use $sdlc-design-arch to design the target architecture of a Feature or ChangeRequest."
   },
   "sdlc-plan-tasks": {
     "display_name": "SDLC Plan Tasks",
-    "short_description": "Break an approved design into build tasks",
-    "default_prompt": "Use $sdlc-plan-tasks to plan the build Tasks of an Approved Feature or ChangeRequest."
+    "short_description": "Break a design into build tasks",
+    "default_prompt": "Use $sdlc-plan-tasks to plan the build Tasks of a designed Feature or ChangeRequest."
   },
   "sdlc-design-tests": {
     "display_name": "SDLC Design Tests",
     "short_description": "Design traceable test suites and cases",
-    "default_prompt": "Use $sdlc-design-tests to design TestSuites and TestCases for an Approved Feature or ChangeRequest."
+    "default_prompt": "Use $sdlc-design-tests to design TestSuites and TestCases for a designed Feature or ChangeRequest."
   },
   "sdlc-ask-wiki": {
     "display_name": "SDLC Ask Wiki",

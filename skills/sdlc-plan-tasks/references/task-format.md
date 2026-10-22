@@ -12,6 +12,7 @@ type: Task
 title: Build the refund endpoint
 description: Let support staff refund a captured payment.
 status: Todo
+basedOn: { version: 2, at: 2026-10-02 }
 taskType: dev
 estimate: M
 priority: P1
@@ -45,6 +46,8 @@ folder, link the Feature's copy:
 * [REF-cancel-flow-example](../../references/REF-cancel-flow-example/overview.md) — take the idempotency-key handling; ignore its legacy retry loop.
 ```
 
+- `basedOn` is the parent's `version` and `versionDate` the Task was planned
+  from.
 - `status` starts at `Todo`. Leave `trackerKey` and `resource` out unless the
   user gave them: a person adds them when the ticket exists. Never write
   `mergedAt`, `mergeCommitSha` or `prUrl`; they are written when the Task is

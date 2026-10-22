@@ -1,17 +1,17 @@
 # sdlc-design-arch
 
-Design the target architecture of a Feature or ChangeRequest whose requirements
-are approved. [Back to the user guide](user-guide.md).
+Design the target architecture of a Feature or ChangeRequest, while its
+requirements are a draft or once they are agreed. [Back to the user guide](user-guide.md).
 
 ## At a glance
 
 | | |
 |---|---|
 | **Who** | Architect |
-| **Use when** | A Feature or ChangeRequest is `ReqApproved` and needs a technical design: the services, frontends, endpoints, events, data and externals it needs, their contracts, diagrams, and the decisions behind them |
-| **Needs first** | The spec pull request is merged |
+| **Use when** | A Feature or ChangeRequest, draft or agreed, needs a technical design (or a new one after its spec changed): the services, frontends, endpoints, events, data and externals it needs, their contracts, diagrams, and the decisions behind them |
+| **Needs first** | The spec pull request is merged, draft or agreed |
 | **Say** | "Design the gift cards feature" |
-| **You get** | The Architecture section (a ChangeRequest: the Delta), Mermaid diagrams, new or changed services, endpoints, events, tables and externals marked as **pending**, decisions (`ADR-…`), traceability from each Requirement, and status `Approved`. Draft branch `wiki/arch-<Key>` |
+| **You get** | The Architecture section (a ChangeRequest: the Delta), Mermaid diagrams, new or changed services, endpoints, events, tables and externals marked as **pending**, decisions (`ADR-…`), traceability from each Requirement, and `designBasedOn`: the spec version it was designed from. Status `Approved` only once the Requirements are agreed. Draft branch `wiki/arch-<Key>` |
 | **Next** | Merge the design pull request, then [sdlc-plan-tasks](sdlc-plan-tasks.md) and [sdlc-design-tests](sdlc-design-tests.md), in either order or both at once |
 
 ## What the skill does
@@ -41,8 +41,8 @@ are approved. [Back to the user guide](user-guide.md).
 
 ## What you do
 
-- Name the Feature or ChangeRequest (or accept the `ReqApproved` candidate the
-  skill proposes).
+- Name the Feature or ChangeRequest (or accept the candidate the skill
+  proposes).
 - Decide the design choices and say which `Todo` Tasks have started.
 - Read the full packet at the Design gate. Any edit reopens the gate.
 - Merge the pull request.
@@ -51,11 +51,12 @@ are approved. [Back to the user guide](user-guide.md).
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **The requirements are `ReqApproved`** and the architecture is `None` | Goes on | Answer the rounds |
-| **The requirements are `Draft` or `Proposed`** | Refuses: "ask its author to approve them with sdlc-write-spec" | Approve the requirements |
+| **The architecture is `None`**, the requirements agreed (`ReqApproved`) or a draft (`Draft`, `Proposed`) | Goes on. For a draft it says the design may have to be redone when the spec changes | Answer the rounds |
+| **The spec changed after the design** (`designBasedOn` older than `version`) | Designs again, in place: reads what changed since that version, rewrites the design, deletes `Planned` files the new design drops, restores changed files it no longer changes, and drops their links from `Todo` Tasks | Check the dropped and restored files at the Design gate |
+| **A `ReqApproved` target whose design is already current** | A short run: no new design, only the approval (a ChangeRequest also updates its Feature) | Approve the file-by-file change |
 | **The spec is in an unmerged draft** | Refuses and names the draft | Merge it |
 | **The Feature is already `Approved` or later** | Refuses: a change to the design is a new ChangeRequest | Run [sdlc-write-spec](sdlc-write-spec.md) |
-| **You did not name a key and several are `ReqApproved`** | One question that names the candidates | Pick one |
+| **You did not name a key and several are waiting** | One question that names the candidates | Pick one |
 | **The requirements contradict an accepted decision or a live contract** | Shows both sides with paths in the first round and asks how to proceed | Decide: change the requirement, supersede the decision, or accept the contract |
 | **The wiki and the code disagree** (drift) | Classifies the difference. If it is material, stops before the Intent gate, shows both sides and asks which is true | Decide which is true. A correction of the wiki is [sdlc-import](sdlc-import.md); a change of design is a ChangeRequest |
 | **An existing service could serve the need** | Reuses it, unless a different ownership or lifecycle boundary is proven. It never copies a concept to avoid changing it | Challenge the recommendation if you disagree |
@@ -63,7 +64,7 @@ are approved. [Back to the user guide](user-guide.md).
 | **A Requirement has a user interface** | Names which web or mobile frontend owns each screen. It never invents a frontend | Confirm |
 | **Tasks or TestSuites already exist** | Lists the ones the design makes out of date under "For other skills". It never edits them | Run [sdlc-plan-tasks](sdlc-plan-tasks.md) and [sdlc-design-tests](sdlc-design-tests.md) after the merge |
 | **A `Todo` Task has already been started** | Asks you to acknowledge each started Task separately. The wiki cannot know | Tell it which Tasks started |
-| **A ChangeRequest** | Fills its Delta and, in the **same** change, updates the target Feature's Requirements and Architecture to the new target | Check both |
+| **A ChangeRequest** | Fills its Delta. Once the ChangeRequest is `ReqApproved`, in the **same** change, it sets it `Approved` and updates the target Feature's Requirements and Architecture to the new target. While it is `Proposed`, the Feature is left alone | Check both |
 | **The design removes a Requirement** that user stories or TestCases list | Fixes those stories and cases in the same draft and shows the edits at the Design gate | Check the edits |
 | **A changed Requirement keeps its key** | Leaves its stories as they are | Nothing |
 | **Requirements are missing or unclear** | Does not invent them. Routes to [sdlc-write-spec](sdlc-write-spec.md) | Fix the requirements first |

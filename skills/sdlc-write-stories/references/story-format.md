@@ -14,6 +14,7 @@ type: UserStory
 title: Pay with a gift card
 description: A customer pays part or all of an order with a gift card.
 priority: P1
+basedOn: { version: 1, at: 2026-10-02 }
 ---
 
 # Pay with a gift card
@@ -47,6 +48,7 @@ A card is entered by its 16-digit number; scanning is out of scope.
 type: UserStory
 title: Pay with an expired gift card balance
 description: A customer learns that an expired card cannot pay.
+basedOn: { version: 1, at: 2026-10-05 }
 ---
 
 # Pay with an expired gift card balance
@@ -72,6 +74,8 @@ I can pay another way before I lose my cart.
 
 - `# Requirements` links the `overview.md` of the story's own folder. In a
   ChangeRequest, that is the ChangeRequest's copy, never the Feature's.
+- `basedOn` is the `version` and `versionDate` of the folder's Feature or
+  ChangeRequest that the story was written from.
 - Leave out `trackerKey` and `resource`; a person adds them after making the
   ticket. Leave out `# Notes` and `# Affects` when they have nothing to say.
 - `generated` and `verified` are written by `draft finish`; `# Changed by`

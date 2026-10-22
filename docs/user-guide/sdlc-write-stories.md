@@ -9,7 +9,7 @@ stories. [Back to the user guide](user-guide.md).
 |---|---|
 | **Who** | Business analyst, product owner |
 | **Use when** | You want the Requirements as user stories ("As a …, I want …, so that …") with acceptance criteria, or want existing stories regrouped. Stories are optional |
-| **Needs first** | The spec pull request is merged (`ReqApproved` or later). It runs **at the same time** as [sdlc-design-arch](sdlc-design-arch.md); neither waits for the other |
+| **Needs first** | The spec pull request is merged, draft or agreed. It runs **at the same time** as [sdlc-design-arch](sdlc-design-arch.md); neither waits for the other |
 | **Say** | "Break gift cards into user stories", "Write the user stories for CR-sms-notifications" |
 | **You get** | `STORY-…` files, one actor's goal each, with Given/When/Then criteria that cite the Requirements. Every Functional Requirement (that is not **Wont**) is in a story. At the end, each story is printed ready to paste into a ticket. Draft branch `wiki/stories-<Key>` |
 | **Next** | Merge the stories pull request and create the tickets. After the design is merged, [sdlc-plan-tasks](sdlc-plan-tasks.md) links each Task to its stories. If Tasks are already planned, run it again to link them |
@@ -44,8 +44,8 @@ testable unit.
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **The Feature is `ReqApproved`, `Approved` or `InDev`** (or a ChangeRequest `ReqApproved` or `Approved`) | Goes on | Answer the rounds |
-| **The requirements are still `Draft` or `Proposed`** | Refuses and routes to [sdlc-write-spec](sdlc-write-spec.md) | Approve the requirements first |
+| **The Feature is `Draft`, `ReqApproved`, `Approved` or `InDev`** (or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`) | Goes on. For a draft spec it says the stories may change with the spec | Answer the rounds |
+| **Stories were written from an older spec version** | Revises them only where the change touches them, and gives each the current `basedOn` | Check the revisions |
 | **The spec is in a draft that is not merged** | Refuses and names the draft | Merge it |
 | **The Feature is `Released` or `Deprecated`, or the ChangeRequest `Implemented` or `Rejected`** | Refuses. A change to a Released Feature is a ChangeRequest | Run [sdlc-write-spec](sdlc-write-spec.md) |
 | **Every Requirement is already in a story** and you ask for no change | Reports the stories and stops | Nothing |

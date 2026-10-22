@@ -1,6 +1,6 @@
 ---
 name: sdlc-write-spec
-description: Write and approve the requirements of a new Feature, or of a ChangeRequest to one existing Feature, in the project wiki - a PRD plus testable Requirements, marked ReqApproved when they are approved for design. Use when defining a new capability, turning a request or brief into requirements, writing a PRD, recording a bug, security, performance or refactor change to an existing feature, or revising requirements that are not designed yet. Not for wiki questions, document conversion, architecture, tasks, tests or code.
+description: Write and approve the requirements of a new Feature, or of a ChangeRequest to one existing Feature, in the project wiki - a PRD plus testable Requirements with a version, kept as a draft or marked ReqApproved once they are agreed; either can be merged, and design, stories, tasks and tests may start from a draft. Use when defining a new capability, turning a request or brief into requirements, writing a PRD, recording a bug, security, performance or refactor change to an existing feature, or revising requirements that are not yet Approved. Not for wiki questions, document conversion, architecture, tasks, tests or code.
 ---
 
 # Write a spec
@@ -8,12 +8,19 @@ description: Write and approve the requirements of a new Feature, or of a Change
 This skill is the first lifecycle step. Its output is exactly one of:
 
 1. A **Feature**: `wiki/<app>/features/FEAT-<name>/` with `overview.md`
-   (Requirements, `# Architecture` `None`) and `log.md`, and its PRD, the
-   Reference `wiki/<app>/references/REF-<name>-prd/`.
+   (Requirements, `# Architecture` `None` until it is designed) and `log.md`,
+   and its PRD, the Reference `wiki/<app>/references/REF-<name>-prd/`.
 2. A **ChangeRequest** to one existing Feature:
    `wiki/<app>/change-requests/CR-<name>/` with `overview.md` (Requirements,
-   `# Delta` `None — pending architecture`) and `log.md`, and its change PRD,
-   the Reference `wiki/<app>/references/REF-<name>-change-prd/`.
+   `# Delta` `None — pending architecture` until it is designed) and
+   `log.md`, and its change PRD, the Reference
+   `wiki/<app>/references/REF-<name>-change-prd/`.
+
+Each has a `version`, and the status says whether the Requirements are agreed
+(`ReqApproved`) or still a draft (`Draft` for a Feature, `Proposed` for a
+ChangeRequest). Both can be merged. The status is not a gate: architecture,
+stories, Tasks and TestSuites may be written from a draft, and each records
+the version it was written from.
 
 Its draft prefix is `spec-`: the draft for `FEAT-coupons` is
 `wiki/spec-FEAT-coupons`.
@@ -34,8 +41,8 @@ Other requests go elsewhere; say so and stop:
 | A question about the wiki, a list of features, an architecture view | `sdlc-ask-wiki` |
 | A PDF, Word, slide or other non-text document as input | `sdlc-convert-doc` first, then this skill |
 | A document, code or tests that describe something already built and running | `sdlc-import` |
-| Architecture for approved requirements | `sdlc-design-arch` |
-| User stories, a story breakdown | `sdlc-write-stories`, once the Requirements are `ReqApproved` |
+| Architecture | `sdlc-design-arch`, from a draft or agreed spec |
+| User stories, a story breakdown | `sdlc-write-stories`, from a draft or agreed spec |
 | Build tasks, or test design | `sdlc-plan-tasks`, `sdlc-design-tests` |
 | An Application that does not exist yet | `sdlc-setup-wiki` ("add application `<key>`") |
 | The code of a planned Task | `sdlc-build-task` |
@@ -72,7 +79,7 @@ Partial word overlap may prompt a question but never decides.
 |---|---|
 | No Feature owns the capability | New Feature, status `Draft` |
 | One Feature owns it and is `Draft` | Revise that Feature |
-| One Feature owns it and is `ReqApproved` | Revise that Feature; it goes back to `Draft` until approved again. Say so in the first round |
+| One Feature owns it and is `ReqApproved` | Revise that Feature; it goes back to `Draft` until agreed again. Say so in the first round |
 | One Feature owns it and is `Approved` or later | New ChangeRequest on that Feature, status `Proposed` |
 | The request revises an open ChangeRequest that is `Proposed` or `ReqApproved` | Revise that ChangeRequest; a `ReqApproved` one goes back to `Proposed` |
 | The request revises an `Approved` ChangeRequest | New ChangeRequest |
@@ -153,9 +160,11 @@ Feature's or ChangeRequest's folder, and the PRD's Reference folder:
 only a summary, then the Run plan, and ask two questions:
 
 1. Is the PRD approved as written?
-2. Are these requirements **approved for design** (`ReqApproved`), or a draft
-   to keep working on (`Draft` for a Feature, `Proposed` for a
-   ChangeRequest)?
+2. Are these requirements **agreed** (`ReqApproved`), or a draft to keep
+   working on (`Draft` for a Feature, `Proposed` for a ChangeRequest)?
+   Recommend the draft unless the person said they are agreed. Say that
+   either one can be merged, and that the architecture, stories, Tasks and
+   tests can start from a draft.
 
 Make any edit to the PRD in its file; it needs the gate again. The person's
 approval of the PRD is the approval the Reference needs.
@@ -171,8 +180,10 @@ In the draft worktree, under `wiki/<app>/`:
 type: Feature
 title: Gift cards
 description: Let a customer pay with a gift card.
-status: ReqApproved
+status: Draft
 ownerTeam: checkout
+version: 1
+versionDate: 2026-10-02
 priority: P1
 ---
 
@@ -196,10 +207,24 @@ None
 * [REF-gift-cards-prd](../../references/REF-gift-cards-prd/overview.md) — the PRD these Requirements were written from.
 ```
 
-Keep `# Architecture` `None`. Write every Requirement out in full; none says
-"see the PRD". Link other References that apply to the Feature under
-`# References` too, with a note on what to take from each. In a revision, keep everything you were not asked
-to change, and set the status the Design gate decided.
+A new Feature has `# Architecture` `None`. Write every Requirement out in
+full; none says "see the PRD". Link other References that apply to the
+Feature under `# References` too, with a note on what to take from each. In a
+revision, keep everything you were not asked to change, and set the status
+the Design gate decided. Never touch `# Architecture`, `# Delta` or
+`designBasedOn`: they are `sdlc-design-arch`'s.
+
+**Version.** A new Feature or ChangeRequest has `version: 1` and
+`versionDate` today. A revision that changes a Requirement or the PRD adds 1
+to `version` and sets `versionDate` to today; a revision that only changes
+the status keeps both.
+
+**Approved.** The Design gate's answer is the status, with one exception: a
+**Feature** marked `ReqApproved` whose `designBasedOn` names its version
+after this run (the architecture was designed from exactly these
+Requirements) becomes `Approved` instead. Say so at the Design gate. A
+ChangeRequest never becomes `Approved` here: approving it also rewrites its
+Feature, which is `sdlc-design-arch`'s.
 
 **Stories after a removed Requirement.** A revision that removes a
 Requirement a user story in the same folder lists fixes those stories in the
@@ -213,11 +238,12 @@ Design gate and log them.
 **New or revised ChangeRequest** `change-requests/CR-<name>/`: frontmatter
 `type: ChangeRequest`, `title`, `description`, `status` (`Proposed` or
 `ReqApproved`), `changeType`, `riskLevel`, optional `priority`,
-`requestedBy`; then the headings of `change-request.md` in order:
+`requestedBy`, `version`, `versionDate`; then the headings of `change-request.md` in order:
 `# Changes` (one link to the Feature's `overview.md`), `# Reason`,
 `# Requirements` (added and changed ones only), `# Delta` with
-`None — pending architecture`, and `# References` linking
-`REF-<name>-change-prd`. Never edit the target Feature.
+`None — pending architecture` (a revision keeps the Delta it has), and
+`# References` linking `REF-<name>-change-prd`. Never edit the target
+Feature.
 
 **The PRD**, a Reference folder `references/REF-<name>-prd/` for a Feature or
 `references/REF-<name>-change-prd/` for a ChangeRequest, as `reference.md`
@@ -257,7 +283,7 @@ Append-only history. Newest first.
 
 ## 2026-10-02
 
-* **Spec**: Wrote the PRD and 4 Requirements; status ReqApproved. Written by an AI model with sdlc-write-spec.
+* **Spec**: Wrote the PRD and 4 Requirements; version 1, status Draft. Written by an AI model with sdlc-write-spec.
 ```
 
 Do not write `generated`, `verified` or any `index.md`: `draft finish` does.
@@ -277,15 +303,35 @@ In the self review, also check that:
 - the PRD's content file was not changed after the Design gate, and the
   Feature or ChangeRequest links its Reference under `# References`;
 - a ChangeRequest left the target Feature unchanged, and its `# Delta` is
-  `None — pending architecture`;
-- the status is the one the Design gate decided;
+  `None — pending architecture` unless it was already designed;
+- `# Architecture`, `# Delta` and `designBasedOn` are as they were;
+- `version` went up by exactly 1 when a Requirement or the PRD changed, and
+  not otherwise, with `versionDate` today;
+- the status is the one the Design gate decided, or `Approved` by the rule
+  above;
 - no user story links a removed Requirement.
 
 Commit message: `spec(<Key>): <title>`, for example
-`spec(FEAT-gift-cards): Gift cards`. In the summary, "Next" is
-"`sdlc-design-arch` after the merge; `sdlc-write-stories` at the same time if
-you want user stories" when the status is `ReqApproved`; otherwise it says
-what is still open.
+`spec(FEAT-gift-cards): Gift cards`.
+
+**What the new version makes outdated.** After a revision that raised the
+version, run `$T outdated --feature <Key>` (or `--change <Key>`) in the
+worktree. It lists the design, stories, Tasks and TestSuites written from an
+older version. Put them under "For other skills" in the summary, each with
+the skill that rewrites it (`sdlc-design-arch`, `sdlc-write-stories`,
+`sdlc-plan-tasks`, `sdlc-design-tests`), and say that `sdlc-edit-wiki` can
+record one as still current when the change does not touch it. Nothing is
+stored: the list empties as those steps run.
+
+"Next" in the summary, by the status and the design:
+
+| After this run | Next |
+|---|---|
+| Not designed yet | "`sdlc-design-arch` after the merge, even while the Requirements are a draft; `sdlc-write-stories` at the same time if you want user stories" |
+| Designed from an older version | "`sdlc-design-arch` again for the new version" |
+| A Feature that became `Approved` | "`sdlc-plan-tasks` and `sdlc-design-tests` after the merge, if not done yet" |
+| A ChangeRequest `ReqApproved` whose Delta is current | "`sdlc-design-arch` again to approve it: no redesign, it updates the Feature and sets `Approved`" |
+| A draft that is designed and current | "Mark the Requirements agreed with this skill when they are; the Tasks can be built but not closed until then" |
 
 ## Done when
 

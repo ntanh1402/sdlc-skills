@@ -52,6 +52,8 @@ Refuse, as a refusal and not a question, when:
 |---|---|
 | The Task is `Done` | It is already closed; name its `mergeCommitSha` when it has one |
 | The Task is not on the default branch | Name the draft that holds it and ask to merge it first |
+| The parent is not agreed and designed: a Feature that is not `Approved` or `InDev`, or a ChangeRequest that is not `Approved` | The Requirements are not agreed yet, so the work cannot be recorded as done. Name the way out: agree the Requirements with `sdlc-write-spec`, then `sdlc-design-arch` when it says the design must be redone or approved. The Task stays `Todo` with its code merged until then |
+| `$T outdated` lists the Task: its `basedOn` is older than the parent's `version` | It was planned from an older spec. Name the way out: `sdlc-plan-tasks` checks it against the new version (and adds a Task for any difference), or `sdlc-edit-wiki` records that a person confirmed it is still current |
 
 When the user gave no code folder, ask for it once. Never guess it; "this
 folder" is an answer.
@@ -192,6 +194,8 @@ that `sdlc-edit-wiki` sets the Feature `Released` when it ships.
 - The merged commit was found by its trailer, or given by the person and
   checked to be on the remote's default branch.
 - The person answered whether the change was reviewed.
+- The parent was `Approved` (or a Feature `InDev`), and the Task's `basedOn`
+  named the parent's current version.
 - The wiki changes were approved file by file before the draft was started.
 - `draft finish` was `ok`, the change set was approved, and `draft commit`
   reported the branch.

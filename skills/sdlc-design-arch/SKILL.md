@@ -1,19 +1,29 @@
 ---
 name: sdlc-design-arch
-description: Design and approve the target architecture of a Feature or ChangeRequest whose requirements are approved (ReqApproved) in the project wiki - the services, frontends, endpoints, events, data and externals it needs, their contracts, Mermaid diagrams, traceability and architecture decisions - and mark what is not built yet. Use when approved requirements need technical design, impact mapping, interface contracts or ADRs. Not for writing requirements, viewing an existing architecture, tasks, tests or code.
+description: Design and approve the target architecture of a Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - the services, frontends, endpoints, events, data and externals it needs, their contracts, Mermaid diagrams, traceability and architecture decisions - and mark what is not built yet. Use when requirements need technical design, impact mapping, interface contracts or ADRs, when a spec changed after its design, or to approve a ChangeRequest whose design is current. Not for writing requirements, viewing an existing architecture, tasks, tests or code.
 ---
 
 # Design the architecture
 
-This skill is the second lifecycle step. It takes a Feature or ChangeRequest
-with status `ReqApproved` and writes its approved target design:
+This skill is the second lifecycle step. It takes a Feature or
+ChangeRequest whose Requirements are a draft (`Draft`, `Proposed`) or agreed
+(`ReqApproved`), and writes its approved target design:
 
-- **Feature**: `# Architecture` filled, status `Approved`.
-- **ChangeRequest**, in one change: `# Delta` filled, status `Approved`, and
+- **Feature**: `# Architecture` filled and `designBasedOn` set to the
+  Feature's version. The status becomes `Approved` only when the Feature is
+  `ReqApproved`; a `Draft` Feature stays `Draft`.
+- **ChangeRequest**: `# Delta` filled and `designBasedOn` set. When the
+  ChangeRequest is `ReqApproved`, in the same change: status `Approved`, and
   the target Feature's Requirements and Architecture updated to the new
-  target.
+  target. While it is `Proposed`, the Feature is not touched: it shows only
+  agreed changes.
 - In both: every new or changed Design concept file written as its target,
   with a pending entry; decisions in `wiki/<app>/decisions/ADR-<name>.md`.
+
+A target designed before its Requirements were agreed may be designed again
+after the spec changes: the design is revised in place. A `ReqApproved`
+target whose design is already current needs no design at all: a short run
+approves it (section 1, `APPROVE`).
 
 Its draft prefix is `arch-`: the draft for `CR-sms-alerts` is
 `wiki/arch-CR-sms-alerts`.
@@ -42,19 +52,26 @@ When "design this" could mean several of these, ask one routing question.
 ## 1. Look up: readiness and what exists
 
 Accept one `FEAT-*` or `CR-*` key; if the user named none, find the
-`ReqApproved` candidates. Read it on the default branch and classify:
+candidates: Features `Draft` or `ReqApproved`, ChangeRequests `Proposed` or
+`ReqApproved`, that are not designed or whose design is outdated. Read it on
+the default branch and classify:
 
 | State | When | Do |
 |---|---|---|
-| `READY` | `ReqApproved`, and Architecture (Feature) or Delta (ChangeRequest) is `None` | Go on |
-| `NEEDS_SPEC` | `Draft` or `Proposed` | Stop: "The requirements of <Key> are not approved for design; ask its author to approve them with sdlc-write-spec." |
+| `READY` | A Feature `Draft` or `ReqApproved`, or a ChangeRequest `Proposed` or `ReqApproved`, whose Architecture (Feature) or Delta (ChangeRequest) is `None` | Go on |
+| `REDESIGN` | The same statuses, already designed, and `designBasedOn` names an older version than `version`, or the person asks to change the design | Go on, revising the design in place (section 5, "A design written again") |
+| `APPROVE` | `ReqApproved`, designed, and `designBasedOn` names the current version | The short run of section 7: no new design |
 | `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft (write protocol, section 3) |
 | `ALREADY_DESIGNED` | `Approved` or later | Stop: a change to the design is a new ChangeRequest, written with `sdlc-write-spec` |
 | `AMBIGUOUS` | Several candidates | One question that names them; write nothing until it is answered |
 | `CONFLICT` | The requirements contradict an accepted decision or a live contract | Show both, with paths, in the first round and ask how to proceed |
 
-Every state but `READY`, `AMBIGUOUS` and `CONFLICT` is a refusal, not a
-question.
+`NOT_MERGED` and `ALREADY_DESIGNED` are refusals, not questions.
+
+A draft spec is designed like an agreed one. Say in the first round that the
+Requirements are still a draft, so the design may have to be done again when
+they change, and that the target becomes `Approved` only once they are
+agreed.
 
 Then read the PRD and every Reference the Feature or ChangeRequest links,
 every Requirement, the target Feature's current Architecture (for a
@@ -72,7 +89,11 @@ the skill that settles it. It is a change another skill owns (`flow.md`,
 section 4).
 
 Also read the Tasks and TestSuites that already exist for the Feature: the
-design may make them out of date.
+design may make them out of date. For `REDESIGN`, read what changed in the
+spec since the version the design was made from (`git log -p` on the
+`overview.md` and the PRD's content file), and run
+`$T outdated --feature <Key>` (or `--change <Key>`): it lists the stories,
+Tasks and TestSuites also written from an older version.
 
 ## 2. Questions and the Intent gate
 
@@ -180,18 +201,14 @@ the traceability, so a run that stops after it can be resumed from the file.
   order (`## Context and constraints`, `## High-level architecture`,
   `## Services`, `## Frontends` only with a user interface,
   `## Runtime sequences`, `## Decisions`, `## Traceability`). Set
-  `status: Approved`.
+  `designBasedOn: { version: <its version>, at: <its versionDate> }`. Set
+  `status: Approved` only when it is `ReqApproved`.
 - **ChangeRequest**: fill `# Delta` (`## Target delta` with every concept
   qualified `new`, `modified` or `removed`, `## Runtime sequences`,
-  `## Decisions`, `## Traceability`) and set `status: Approved`. In the same
-  draft, update the target Feature's Requirements (the Feature's copy becomes
-  the current text) and its `# Architecture` to the new target. When that
-  removes a Requirement a Feature user story lists, fix those stories in the
-  same draft as the last rule of `user-story.md` says, list them in the Run
-  plan and show the edits at the Design gate. When it removes a Requirement
-  that TestCases cover, fix those cases the same way, as the last rule of
-  `test-case.md` says. A changed Requirement keeps its
-  key: its stories stay as they are.
+  `## Decisions`, `## Traceability`) and set `designBasedOn` the same way.
+  When it is `ReqApproved`, also apply it (section 7, "Applying a
+  ChangeRequest"). While it is `Proposed`, leave its status and the target
+  Feature as they are.
 - **Design concepts**: write each new one as the full target with
   `status: Planned`; rewrite each changed one to the target with
   `status: Modifying`; set each removed one to `status: Removing` and keep its
@@ -210,7 +227,23 @@ the traceability, so a run that stops after it can be resumed from the file.
 - **Decisions**: `decisions/ADR-<name>.md` with `status: Accepted`, linked
   from `## Decisions`.
 - **Logs**: an entry in the `log.md` of every concept folder you change, for
-  example `* **Target design**: Designed the SMS channel for CR-sms-alerts. Written by an AI model with sdlc-design-arch.`
+  example `* **Target design**: Designed the SMS channel for CR-sms-alerts from version 2. Written by an AI model with sdlc-design-arch.`
+
+**A design written again** (`REDESIGN`). Rewrite `# Architecture` or
+`# Delta` to the new target and set `designBasedOn` to the current version.
+For each Design concept:
+
+- still in the design: rewrite it to the new target; its pending entry stays;
+- new to the design: write it as above, with its pending entry;
+- dropped from the design: remove this target's pending entry. A `Planned`
+  file with no entry left is deleted: it was never built. A `Modifying` or
+  `Removing` file with no entry left gets back the text it had before this
+  target's first design (`git log` on the file) and its live status;
+- a `Todo` Task of the target that plans a dropped concept loses that link
+  from its `# Planned scope`. It is the only edit this skill makes to a Task;
+  list each one under `## For other skills` (`sdlc-plan-tasks` replans it).
+
+Show the dropped and restored files at the Design gate.
 
 ## 6. Self review, finish and commit
 
@@ -222,11 +255,42 @@ review, also check by reading that:
 - every concept in `## Target delta` (or in `## Services` and `## Frontends`
   for a new Feature) exists and has its pending entry;
 - no Task or TestSuite was edited, and no TestCase except by the removed-
-  Requirement fix.
+  Requirement fix, beyond the dropped links of a redesign;
+- `designBasedOn` names the target's current version and `versionDate`;
+- the status is `Approved` exactly when the target is `ReqApproved`, and the
+  target Feature of a ChangeRequest was changed only when the ChangeRequest
+  became `Approved`.
 
 Commit message: `arch(<Key>): <title>`. In the summary, "For other skills"
-lists the Tasks and TestSuites reported out of date, and "Next" is
-"`sdlc-plan-tasks` and `sdlc-design-tests` after the merge".
+lists the Tasks, stories and TestSuites reported out of date, and "Next" is
+"`sdlc-plan-tasks` and `sdlc-design-tests` after the merge". When the target
+is still a draft, add: "the Tasks can be built, but not closed until the
+Requirements are agreed with `sdlc-write-spec`".
+
+## 7. Approving a design that is current
+
+**Applying a ChangeRequest.** When a ChangeRequest becomes `Approved`, in
+the same draft: set `status: Approved`, and update the target Feature's
+Requirements (the Feature's copy becomes the current text) and its
+`# Architecture` to the new target. The Feature's `version` does not change:
+the ChangeRequest has its own. When that removes a Requirement a Feature user
+story lists, fix those stories in the same draft as the last rule of
+`user-story.md` says, list them in the Run plan and show the edits at the
+Design gate. When it removes a Requirement that TestCases cover, fix those
+cases the same way, as the last rule of `test-case.md` says. A changed
+Requirement keeps its key: its stories stay as they are.
+
+**The short run** (`APPROVE`): a `ReqApproved` target whose design was made
+from its current version. Use the short form of `references/flow.md`
+section 8 in the draft `arch-<Key>`. The one stop shows, file by file:
+
+- a Feature: `status: Approved`, and nothing else;
+- a ChangeRequest: `status: Approved` and the Feature update above.
+
+Then the Change-set gate and the commit, `arch(<Key>): approve`. A
+ChangeRequest whose Delta no longer fits the target Feature (another
+ChangeRequest changed it meanwhile) is a `REDESIGN`, not an approval: say so
+and go back to section 2.
 
 ## Done when
 
@@ -238,6 +302,8 @@ lists the Tasks and TestSuites reported out of date, and "Next" is
   explicit.
 - Every material one-way choice has an accepted decision.
 - Every changed concept has its target status and pending entry.
+- `designBasedOn` names the version designed from, and the status is
+  `Approved` only for a target whose Requirements are agreed.
 - Downstream Tasks and TestSuites were confirmed current or reported out of
   date.
 - The self review found nothing it could not fix, or the person accepted what

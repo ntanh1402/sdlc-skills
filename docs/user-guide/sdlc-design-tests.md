@@ -8,10 +8,10 @@ code. [Back to the user guide](user-guide.md).
 | | |
 |---|---|
 | **Who** | QA (and developers, security or performance roles) |
-| **Use when** | An `Approved` Feature or ChangeRequest needs test design: unit, integration, end-to-end, load or security |
+| **Use when** | A designed Feature or ChangeRequest, draft or agreed, needs test design (unit, integration, end-to-end, load or security), or its spec changed after the tests were designed |
 | **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-plan-tasks](sdlc-plan-tasks.md) |
 | **Say** | "Design the tests for gift cards" |
-| **You get** | TestSuites (`TS-…`) with one TestCase (`TC-…`) per file. Each case has its risk, concrete data, steps and validations, and together they cover every Requirement, contract and failure branch. Draft branch `wiki/tests-<Key>` |
+| **You get** | TestSuites (`TS-…`) with one TestCase (`TC-…`) per file. Each case has its risk, numbered test data (`No | Input | Value`), steps and validations, with the request and the expected response of each step that calls an API or publishes a message, and together they cover every Requirement, contract and failure branch. Each suite records the spec version it was designed from (`basedOn`) and gets a `checklist.csv` (`No,Title,Description,Covers,Purpose`, highest risk first) written by the tool. Draft branch `wiki/tests-<Key>` |
 | **Next** | Merge the pull request. Your team writes and runs the test code; then [sdlc-import](sdlc-import.md) on that code marks the suite `Implemented` |
 
 ## What the skill does
@@ -45,8 +45,10 @@ system can follow it.
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **The design is `Approved`** (or an `InDev` Feature) | Goes on | Answer the rounds |
-| **The design is not approved** | Refuses and routes to [sdlc-design-arch](sdlc-design-arch.md) | Design first |
+| **The design is merged**, whatever the requirement status | Goes on. For a draft spec it says the cases may change with the spec | Answer the rounds |
+| **A suite was designed from an older spec version** | Revises the cases the change affects and adds the ones it needs; leaves the others | Check the revised cases at the Design gate |
+| **The design itself is behind the spec** | Says so and recommends [sdlc-design-arch](sdlc-design-arch.md) first | Decide whether to go on |
+| **There is no design yet** | Refuses and routes to [sdlc-design-arch](sdlc-design-arch.md) | Design first |
 | **The design is in an unmerged draft** | Refuses and names the draft | Merge it |
 | **The Feature or ChangeRequest is closed** | Refuses. A change to a Released Feature is a ChangeRequest | Run [sdlc-write-spec](sdlc-write-spec.md) |
 | **You decline a suite type the evidence requires** | Allows it only if you explicitly accept the residual risk, and records that in the suite's log | Say so explicitly, or keep the type |

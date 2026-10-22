@@ -1,4 +1,4 @@
 interface:
   display_name: "SDLC Design Architecture"
-  short_description: "Design target architecture from approved requirements"
-  default_prompt: "Use $sdlc-design-arch to design the target architecture of a ReqApproved Feature or ChangeRequest."
+  short_description: "Design the target architecture of a spec"
+  default_prompt: "Use $sdlc-design-arch to design the target architecture of a Feature or ChangeRequest."

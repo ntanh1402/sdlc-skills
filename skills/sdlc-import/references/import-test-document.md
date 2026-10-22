@@ -35,7 +35,10 @@ Rules:
   "Could not determine". Never complete it by guessing.
 - **`# Steps`** keeps the document's steps, one row each, with the expected
   result and what is inspected. `# Test data` gives the document's concrete
-  values.
+  values as a `No | Input | Value` table numbered from 1. A step that calls
+  an API or publishes a message gets its `### Step <n>` block with the
+  request and the expected response, as `test-case.md` says, when the
+  document gives them.
 - **`risk`** is the document's priority when it has one, mapped to `low`,
   `med`, `high` or `critical` and confirmed by the person; otherwise proposed
   and confirmed.

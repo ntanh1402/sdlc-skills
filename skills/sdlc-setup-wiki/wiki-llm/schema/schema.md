@@ -174,6 +174,40 @@ Closing the last Task has three more consequences, which the tool checks:
 - a Feature in `InDev` whose Tasks are all `Done` is reported as a warning
   (`pending.feature-built`): a person sets it `Released` when it ships.
 
+## Spec versions
+
+A Feature or ChangeRequest may be designed, planned, tested and told as
+stories before its Requirements are agreed. To show what must be redone when
+the Requirements change, each one carries a spec version, and everything
+written from it records the version it read:
+
+| Field | On | Holds |
+|---|---|---|
+| `version`, `versionDate` | Feature, ChangeRequest | the revision of its Requirements and PRD, from 1, and the day it was written |
+| `designBasedOn` | Feature, ChangeRequest | `{ version, at }` that `# Architecture` / `# Delta` was designed from |
+| `basedOn` | Task, UserStory | `{ version, at }` of its own folder's Feature or ChangeRequest |
+| `basedOn` | TestSuite | `{ id, version, at }` for each target under `# Verifies` |
+
+`at` copies the target's `versionDate` for that version. The version goes up
+when the Requirements or the PRD change, never for a wording fix, and never
+when an approved ChangeRequest updates its Feature: the ChangeRequest has a
+version of its own.
+
+The tool checks that:
+
+- a record never names a version above the target's (`basis.ahead`), and a
+  record of the current version has its date (`basis.date`);
+- an `Approved` target was designed from its current version
+  (`basis.approved`);
+- each TestSuite has one record per target it verifies (`basis.target`);
+- a design, story, TestSuite or Task that is not `Done` written from an older
+  version is reported as a warning (`basis.outdated`). It is cleared by
+  writing it again from the current version, or by a person confirming it is
+  still current, which updates the record.
+
+`wiki_llm.py outdated --feature <key>` (or `--change <key>`) lists what is
+outdated for one target.
+
 ## Corrections
 
 A correction changes the record, not the system: the file was wrong about what

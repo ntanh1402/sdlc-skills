@@ -61,10 +61,18 @@ When several Applications have a Task with that key, ask which.
 |---|---|
 | The Task is not on the default branch | Name the draft that holds it (`git branch -a --list 'wiki/tasks-*'`) and ask to merge it first; with no such draft, `sdlc-plan-tasks` |
 | The Task is `Done` | Its code is merged. A further change is a new Task or a ChangeRequest |
-| The parent Feature is not `Approved` or `InDev`, or the parent ChangeRequest is not `Approved` | The design is not approved, or the work is closed |
+| The parent Feature is `Released` or `Deprecated`, or the parent ChangeRequest is `Implemented` or `Rejected` | The work is closed |
 | The code folder is not a git repository | `git -C "$SRC" rev-parse --show-toplevel` prints nothing |
 
 A refusal is not a question.
+
+**A spec that is not agreed yet.** When the parent is not `Approved` (a
+Feature `Draft` or `ReqApproved`, a ChangeRequest `Proposed` or
+`ReqApproved`), or `$T outdated` lists this Task (its `basedOn` is older than
+the parent's `version`), say so in the first round and go on only when the
+person says so: the Requirements may still change, and `sdlc-close-task`
+records the Task as done only once the parent is `Approved` and the Task's
+`basedOn` is current.
 
 **A blocker that is not `Done`.** When a Task under `# Blocked by` is `Todo`,
 say so in the first round and go on only when the person says so: its code

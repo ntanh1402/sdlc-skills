@@ -1,13 +1,13 @@
 ---
 name: sdlc-write-stories
-description: Break the approved Requirements of a Feature or ChangeRequest in the project wiki into user stories - one actor goal each, "As a … I want … so that …", with Given/When/Then acceptance criteria that cite the Requirements, and a paste-ready copy for the tracker. Use when a business analyst wants user stories, a story breakdown or story acceptance criteria for requirements that are approved for design, or wants existing stories regrouped. Not for writing or changing Requirements, architecture, tasks, test design, tracker sync or code.
+description: Break the Requirements of a Feature or ChangeRequest in the project wiki into user stories, while they are a draft or once they are agreed - one actor goal each, "As a … I want … so that …", with Given/When/Then acceptance criteria that cite the Requirements, and a paste-ready copy for the tracker. Use when a business analyst wants user stories, a story breakdown or story acceptance criteria for requirements, wants existing stories regrouped, or the spec changed after the stories were written. Not for writing or changing Requirements, architecture, tasks, test design, tracker sync or code.
 ---
 
 # Write the user stories
 
-This skill is a lifecycle step after the Requirements are approved. It runs
-at the same time as `sdlc-design-arch` on the same target; neither waits for
-the other. It takes a Feature or ChangeRequest and writes `STORY-<name>.md`
+This skill is a lifecycle step after the Requirements are written; they may
+still be a draft. It runs at the same time as `sdlc-design-arch` on the same
+target; neither waits for the other. It takes a Feature or ChangeRequest and writes `STORY-<name>.md`
 files into its folder, so that every Functional Requirement that is not
 **Wont** is listed by at least one story.
 
@@ -46,15 +46,21 @@ behaviour). Read it on the default branch:
 
 | State | When | Do |
 |---|---|---|
-| `READY` | A Feature `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `ReqApproved` or `Approved`; and `coverage stories` reports Requirements, or the person asks to revise the stories | Go on |
-| `NEEDS_SPEC` | `Draft` or `Proposed` | Stop: route to `sdlc-write-spec` |
+| `READY` | A Feature `Draft`, `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`; and `coverage stories` reports Requirements, `outdated` lists a story, or the person asks to revise the stories | Go on |
 | `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft |
 | `CLOSED` | A Feature `Released` or `Deprecated`, or a ChangeRequest `Implemented` or `Rejected` | Stop: a change to a Released Feature goes through a ChangeRequest (`sdlc-write-spec`) |
-| `ALREADY_CURRENT` | `coverage stories` reports nothing and the person asks for nothing to change | Report the stories and stop |
+| `ALREADY_CURRENT` | `coverage stories` and `outdated` report nothing and the person asks for nothing to change | Report the stories and stop |
 
 ```bash
 $T coverage stories --feature FEAT-coupons      # or --change CR-sms-alerts
+$T outdated --feature FEAT-coupons              # stories written from an older spec version
 ```
+
+When the Requirements are still a draft, say so in the first round: the
+stories may have to change when the spec does. A story `outdated` lists was
+written from an older version: compare its Requirements at that version with
+the current ones (`git log -p` on the `overview.md`) and revise it only where
+the change touches it.
 
 Every state but `READY` is a refusal, not a question.
 
@@ -118,8 +124,10 @@ summary, then the coverage matrix, then the Run plan. Ask for approval.
 ## 4. Write
 
 In the draft worktree, in the Feature's or ChangeRequest's folder, write each
-story as `STORY-<feature-name>-<name>.md`. In a revision, keep each existing
-story's key. Delete a story whose Requirements were all removed, say why in
+story as `STORY-<feature-name>-<name>.md`, with
+`basedOn: { version: <the folder's Feature or ChangeRequest version>, at: <its versionDate> }`.
+In a revision, keep each existing story's key, and give each story you
+revise, or checked against the new version, the current `basedOn`. Delete a story whose Requirements were all removed, say why in
 the log, and drop the links to it from every Task's `# Stories` and every
 ChangeRequest story's `# Affects`, with a log entry in each folder changed. Add an entry to the folder's `log.md`, for example
 `* **Stories**: Wrote 3 user stories. Written by an AI model with sdlc-write-stories.`
@@ -148,7 +156,8 @@ review, also check that:
 - each criterion has real values and cites only Requirements its story
   lists;
 - no file outside the story files and the folder's `log.md` changed, except
-  a dropped link to a deleted story and its log entry.
+  a dropped link to a deleted story and its log entry;
+- every story of the folder has the current `basedOn`.
 
 Commit message: `stories(<Key>): <n> user stories`, for example
 `stories(FEAT-gift-cards): 3 user stories`.
@@ -156,8 +165,8 @@ Commit message: `stories(<Key>): <n> user stories`, for example
 Before the summary, print the paste-ready copy of each story added or
 changed, as `references/paste-format.md` shows. It is not written to the
 wiki. Then the summary. "Next" is "`sdlc-plan-tasks` once the design is
-merged"; when the folder already has Tasks, "run `sdlc-plan-tasks` again to
-link the stories".
+merged, even while the Requirements are a draft"; when the folder already
+has Tasks, "run `sdlc-plan-tasks` again to link the stories".
 
 ## Done when
 

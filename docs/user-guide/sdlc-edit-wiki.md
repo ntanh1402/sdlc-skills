@@ -21,12 +21,13 @@ stops once to show the exact old and new text, then once for the change set.
 
 | Allowed | Rule |
 |---|---|
-| A typo or wording fix in any file a person writes | The meaning of a contract, Requirement or acceptance item does not change |
+| A typo or wording fix in any file a person writes | The meaning of a contract, Requirement or acceptance item does not change, so the spec `version` stays |
 | `glossary.md` and `conventions.md` of the Application | Terms, roles and rules, added, changed or removed |
 | A Feature's status to `Released` or `Deprecated` | `Released` only from `InDev`, with the release time you give. Only when none of its Tasks is `Todo` and no design item has a pending entry for it |
 | A Task's `trackerKey`, `resource` and `prUrl` | The ticket and pull request you followed by hand. Never its status |
 | A user story's `trackerKey` and `resource` | The ticket you made from the story's paste-ready copy |
 | A `verified` stamp | You say you read the file and it is right |
+| Still current for a new spec version | You say a file the wiki lists as outdated needs no change for the new version. Its `basedOn` (or `designBasedOn`) moves to the current version, and the log names you |
 | A new Reference | A page, a short document or a code location at a commit or tag. You approve the whole folder |
 | A `# References` link on any file | It links a Reference of the same Application, with a note on what to take from it. It changes no status |
 | A Reference's status to `Deprecated` | You say it no longer applies. It is never deleted |

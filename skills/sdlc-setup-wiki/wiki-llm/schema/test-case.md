@@ -36,7 +36,7 @@ One test, written so a tester who did not design the system can run it.
 | `# Covers` | required | author | Requirement, any Design type, ArchitectureDecision (1 or more) |  |  |
 | `# Purpose` | required | author |  |  |  |
 | `# Preconditions` | required | author |  |  |  |
-| `# Test data` | required | author |  |  |  |
+| `# Test data` | required | author |  |  | table with columns `No`, `Input`, `Value`; `No` counts 1, 2, 3, … in order |
 | `# Steps` | required | author |  |  | table with columns `Step`, `Action`, `Expected result`, `Validation` |
 | `# Postconditions and cleanup` | required | author |  |  |  |
 | `# References` | optional | author | Reference (any number) |  |  |
@@ -49,7 +49,14 @@ One test, written so a tester who did not design the system can run it.
   Design concepts.
 - `# Steps` is a `Step | Action | Expected result | Validation` table. Every step
   has an observable expected result and names what is inspected to confirm it.
-- `# Test data` gives concrete values, including boundary values.
+- A step that calls an API or publishes to a channel says "Request: see Step
+  <n>" in its Action cell. A `### Step <n>` block under the table then holds
+  a `Request` code block (the method and path, or the channel; the headers;
+  the body) and an `Expected response` code block (the status and only the
+  fields the step checks), followed by "Other fields are ignored."
+- `# Test data` is a `No | Input | Value` table of concrete values, including
+  boundary values. `No` counts 1, 2, 3, … in order, and steps refer to data by
+  its number.
 - A TestCase says what is tested and how. Whether it passes is not recorded in
   the wiki: the test runner and CI hold results.
 - A step that removes a Requirement fixes the cases that cover it in the same

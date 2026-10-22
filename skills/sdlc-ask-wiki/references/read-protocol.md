@@ -90,8 +90,10 @@ one file or one folder named by its key, for example
   nobody has confirmed (indexes and logs appear too; ignore them).
 - **Gaps.** `$T coverage tests --feature FEAT-x` and
   `$T coverage tasks --change CR-x` list Requirements no TestCase covers and
-  Design concepts no Task plans. These are the only tool commands a reader
-  needs.
+  Design concepts no Task plans.
+- **Outdated.** `$T outdated --feature FEAT-x` (or `--change CR-x`) lists the
+  design, stories, Tasks and TestSuites written from an older version of the
+  spec. These are the only tool commands a reader needs.
 - **History.** Read the concept folder's `log.md`, then `git log -p` on the
   folder.
 
@@ -106,11 +108,20 @@ heading or a status. Never guess them from memory.
 
 Two statuses matter to every skill:
 
-- A Feature is `Draft`, then `ReqApproved` (its Requirements are approved for
-  design), then `Approved` (its Architecture is approved), then `InDev`,
-  `Released`, `Deprecated`.
+- A Feature is `Draft`, then `ReqApproved` (its Requirements are agreed),
+  then `Approved` (its Requirements are agreed and its Architecture is
+  approved, designed from the current version), then `InDev`, `Released`,
+  `Deprecated`.
 - A ChangeRequest is `Proposed`, then `ReqApproved`, then `Approved`, then
   `Implemented`; or `Rejected`.
+
+`Draft`, `Proposed` and `ReqApproved` are not gates: the design, stories,
+Tasks and TestSuites may be written before the Requirements are agreed. Only
+`sdlc-close-task` waits for `Approved`. Each Feature and ChangeRequest has a
+`version`, and what is written from it records the version it read
+(`designBasedOn`, `basedOn`). `$T outdated --feature <key>` (or
+`--change <key>`) lists what was written from an older version
+(`schema.md`, "Spec versions").
 
 ## 5. Answering
 

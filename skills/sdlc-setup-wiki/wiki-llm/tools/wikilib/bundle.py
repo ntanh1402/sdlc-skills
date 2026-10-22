@@ -241,7 +241,8 @@ class Bundle:
         if spec.get("content_files"):
             return  # any other file or folder is content of the concept; nothing below needs an index
         extra = {entry["name"] for entry in spec.get("extra_files", [])}
-        for name in sorted(extra):
+        authored = {entry["name"] for entry in spec.get("extra_files", []) if entry.get("origin") != "generated"}
+        for name in sorted(authored):  # a missing tool-written file is reported by generated.stale
             if not (folder / name).is_file():
                 self._problem("layout.missing-file", folder / name, f"{type_name} folder needs {name}")
         owned_types = self.schema.owned_types(type_name)

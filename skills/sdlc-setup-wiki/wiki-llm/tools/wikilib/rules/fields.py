@@ -59,9 +59,38 @@ def _sources(value: object) -> str | None:
     return None
 
 
+def _basis(value: object, keys: set[str]) -> str | None:
+    """A spec version something was written from: { version, at }, plus id in a list entry."""
+    shape = "{ " + ", ".join(sorted(keys, key=["id", "version", "at"].index)) + " }"
+    if not isinstance(value, dict) or set(value) != keys:
+        return f"expected {shape}"
+    if not re.match(r"^[1-9]\d*$", value["version"]):
+        return f"version must be a whole number from 1, got {value['version']}"
+    if not DATE_RE.match(value["at"]):
+        return f"at must be YYYY-MM-DD, got {value['at']}"
+    return None
+
+
+def _basis_list(value: object) -> str | None:
+    if not isinstance(value, list) or not value:
+        return "expected a list of { id, version, at }"
+    for entry in value:
+        problem = _basis(entry, {"id", "version", "at"})
+        if problem:
+            return problem
+    ids = [entry["id"] for entry in value]
+    if len(ids) != len(set(ids)):
+        return "each id appears once"
+    return None
+
+
 def problem_with(value: object, spec: dict) -> str | None:
     """Return why `value` does not fit the field spec, or None when it does."""
     kind = spec["kind"]
+    if kind == "basis":
+        return _basis(value, {"version", "at"})
+    if kind == "basis_list":
+        return _basis_list(value)
     if kind == "actor_stamp":
         return _stamp(value)
     if kind == "actor_stamps":

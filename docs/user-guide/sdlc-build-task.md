@@ -9,7 +9,7 @@ Write the code and unit tests of one wiki Task, on a branch of its own.
 |---|---|
 | **Who** | Developer |
 | **Use when** | You implement one Task of the wiki |
-| **Needs first** | The Task is merged and `Todo`, and its Feature (or ChangeRequest) is `Approved` (a Feature may be `InDev`). You name the code folder |
+| **Needs first** | The Task is merged and `Todo`. You name the code folder. A Feature or ChangeRequest that is not `Approved` yet gets a warning, not a refusal |
 | **Say** | "Build TASK-gift-card-redeem in this folder" |
 | **You get** | The code and its unit tests, committed on a new branch (`task/<name>`, unless your conventions name branches differently) in a git worktree at `<code folder>/.worktrees/<name>/`. The commit message ends with `Task: <key>`. **Nothing is pushed and nothing is run** |
 | **Next** | Build and run the tests yourself, push, open the pull request, have it reviewed ([sdlc-review-code](sdlc-review-code.md)), merge it, then [sdlc-close-task](sdlc-close-task.md) |
@@ -55,7 +55,8 @@ It writes code, never the wiki. It never changes a Task's status.
 | **The Task is not on the default branch** | Refuses. Names the draft that holds it (`wiki/tasks-…`), or [sdlc-plan-tasks](sdlc-plan-tasks.md) if there is none | Merge it |
 | **There is no Task for this code** | Refuses. Not this skill | Plan the Task first with [sdlc-plan-tasks](sdlc-plan-tasks.md) |
 | **The Task is `Done`** | Refuses. Its code is merged | A further change is a new Task or a ChangeRequest |
-| **The parent is not `Approved` or `InDev`** | Refuses: the design is not approved, or the work is closed | Check with [sdlc-ask-wiki](sdlc-ask-wiki.md) |
+| **The parent is not `Approved` yet**, or the Task was planned from an older spec version | Warns in the first round and goes on only if you say so: the Requirements may still change, and the Task can be closed only once the parent is `Approved` | Decide whether to build now |
+| **The parent is closed** (`Released`, `Deprecated`, `Implemented`, `Rejected`) | Refuses: the work is closed | A further change is a ChangeRequest |
 | **The folder is not a git repository** | Refuses | Give the right folder |
 | **Several Applications have a Task with that key** | Asks which | Name it |
 | **A Task it is blocked by is still `Todo`** | Says so in the first round and goes on only if you say so: that code may be merged and not yet closed in the wiki | Close the blocker with [sdlc-close-task](sdlc-close-task.md), or tell it to go on |

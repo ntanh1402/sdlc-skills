@@ -8,11 +8,11 @@ Feature. [Back to the user guide](user-guide.md).
 | | |
 |---|---|
 | **Who** | Business analyst, product owner |
-| **Use when** | You define a new capability, turn a brief into requirements, write a PRD, or change an existing Feature (a bug, a security, performance or refactor change), or revise requirements that are not designed yet |
+| **Use when** | You define a new capability, turn a brief into requirements, write a PRD, or change an existing Feature (a bug, a security, performance or refactor change), or revise requirements that are not `Approved` yet |
 | **Needs first** | The Application exists. If the input is a PDF or Word file, convert it first with [sdlc-convert-doc](sdlc-convert-doc.md) |
 | **Say** | "Write the spec for gift cards: customers pay part or all of an order with a gift card balance", "Add SMS as a second notification channel" |
-| **You get** | A **Feature** (`FEAT-…`) with its Requirements and its PRD as a Reference (`REF-<name>-prd`), or a **ChangeRequest** (`CR-…`) with its change PRD (`REF-<name>-change-prd`) when the Feature is already designed. Draft branch `wiki/spec-<Key>` |
-| **Next** | Merge the spec pull request. Then [sdlc-design-arch](sdlc-design-arch.md), and [sdlc-write-stories](sdlc-write-stories.md) at the same time if you want user stories |
+| **You get** | A **Feature** (`FEAT-…`) with its Requirements and its PRD as a Reference (`REF-<name>-prd`), or a **ChangeRequest** (`CR-…`) with its change PRD (`REF-<name>-change-prd`) when the Feature is already `Approved`. Each has a `version` that goes up with every change of its Requirements or PRD. Draft branch `wiki/spec-<Key>` |
+| **Next** | Merge the spec pull request, draft or agreed. Then [sdlc-design-arch](sdlc-design-arch.md), and [sdlc-write-stories](sdlc-write-stories.md) at the same time if you want user stories. After a revision, the summary lists what was written from the older version |
 
 ## What the skill does
 
@@ -29,7 +29,8 @@ Feature. [Back to the user guide](user-guide.md).
    Requirement to the PRD text it came from.
 5. **Design gate:** shows the **full PRD** and the mapping, then asks two
    questions: is the PRD approved as written, and are the requirements
-   **approved for design** (`ReqApproved`) or still a draft?
+   **agreed** (`ReqApproved`) or still a draft? Both can be merged, and design
+   can start from either.
 6. Writes `overview.md` and `log.md`, and the PRD's Reference folder, checks them, then the
    **Change-set gate** and the commit.
 
@@ -39,17 +40,21 @@ Feature. [Back to the user guide](user-guide.md).
   ask what the brief already says.
 - Confirm the mode and the target Feature.
 - Answer the rounds, read the PRD in full at the Design gate, and choose
-  `ReqApproved` only when you want design to start.
+  `ReqApproved` when the requirements are agreed. Design, stories, Tasks and
+  tests do not wait for it; closing a Task does.
 - Merge the pull request.
 
 ## Scenarios
 
 | What happens | What the skill does | What you do |
 |---|---|---|
-| **A new capability** no Feature owns | Writes a new Feature, status `Draft` | Approve; choose `ReqApproved` at the Design gate when ready |
+| **A new capability** no Feature owns | Writes a new Feature, status `Draft`, `version: 1` | Approve; choose `ReqApproved` at the Design gate when agreed |
 | **The Feature exists and is `Draft`** | Revises that Feature | Say what changes |
-| **The Feature exists and is `ReqApproved`** | Revises it and puts it back to `Draft` until approved again. It says so in the first round | Re-approve at the Design gate |
-| **The Feature is `Approved` or later** | Writes a new **ChangeRequest** (`Proposed`) instead. It never edits the target Feature | Choose the change type and risk it proposes |
+| **The Feature exists and is `ReqApproved`** | Revises it and puts it back to `Draft` until agreed again. It says so in the first round | Re-approve at the Design gate |
+| **Your revision changes a Requirement or the PRD** | Raises `version` by one. Its summary lists the architecture, stories, Tasks and TestSuites written from the older version, with the skill that redoes each | Run those skills, or confirm an unaffected file with [sdlc-edit-wiki](sdlc-edit-wiki.md) |
+| **You mark a designed Feature `ReqApproved`** and its architecture was designed from this version | Sets it `Approved` instead | Nothing |
+| **You mark a designed ChangeRequest `ReqApproved`** | Leaves it `ReqApproved`: approving it also updates its Feature | Run [sdlc-design-arch](sdlc-design-arch.md) again; with a current design it only approves |
+| **The Feature is `Approved` or later** | Writes a new **ChangeRequest** (`Proposed`, `version: 1`) instead. It never edits the target Feature | Choose the change type and risk it proposes |
 | **You revise an open ChangeRequest** (`Proposed` or `ReqApproved`) | Revises it. A `ReqApproved` one goes back to `Proposed` | Re-approve |
 | **You revise an `Approved` ChangeRequest** | Writes a new ChangeRequest | Approve |
 | **You say "new feature" but one already owns that behaviour** | The exact match wins. It asks you to confirm the existing Feature | Confirm, or name a different Feature |

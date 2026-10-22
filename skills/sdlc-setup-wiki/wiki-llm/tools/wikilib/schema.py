@@ -62,6 +62,14 @@ class Schema:
     def is_design(self, name: str) -> bool:
         return name in self.design_types
 
+    def tool_files(self) -> set[str]:
+        """Names of the files the tool writes whole: every index.md, and the
+        extra files a type declares with origin generated."""
+        names = {"index.md"}
+        for spec in self.types.values():
+            names.update(entry["name"] for entry in spec.get("extra_files", []) if entry.get("origin") == "generated")
+        return names
+
     # --- fields ----------------------------------------------------------
 
     def fields(self, name: str) -> dict[str, dict]:

@@ -22,6 +22,7 @@ ChangeRequest whose Requirements it lists.
 | `type` | yes | `UserStory` |
 | `title` | yes | text |
 | `description` | yes | text |
+| `basedOn` | yes | `{ version, at }`: a spec version and its `YYYY-MM-DD` |
 | `trackerKey` | no | text |
 | `priority` | no | `P0`, `P1`, `P2`, `P3` |
 | `generated` | yes | `{ by, at }` |
@@ -68,6 +69,9 @@ ChangeRequest whose Requirements it lists.
   it, and its own stories describe the change.
 - The key is `STORY-<feature-name>-<name>`, where `<feature-name>` is the
   Feature key without `FEAT-` (the changed Feature's, for a ChangeRequest).
+- `basedOn` is the version of the story's own folder's Feature or
+  ChangeRequest that the story was written from. See
+  [Spec versions](schema.md#spec-versions).
 - A story has no `status`: progress is followed in the tracker. `resource` is
   the tracker ticket URL and `trackerKey` its key; a person adds them.
 - A Task links the stories it serves under `# Stories`; every story is linked

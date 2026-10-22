@@ -24,6 +24,9 @@ A requested change to exactly one existing Feature: new behavior, a fix, a refac
 | `status` | yes | `Proposed`, `ReqApproved`, `Approved`, `Implemented`, `Rejected` |
 | `changeType` | yes | `feature`, `bugfix`, `refactor`, `security`, `perf` |
 | `riskLevel` | yes | `low`, `med`, `high`, `critical` |
+| `version` | yes | whole number |
+| `versionDate` | yes | `YYYY-MM-DD` |
+| `designBasedOn` | no | `{ version, at }`: a spec version and its `YYYY-MM-DD` |
 | `priority` | no | `P0`, `P1`, `P2`, `P3` |
 | `targetRelease` | no | text |
 | `requestedBy` | no | text |
@@ -61,15 +64,23 @@ A requested change to exactly one existing Feature: new behavior, a fix, a refac
 - The Feature's copy of a Requirement is the current text. This request's copy
   records what was asked for and is not updated afterwards.
 - Status is `Proposed` while the request is written, and `ReqApproved` once its
-  Requirements are approved for design. Only a `ReqApproved` request is
-  designed. A `Proposed` or `ReqApproved` request may be edited; editing a
-  `ReqApproved` one sets it back to `Proposed`. An `Approved` request is not
-  edited; a further change is another request.
-- Before design approval, `# Delta` is `None — pending architecture`.
-- When the design is approved, in one change: `# Delta` gets its four sections,
-  status becomes `Approved`, the Feature's Requirements and Architecture are
-  updated to the new target, every concept in `## Target delta` is rewritten to
-  the target and gets a pending entry, and decisions are recorded.
+  Requirements are agreed. Neither is a gate: the request may be designed,
+  and its stories, Tasks and TestSuites written, while it is `Proposed`. A
+  `Proposed` or `ReqApproved` request may be edited; editing a `ReqApproved`
+  one sets it back to `Proposed`. An `Approved` request is not edited; a
+  further change is another request.
+- Until it is designed, `# Delta` is `None — pending architecture`.
+- A design written before the request is `Approved` fills `# Delta`, rewrites
+  every concept in `## Target delta` to the target with a pending entry, and
+  records decisions. It does not touch the Feature: the Feature shows only
+  agreed changes.
+- The request becomes `Approved` once its Requirements are agreed, its
+  `# Delta` is approved, and the Delta was designed from the current version
+  (`basis.approved`). In that same change the Feature's Requirements and
+  Architecture are updated to the new target.
+- `version`, `versionDate` and `designBasedOn` work as on a
+  [Feature](feature.md): `designBasedOn` is present exactly when `# Delta` is
+  not `None`. See [Spec versions](schema.md#spec-versions).
 - `## Target delta` lists every Design concept this request creates, changes, or
   removes, each qualified `new`, `modified`, or `removed`.
 - Status becomes `Implemented` when every Task is `Done` and no pending entry

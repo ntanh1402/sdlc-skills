@@ -37,6 +37,9 @@ Rules for a TestCase:
   cleanup`** are read from the test's code: its setup, each action with what
   it asserts, its fixtures, its teardown. Every step needs an observable
   expected result and what is inspected; they are the test's assertions.
+  `# Test data` is a `No | Input | Value` table numbered from 1. A step that
+  calls an API or publishes a message gets its `### Step <n>` block with the
+  request the test sends and the fields it asserts, as `test-case.md` says.
 - **A test with no assertion** has no expected result, so its case is not
   written. List it under "Could not determine".
 - **`risk`** is proposed and confirmed by the person.

@@ -31,7 +31,7 @@
   "pending": {
     "heading": "Pending changes",
     "status_by_change": {"new": "Planned", "removed": "Removing", "modified": "Modifying"},
-    "open_parents": {"Feature": ["Approved", "InDev"], "ChangeRequest": ["Approved"]},
+    "open_parents": {"Feature": ["Draft", "ReqApproved", "Approved", "InDev"], "ChangeRequest": ["Proposed", "ReqApproved", "Approved"]},
     "open_requests": ["Proposed", "ReqApproved", "Approved"],
     "delta": ["Delta", "Target delta"],
     "feature_scope": ["Architecture"],
@@ -97,6 +97,9 @@
       "statuses": ["Draft", "ReqApproved", "Approved", "InDev", "Released", "Deprecated"],
       "fields": {
         "ownerTeam": {"kind": "string", "required": true},
+        "version": {"kind": "integer", "required": true},
+        "versionDate": {"kind": "date", "required": true},
+        "designBasedOn": {"kind": "basis"},
         "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]},
         "targetRelease": {"kind": "string"},
         "epicKey": {"kind": "string"},
@@ -142,6 +145,9 @@
       "fields": {
         "changeType": {"kind": "enum", "values": ["feature", "bugfix", "refactor", "security", "perf"], "required": true},
         "riskLevel": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true},
+        "version": {"kind": "integer", "required": true},
+        "versionDate": {"kind": "date", "required": true},
+        "designBasedOn": {"kind": "basis"},
         "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]},
         "targetRelease": {"kind": "string"},
         "requestedBy": {"kind": "string"}
@@ -179,6 +185,7 @@
       "place": {"kind": "owned", "owners": ["Feature", "ChangeRequest"]},
       "lifecycle": false,
       "fields": {
+        "basedOn": {"kind": "basis", "required": true},
         "trackerKey": {"kind": "string"},
         "priority": {"kind": "enum", "values": ["P0", "P1", "P2", "P3"]}
       },
@@ -668,6 +675,7 @@
       "lifecycle": true,
       "statuses": ["Todo", "Done"],
       "fields": {
+        "basedOn": {"kind": "basis", "required": true},
         "trackerKey": {"kind": "string"},
         "taskType": {"kind": "enum", "values": ["dev", "test", "design", "spike"]},
         "estimate": {"kind": "string"},
@@ -698,9 +706,14 @@
       "place": {"kind": "collection", "dir": "tests"},
       "lifecycle": true,
       "statuses": ["Draft", "Approved", "Implemented", "Deprecated"],
-      "fields": {"suiteType": {"kind": "enum", "values": ["unit", "integration", "e2e", "load", "security"], "required": true}, "framework": {"kind": "string"}},
+      "fields": {
+        "suiteType": {"kind": "enum", "values": ["unit", "integration", "e2e", "load", "security"], "required": true},
+        "basedOn": {"kind": "basis_list", "required": true},
+        "framework": {"kind": "string"}
+      },
       "headings": [{"name": "Verifies", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest"], "min": 1}}],
-      "owns": ["TestCase"]
+      "owns": ["TestCase"],
+      "extra_files": [{"name": "checklist.csv", "description": "One row per test case, highest risk first.", "origin": "generated"}]
     },
     "TestCase": {
       "page": "test-case.md",
@@ -718,7 +731,7 @@
         {"name": "Covers", "presence": "required", "links": {"targets": ["Requirement", "@design", "ArchitectureDecision"], "min": 1}},
         {"name": "Purpose", "presence": "required"},
         {"name": "Preconditions", "presence": "required"},
-        {"name": "Test data", "presence": "required"},
+        {"name": "Test data", "presence": "required", "table": ["No", "Input", "Value"], "numbered": true},
         {"name": "Steps", "presence": "required", "table": ["Step", "Action", "Expected result", "Validation"]},
         {"name": "Postconditions and cleanup", "presence": "required"}
       ]

@@ -20,8 +20,9 @@ and the summary. This file adds what a draft needs at each of those steps.
   Change-set. No draft is started before the Intent gate is approved.
 - Never merge, never open a pull request, never call a hosting service; the
   user does that.
-- Edit only what a person writes. Never edit an `index.md` or a section the
-  schema page marks as written by the tool; `draft finish` writes those.
+- Edit only what a person writes. Never edit an `index.md`, a TestSuite's
+  `checklist.csv` or a section the schema page marks as written by the tool;
+  `draft finish` writes those.
 - Never edit another step's output, unless your `SKILL.md` says the edit is a
   correction, or it is the story fix of `user-story.md` or the TestCase fix
   of `test-case.md` after a removed Requirement. When you find that a later step's output is out of date, name

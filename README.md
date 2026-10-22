@@ -65,17 +65,26 @@ Run it again from any other folder you want to link to the same wiki.
 |---|---|---|---|---|
 | Setup, once per project | Tech lead | `sdlc-setup-wiki` | A wiki repository, linked to your workspace | Push the new wiki repository to your git host |
 | Onboarding, existing projects only | Tech lead, architect | `sdlc-import`, once per code folder, document or test suite | `Released` Features, as-built Design files | Merge each import pull request |
-| Requirements | BA / PO | `sdlc-write-spec` | Feature `ReqApproved` (a ChangeRequest: `ReqApproved`) | Merge the spec pull request |
-| Design | Architect | `sdlc-design-arch` | `Approved` | Merge the design pull request |
+| Requirements | BA / PO | `sdlc-write-spec` | Feature `Draft`, or `ReqApproved` once agreed (a ChangeRequest: `Proposed` or `ReqApproved`), with a `version` | Merge the spec pull request, draft or agreed |
+| Design | Architect | `sdlc-design-arch` | Architecture written from the spec's version; `Approved` once the Requirements are agreed too | Merge the design pull request |
 | User stories, optional | BA / PO | `sdlc-write-stories`, alongside design | User stories (`STORY-…`) | Merge the stories pull request, create a ticket per story from its paste-ready copy |
 | Planning | Tech lead | `sdlc-plan-tasks` | Tasks `Todo` | Merge the pull request, create the tracker tickets |
-| Test design | QA | `sdlc-design-tests`, alongside planning | TestSuites `Approved` | Merge the pull request |
+| Test design | QA | `sdlc-design-tests`, alongside planning | TestSuites `Approved`, each with a `checklist.csv` | Merge the pull request |
 | Implementation | Developer | `sdlc-build-task`, once per Task | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
 | Code review | Reviewer | `sdlc-review-code` | Unchanged (read-only) | Decide on the findings, merge the code pull request |
-| Closing a Task | Developer | `sdlc-close-task` | Task `Done`; Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
+| Closing a Task | Developer | `sdlc-close-task` | Only once the Feature or ChangeRequest is `Approved`: Task `Done`; Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
 | Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a suite `Implemented` |
 | Release | Release manager | Your usual tools, then `sdlc-edit-wiki` | Feature `Released` | Deploy. Then ask `sdlc-edit-wiki` to mark the Feature released |
 | Maintenance | Anyone | `sdlc-write-spec`, `sdlc-import`, `sdlc-edit-wiki` | A new ChangeRequest, or corrections | See below |
+
+**Starting before the Requirements are agreed.** A spec can be merged as a
+draft (`Draft`, `Proposed`). The architecture, stories, Tasks and TestSuites
+can all start from it; each records the spec `version` it was written from.
+When the spec changes, its version goes up and `sdlc-ask-wiki` (or
+`wiki_llm.py outdated`) lists what was written from an older version, to
+redo or to confirm as still current. Code can be built from a draft, but
+`sdlc-close-task` records a Task as done only once its Feature or
+ChangeRequest is `Approved`: Requirements agreed and design current.
 
 **Maintenance.** A bug, a security fix or any change to a released Feature is
 a new ChangeRequest from `sdlc-write-spec`, and it goes through the same phases
@@ -97,19 +106,19 @@ flowchart TD
   setup["sdlc-setup-wiki"] --> spec
   import["sdlc-import (existing projects)"] -.-> spec
   spec["sdlc-write-spec"] --> m1(["you: merge the spec PR"])
-  m1 -- "ReqApproved" --> arch["sdlc-design-arch"]
-  m1 -. "ReqApproved, optional" .-> stories["sdlc-write-stories"]
+  m1 -- "draft or agreed" --> arch["sdlc-design-arch"]
+  m1 -. "optional" .-> stories["sdlc-write-stories"]
   stories --> m6(["you: merge the stories PR, create tickets"])
   m6 -. "stories" .-> tasks
   arch --> m2(["you: merge the design PR"])
-  m2 -- "Approved" --> tasks["sdlc-plan-tasks"]
-  m2 -- "Approved" --> tests["sdlc-design-tests"]
+  m2 -- "designed" --> tasks["sdlc-plan-tasks"]
+  m2 -- "designed" --> tests["sdlc-design-tests"]
   tasks --> m3(["you: merge the PR, create tickets"])
   m3 -- "Task Todo" --> build["sdlc-build-task"]
   build --> pr(["you: push, open the code PR"])
   pr --> review["sdlc-review-code"]
   review --> merge(["you: merge the code PR"])
-  merge --> close["sdlc-close-task"]
+  merge -- "Feature or ChangeRequest Approved" --> close["sdlc-close-task"]
   close --> m5(["you: merge the close PR"])
   m5 -- "next Task" --> build
   m5 -- "all Tasks Done, InDev" --> ship(["you: deploy"])
@@ -127,9 +136,10 @@ tracker.
 
 | Term | Means |
 |---|---|
-| Feature (`FEAT-…`) | A capability of an Application: its PRD, Requirements and Architecture. Statuses: `Draft` → `ReqApproved` → `Approved` → `InDev` → `Released` (later `Deprecated`) |
+| Feature (`FEAT-…`) | A capability of an Application: its PRD, Requirements and Architecture. Statuses: `Draft` → `ReqApproved` → `Approved` → `InDev` → `Released` (later `Deprecated`). `ReqApproved` means the Requirements are agreed; `Approved` means agreed and designed from the current version |
 | ChangeRequest (`CR-…`) | A change to one Feature that is already `Approved` or later. Statuses: `Proposed` → `ReqApproved` → `Approved` → `Implemented` (or `Rejected`) |
 | Requirement (`REQ-…`) | One testable requirement inside a Feature or ChangeRequest |
+| Spec version | `version` of a Feature or ChangeRequest, raised each time its Requirements or PRD change. The architecture, stories, Tasks and TestSuites record the version they were written from, so the wiki lists what is outdated when the spec changes |
 | Design files | Services, endpoints, events, tables, frontends and externals. A design not built yet is marked as pending (`Planned`, `Modifying`, `Removing`) until its Task is closed |
 | User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with Given/When/Then criteria, each citing a Requirement. Optional; no status, you follow it in your tracker |
 | Reference (`REF-…`) | Material to read while working: a PRD, a test plan, a domain page, a vendor document, a code example. A folder with a summary, linked from any file under `# References`. Context, never a contract |
@@ -239,18 +249,20 @@ the names come from the sample wiki in
   channel".
 - **You get:** a new Feature (`FEAT-…`) with its Requirements and its PRD as
   a Reference (`REF-…-prd`), or a ChangeRequest (`CR-…`) when the Feature is
-  already designed. At the Design
-  gate you choose `ReqApproved` (ready for design) or keep it a draft.
+  already designed. At the Design gate you choose `ReqApproved` (agreed) or
+  keep it a draft; both can be merged. Each revision raises its `version`.
 - **Next:** merge the spec pull request, then `sdlc-design-arch`, and
-  `sdlc-write-stories` at the same time if you want user stories.
+  `sdlc-write-stories` at the same time if you want user stories, even while
+  it is a draft. After a revision, the summary lists what was written from
+  the older version.
 
 ### sdlc-write-stories
 
-- **Use when:** a business analyst wants the approved Requirements of a
-  Feature or ChangeRequest as user stories, or wants existing stories
-  regrouped. Stories are optional.
-- **Before:** the spec pull request is merged (`ReqApproved` or later). It
-  runs at the same time as `sdlc-design-arch`.
+- **Use when:** a business analyst wants the Requirements of a Feature or
+  ChangeRequest as user stories, wants existing stories regrouped, or the
+  spec changed after the stories were written. Stories are optional.
+- **Before:** the spec pull request is merged, draft or agreed. It runs at
+  the same time as `sdlc-design-arch`.
 - **Say:** "Break gift cards into user stories", "Write the user stories for
   CR-sms-notifications".
 - **You get:** `STORY-…` files, one actor goal each, with Given/When/Then
@@ -263,19 +275,22 @@ the names come from the sample wiki in
 
 ### sdlc-design-arch
 
-- **Use when:** a Feature or ChangeRequest is `ReqApproved` and needs a
-  technical design.
-- **Before:** the spec pull request is merged.
+- **Use when:** a Feature or ChangeRequest needs a technical design, its
+  spec changed after the design, or an agreed ChangeRequest with a current
+  design needs approving.
+- **Before:** the spec pull request is merged, draft or agreed.
 - **Say:** "Design the gift cards feature".
 - **You get:** the Architecture section, Mermaid diagrams, new or changed
   services, endpoints, events, tables and externals marked as pending,
-  decisions (`ADR-…`), and status `Approved`.
+  decisions (`ADR-…`), and the spec version it was designed from. The status
+  becomes `Approved` once the Requirements are agreed; a ChangeRequest
+  updates its Feature only then.
 - **Next:** merge the design pull request, then `sdlc-plan-tasks` and
   `sdlc-design-tests`, in either order or both at once.
 
 ### sdlc-plan-tasks
 
-- **Use when:** an `Approved` design needs build Tasks, or a changed design
+- **Use when:** a design needs build Tasks, or a changed design or spec
   needs its Tasks planned again.
 - **Before:** the design pull request is merged.
 - **Say:** "Plan the tasks for gift cards".
@@ -288,21 +303,24 @@ the names come from the sample wiki in
 
 ### sdlc-design-tests
 
-- **Use when:** an `Approved` design needs test design: unit, integration,
-  end-to-end, load or security.
+- **Use when:** a design needs test design (unit, integration, end-to-end,
+  load or security), or the spec changed after the tests were designed.
 - **Before:** the design pull request is merged.
 - **Say:** "Design the tests for gift cards".
 - **You get:** TestSuites (`TS-…`) with one TestCase (`TC-…`) per file, each
-  with its risk, data, steps and checks, covering every Requirement and
-  contract. It writes no test code.
+  with its risk, numbered test data, steps (with the request and the expected
+  response of each API call or message) and checks, covering every
+  Requirement and contract, and a `checklist.csv` per suite listing its
+  cases. It writes no test code.
 - **Next:** merge the pull request. Your team writes and runs the test code;
   then `sdlc-import` on that code marks the suite `Implemented`.
 
 ### sdlc-build-task
 
 - **Use when:** you implement one Task of the wiki.
-- **Before:** the Task is merged and `Todo`, and its Feature or ChangeRequest
-  is `Approved` (a Feature may be `InDev`). You name the code folder.
+- **Before:** the Task is merged and `Todo`. You name the code folder. When
+  its Feature or ChangeRequest is not `Approved` yet, it warns you and asks
+  before going on.
 - **Say:** "Build TASK-gift-card-redeem in this folder".
 - **You get:** the code and its unit tests, committed on a new branch
   (`task/<name>`, unless your conventions name branches differently) in a
@@ -326,7 +344,9 @@ the names come from the sample wiki in
 
 - **Use when:** a Task's code pull request is merged.
 - **Before:** the merge is on the code repository's default branch, with the
-  `Task: <key>` line that `sdlc-build-task` wrote.
+  `Task: <key>` line that `sdlc-build-task` wrote. The Feature or
+  ChangeRequest is `Approved` (a Feature may be `InDev`), and the Task was
+  planned from its current spec version.
 - **Say:** "Close TASK-gift-card-redeem; the code is in ../shop-orders".
 - **You get:** the Task `Done` with its merge commit, the Design files it
   covered marked as built, and the Feature `InDev` or the ChangeRequest
@@ -339,7 +359,9 @@ the names come from the sample wiki in
 - **Use when:** you need a small edit that no other skill owns: a typo or
   wording fix, the glossary or conventions, a Feature marked `Released` or
   `Deprecated`, a Reference added, linked or marked `Deprecated`, a Task's
-  ticket or pull request link, or a record that a person checked a file.
+  ticket or pull request link, a record that a person checked a file, or a
+  record that a design, story, Task or suite is still current after the spec
+  changed.
 - **Before:** for `Released`, the Feature is `InDev`, no Task is `Todo`, and
   no design item is pending.
 - **Say:** "Mark FEAT-gift-cards released, shipped today", "Add ticket
@@ -353,8 +375,9 @@ the names come from the sample wiki in
 
 - **Use when:** you have a question: the list of Features with their status,
   one Feature's architecture, one endpoint's or consumer's validations and
-  diagrams, what is not built yet, which tests cover a
-  Requirement, or a user story's paste-ready copy for a ticket.
+  diagrams, what is not built yet, what is outdated since a spec changed,
+  which tests cover a Requirement, or a user story's paste-ready copy for a
+  ticket.
 - **Before:** nothing.
 - **Say:** "List the features", "Show the checkout architecture", "Show
   EP-orders-create", "What is
@@ -382,7 +405,8 @@ Skills refuse rather than guess. The common refusals:
 | The wiki was set up by a newer release | Someone upgraded the wiki with newer skills | Update your installed skills (`git pull`, then `install-skills.sh` again) |
 | The wiki's tool copy was edited by hand | Files in `.wiki-llm/` were changed | Run `sdlc-setup-wiki` to restore them |
 | `<Key>` is in draft `wiki/…`, not on `main` | The previous step's pull request is not merged | Merge it, then run the skill again |
-| The requirements are not approved for design | The Feature is still `Draft` | Approve the requirements with `sdlc-write-spec` |
+| The Feature or ChangeRequest is not `Approved`, so the Task cannot be closed | Its Requirements are still a draft, or its design is behind the spec | Agree the requirements with `sdlc-write-spec`, then run `sdlc-design-arch` if it says so |
+| The Task was planned from an older spec version | The spec changed after the Tasks were planned | `sdlc-plan-tasks` again, or `sdlc-edit-wiki` to record that the Task is still current |
 | A change to the design is a new ChangeRequest | The Feature is already designed | `sdlc-write-spec` writes a ChangeRequest |
 | This is already built; use sdlc-import | Your brief describes something that already runs | `sdlc-import` records it |
 | The Application does not exist | No such Application in the wiki | `sdlc-setup-wiki`: "add application `<key>`" |

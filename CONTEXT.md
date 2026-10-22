@@ -44,6 +44,14 @@ _Avoid_: proposal, overlay, staging
 An existing code folder, document or test suite of a project that an import reads to write concept files; each file written from it names it in `sources`.
 _Avoid_: resource (the schema field `resource` is the real asset a concept describes), input, artifact
 
+**Spec version**:
+The number of a Feature's or ChangeRequest's revision of its Requirements and PRD, from 1, kept in its `version` field; the design, user stories, Tasks and TestSuites written from it record it in `designBasedOn` or `basedOn`.
+_Avoid_: revision (unqualified), Schema version, Release version
+
+**Outdated**:
+Written from an older Spec version than the target now has; reported by the tool and cleared by writing the file again or by a person confirming it is still current.
+_Avoid_: stale (the schema's `stale_after` is about age), out of sync, Drift (which compares the wiki with code)
+
 **Drift**:
 A difference between what a concept file says and what the code does that nothing in the wiki marks as not built yet: a `# Pending changes` entry, an `Approved` ChangeRequest on a Feature, or a TestSuite that is not `Implemented`.
 _Avoid_: mismatch, out of sync, stale (the schema's `stale_after` is about age, not difference)

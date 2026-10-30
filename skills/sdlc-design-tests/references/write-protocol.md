@@ -30,7 +30,8 @@ and the summary. This file adds what a draft needs at each of those steps.
   an edit of the concept: any step may link a Reference from a file it
   writes, and the tool does not stamp the change.
 - Keys are names taken from titles, never numbers: `TASK-refund-endpoint`,
-  `ADR-idempotent-checkout`. A key on the default branch never changes. Before
+  `ADR-idempotent-checkout`. A TestCase key is the exception: it starts with
+  its test case ID, as `references/case-format.md` says. A key on the default branch never changes. Before
   the pull request is merged, `$T rename <old> <new>` changes one.
 
 ## 2. Check the versions

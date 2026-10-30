@@ -1,42 +1,27 @@
 # Test design rules
 
-## Coverage
-
-- Requirement: at least one positive and one negative proof of each behaviour.
-- Endpoint: request partitions, validation, authentication, every status,
-  side effects, idempotency, dependency failures, compatibility.
-- Subscription and Channel: schema, ordering, duplicates, retry, exhaustion,
-  dead letters, replay, poison messages, acknowledgement.
-- Every exit of an Endpoint's or Subscription's `# Flowchart` and every rule
-  of its `# Validations` is covered by at least one TestCase. The packet's
-  coverage check lists them.
-- Data: constraints, transactions, concurrency, migration, rollback, retention.
-- External: timeout, rate limit, malformed response, retry, fallback, recovery.
-- Decision or quality target: prove the promised quality, or say which suite
-  owns it.
+What a case must cover, concept by concept, is in `classification.md`,
+"Coverage rules" and "Field validation"; the techniques, risk and priority
+are in the same file. This file holds the types the evidence makes required
+and the rule on gaps.
 
 ## Required types
 
-The evidence makes a suite type required:
+The evidence makes a suite type, or a category of cases, required:
 
 | Evidence | Required type |
 |---|---|
 | A Requirement with verification "test" on behaviour an actor sees | `e2e` or `integration` |
-| A Nonfunctional Requirement with a latency, throughput or capacity target | `load` |
-| A Requirement or decision about authentication, authorization, PII or audit, or `changeType: security` | `security` |
+| A Nonfunctional Requirement with a latency, throughput or capacity target | `performance` cases in `integration` or `e2e` |
+| A Requirement or decision about authentication, authorization, PII or audit, or `changeType: security` | `security` cases at the level they test |
 | A new or changed Endpoint, Subscription or External Operation | `integration` |
+| An entry point with input fields | `field-validation` cases in `integration` |
 
 A required type is declined only with the user's explicit acceptance of the
 residual risk.
-
-## Techniques
-
-Use equivalence partitioning, boundary analysis, state transitions, decision
-tables, pairwise interaction, fault injection and risk-based priority. Name the
-technique when it changes how complete the cases are.
 
 ## No false completeness
 
 Coverage is measured against the chosen suite types. Record excluded types and
 their risks. Never add placeholder "not applicable" cases to make a matrix look
-complete.
+complete; list each gap as uncovered, with its reason.

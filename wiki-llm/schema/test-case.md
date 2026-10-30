@@ -31,6 +31,7 @@ One test, written so a tester who did not design the system can run it.
 | `sources` | no | list of `{ id, resource, title }` |
 | `resource` | no | URL or bundle path |
 | `stale_after` | no | ISO 8601 timestamp with offset |
+| `tags` | no | `[a, b]` |
 
 ### Headings
 
@@ -47,6 +48,12 @@ One test, written so a tester who did not design the system can run it.
 <!-- generated:schema end -->
 
 ## Rules
+- `# Covers` links what the case proves: User story, Requirements by full path and anchor,
+  Design concepts, decisions. A case imported from existing tests may cover only
+  Design concepts.
+- `# Steps` is a `Step | Action | Expected result | Validation` table. Every step
+  has an observable expected result and names what is inspected to confirm it.
+- `# Test data` gives concrete values, including boundary values.
 
 - A TestCase says what is tested and how. Whether it passes is not recorded in
   the wiki: the test runner and CI hold results.

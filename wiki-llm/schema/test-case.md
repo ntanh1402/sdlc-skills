@@ -20,7 +20,12 @@ One test, written so a tester who did not design the system can run it.
 | `type` | yes | `TestCase` |
 | `title` | yes | text |
 | `description` | yes | text |
+| `testCaseId` | no | text |
 | `risk` | yes | `low`, `med`, `high`, `critical` |
+| `priority` | no | `high`, `medium`, `low` |
+| `testingType` | no | `functional`, `non-functional` |
+| `category` | no | `business-rule`, `field-validation`, `error-handling`, `data-integrity`, `idempotency`, `security`, `performance`, `reliability`, `usability`, `compatibility` |
+| `polarity` | no | `positive`, `negative` |
 | `generated` | yes | `{ by, at }` |
 | `verified` | no | `{ by, at }`, or a list of them |
 | `sources` | no | list of `{ id, resource, title }` |
@@ -33,7 +38,7 @@ One test, written so a tester who did not design the system can run it.
 | Heading | Presence | Written by | Links to | Qualifier | Content |
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
-| `# Covers` | required | author | Requirement, any Design type, ArchitectureDecision (1 or more) |  |  |
+| `# Covers` | required | author | Feature, ChangeRequest, UserStory, Requirement, any Design type, ArchitectureDecision (1 or more) |  |  |
 | `# Purpose` | required | author |  |  |  |
 | `# Preconditions` | required | author |  |  |  |
 | `# Test data` | required | author |  |  |  |
@@ -43,13 +48,13 @@ One test, written so a tester who did not design the system can run it.
 <!-- generated:schema end -->
 
 ## Rules
-
-- `# Covers` links what the case proves: Requirements by full path and anchor,
+- `# Covers` links what the case proves: User story, Requirements by full path and anchor,
   Design concepts, decisions. A case imported from existing tests may cover only
   Design concepts.
 - `# Steps` is a `Step | Action | Expected result | Validation` table. Every step
   has an observable expected result and names what is inspected to confirm it.
 - `# Test data` gives concrete values, including boundary values.
+
 - A TestCase says what is tested and how. Whether it passes is not recorded in
   the wiki: the test runner and CI hold results.
 - A step that removes a Requirement fixes the cases that cover it in the same

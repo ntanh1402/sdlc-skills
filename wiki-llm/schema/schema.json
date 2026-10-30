@@ -712,10 +712,15 @@
       "place": {"kind": "owned", "owners": ["TestSuite"]},
       "lifecycle": false,
       "fields": {
-        "risk": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true}
+        "testCaseId": {"kind": "string"},
+        "risk": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true},
+        "priority": {"kind": "enum", "values": ["high", "medium", "low"]},
+        "testingType": {"kind": "enum", "values": ["functional", "non-functional"]},
+        "category": {"kind": "enum", "values": ["business-rule", "field-validation", "error-handling", "data-integrity", "idempotency", "security", "performance", "reliability", "usability", "compatibility"]},
+        "polarity": {"kind": "enum", "values": ["positive", "negative"]}
       },
       "headings": [
-        {"name": "Covers", "presence": "required", "links": {"targets": ["Requirement", "@design", "ArchitectureDecision"], "min": 1}},
+        {"name": "Covers", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest", "UserStory", "Requirement", "@design", "ArchitectureDecision"], "min": 1}},
         {"name": "Purpose", "presence": "required"},
         {"name": "Preconditions", "presence": "required"},
         {"name": "Test data", "presence": "required"},

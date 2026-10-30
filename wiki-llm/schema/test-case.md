@@ -31,7 +31,6 @@ One test, written so a tester who did not design the system can run it.
 | `sources` | no | list of `{ id, resource, title }` |
 | `resource` | no | URL or bundle path |
 | `stale_after` | no | ISO 8601 timestamp with offset |
-| `tags` | no | `[a, b]` |
 
 ### Headings
 
@@ -48,60 +47,6 @@ One test, written so a tester who did not design the system can run it.
 <!-- generated:schema end -->
 
 ## Rules
-
-### Classification fields
-
-- `testCaseId` is in capitals (`TC-CPN-INT-001`); the key is the ID in lower
-  case plus words from the title.
-- `category` belongs to the `testingType`: `business-rule`,
-  `field-validation`, `error-handling`, `data-integrity`, `idempotency` are
-  `functional`; the rest are `non-functional`.
-- A designed case fills all five fields; an imported case may leave them out.
-  A case has no `tags`.
-
-### Covers and Purpose
-
-- `# Covers` links, in order: the Feature or ChangeRequest, the user story
-  if any and Requirements by path and anchor, Design concepts, decisions. An
-  imported case may cover only Design concepts.
-- `# Purpose` is one or two sentences naming the `AC-<n>` and the technique.
-
-### Preconditions and Test data
-
-- `# Preconditions` is a list: each state the case needs and how it is
-  reached, any stub with its answer, any clock or setting with its value.
-- `# Test data` is a `No | Input | Value` table numbered 1, 2, 3, …; steps
-  say "data 2". A value is `<field>: <value>`, fields of one input separated
-  by commas, a note in brackets.
-- Values with the same expected result (boundary values inside a limit) are
-  one row each, and the step says `- Data 1 to 3, one run each`.
-
-### Steps
-
-- `# Steps` is a `Step | Action | Expected result | Validation` table, lines
-  inside a cell joined with `<br>`. "Works" is never an expected result.
-- **Action**: a verb phrase with its target, ending with `:` ("Apply the
-  coupon `POST /carts/{id}/coupons`:"), then `- ` lines: the data and
-  `- Request: see Step <n>`; `- Filter:`, `- Sort:`, `- Path:`, `- Query:`
-  for a read; `- Wait: up to <n> s, checking every <m> s` for a late
-  outcome.
-- **Expected result**: one `<field>: <value>` per line, starting with the
-  status code or the count found (`Rows found: 1`).
-- **Validation**: the place in bold, then what is read there: **API
-  response**, **Database**, **Message**, **Log**, **Cache**, **External
-  system**, **Screen**, **File**, **Metric** or **Alert**.
-- A step that calls an API or publishes a message has a `### Step <n>` block
-  with a `Request` and an `Expected response` (status and checked fields
-  only, then "Other fields are ignored."), taken from the Endpoint or the
-  channel's `# Payload`.
-
-### Postconditions and cleanup
-
-- A list: the state the case leaves, then each clean-up action as a verb
-  with its target ("Delete the rows of table `coupon_redemptions` with
-  `cart_id` = `c-1`.").
-
-### Results and removed Requirements
 
 - A TestCase says what is tested and how. Whether it passes is not recorded in
   the wiki: the test runner and CI hold results.

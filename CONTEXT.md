@@ -49,7 +49,7 @@ The number of a Feature's or ChangeRequest's revision of its Requirements and PR
 _Avoid_: revision (unqualified), Schema version, Release version
 
 **Outdated**:
-Written from an older Spec version than the target now has; reported by the tool and cleared by writing the file again or by a person confirming it is still current.
+Written from an older Spec version than the target now has; reported by the tool and cleared by writing the file again, by a person confirming it is still current, or, for a `Done` Task, by planning a new Task for the difference and updating its `basedOn`. An approved target has no outdated Task.
 _Avoid_: stale (the schema's `stale_after` is about age), out of sync, Drift (which compares the wiki with code)
 
 **Drift**:

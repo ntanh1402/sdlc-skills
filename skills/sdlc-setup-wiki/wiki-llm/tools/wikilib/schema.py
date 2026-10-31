@@ -62,6 +62,10 @@ class Schema:
     def is_design(self, name: str) -> bool:
         return name in self.design_types
 
+    def is_approved_parent(self, type_name: str, status: str | None) -> bool:
+        """An open Feature or ChangeRequest whose Requirements are agreed and approved."""
+        return status in self.pending["approved_parents"].get(type_name, [])
+
     def tool_files(self) -> set[str]:
         """Names of the files the tool writes whole: every index.md, and the
         extra files a type declares with origin generated."""

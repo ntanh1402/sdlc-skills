@@ -9,7 +9,7 @@ from wikilib import docs, sync, validate
 from wikilib.bundle import Bundle
 from wikilib.schema import SCHEMA_DIR, Schema
 
-SAMPLE = SCHEMA_DIR.parent / "sample"
+SAMPLE = SCHEMA_DIR.parent.parent / "forward-tests" / "sample"
 
 
 class SampleTest(unittest.TestCase):

@@ -1,6 +1,6 @@
 # Glossary
 
-[Common rules](schema.md) · [Example](../sample/shop/glossary.md)
+[Common rules](schema.md)
 
 The domain terms and user roles of the application, defined once.
 

@@ -1,6 +1,6 @@
 # ArchitectureDecision
 
-[Common rules](schema.md) · [Example](../sample/shop/decisions/ADR-idempotent-checkout.md)
+[Common rules](schema.md)
 
 One material, hard-to-reverse design choice. All decisions of an application share one folder.
 

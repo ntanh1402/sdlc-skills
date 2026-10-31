@@ -1,0 +1,24 @@
+diff --git a/src/main/java/com/acme/orders/OrderService.java b/src/main/java/com/acme/orders/OrderService.java
+index 805b825..73b6480 100644
+--- a/src/main/java/com/acme/orders/OrderService.java
++++ b/src/main/java/com/acme/orders/OrderService.java
+@@ -35,8 +35,8 @@ public class OrderService {
+     }
+ 
+     public Result create(OrderController.CreateOrder request) {
+-        Integer customers = db.queryForObject("SELECT count(*) FROM customers WHERE customer_id = ?", Integer.class, request.customerId());
+-        Integer open = db.queryForObject(
++        Integer knownCustomers = db.queryForObject("SELECT count(*) FROM customers WHERE customer_id = ?", Integer.class, request.customerId());
++        Integer openCarts = db.queryForObject(
+                 "SELECT count(*) FROM carts WHERE cart_id = ? AND customer_id = ? AND status = 'open'",
+                 Integer.class, request.cartId(), request.customerId());
+         // The total is the sum of the prices fixed when each item was added to the cart.
+@@ -44,7 +44,7 @@ public class OrderService {
+                 "SELECT coalesce(sum(unit_price_usd * quantity), 0) FROM cart_items WHERE cart_id = ?",
+                 BigDecimal.class, request.cartId());
+         Integer items = db.queryForObject("SELECT count(*) FROM cart_items WHERE cart_id = ?", Integer.class, request.cartId());
+-        if (customers == 0 || open == 0 || items == 0) {
++        if (knownCustomers == 0 || openCarts == 0 || items == 0) {
+             return new Result(Outcome.EMPTY_CART, null, null);
+         }
+         UUID orderId = UUID.randomUUID();

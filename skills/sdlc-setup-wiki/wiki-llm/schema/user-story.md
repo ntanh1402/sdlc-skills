@@ -1,6 +1,6 @@
 # UserStory
 
-[Common rules](schema.md) · [Example](../sample/shop/features/FEAT-checkout/STORY-checkout-pay-and-confirm.md)
+[Common rules](schema.md)
 
 One actor's goal in a Feature or ChangeRequest: the Requirements it groups,
 shown as concrete scenarios. It lives in the folder of the Feature or

@@ -1,6 +1,6 @@
 # ExternalService
 
-[Common rules](schema.md) · [Example](../sample/shop/externals/EXT-stripe/overview.md)
+[Common rules](schema.md)
 
 A third-party service, or another application's service. It owns its Operations as files in its folder.
 

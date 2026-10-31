@@ -1,6 +1,6 @@
 # Service
 
-[Common rules](schema.md) · [Example](../sample/shop/services/SVC-orders/overview.md)
+[Common rules](schema.md)
 
 A deployable backend unit. It owns its Endpoints and Subscriptions as files in its folder.
 

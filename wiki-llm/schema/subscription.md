@@ -1,6 +1,6 @@
 # Subscription
 
-[Common rules](schema.md) · [Example](../sample/shop/services/SVC-notifications/SUB-order-created.md)
+[Common rules](schema.md)
 
 One consumer of a MessageChannel, owned by a Service.
 

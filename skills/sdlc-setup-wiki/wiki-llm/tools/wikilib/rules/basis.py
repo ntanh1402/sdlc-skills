@@ -1,6 +1,7 @@
 """Spec versions: each record names a version the target has had, an Approved
-target was designed from its current version, and what was written from an
-older version is reported."""
+target was designed from its current version, an approved target has no Task
+written from an older version, and what was written from an older version is
+reported."""
 
 from __future__ import annotations
 
@@ -44,6 +45,15 @@ def check(bundle: Bundle) -> list[Finding]:
         elif record.version == current and record.at != basis.version_date(target):
             findings.append(
                 Finding("basis.date", rel, f"{record.field} names {target.key} version {current} at {record.at}; that version is dated {basis.version_date(target)}")
+            )
+        elif record.holder.type == "Task" and basis.is_outdated(record) and bundle.schema.is_approved_parent(target.type, target.status):
+            findings.append(
+                Finding(
+                    "basis.approved-task",
+                    rel,
+                    f"written from {target.key} version {record.version}; {target.key} is {target.status} at version {current}: "
+                    "an approved target has no outdated Task, so its Tasks are replanned with sdlc-plan-tasks before it is approved",
+                )
             )
         elif basis.is_outdated(record):
             findings.append(

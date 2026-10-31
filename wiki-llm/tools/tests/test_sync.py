@@ -57,6 +57,29 @@ class SyncTest(RuleTest):
         self.assertFalse((self.root / "pay/references/REF-pay-prd/drafts/index.md").exists())
         self.assertFalse((self.root / "pay/references/REF-pay-prd/images/index.md").exists())
 
+    def test_checklist_lists_cases_by_risk_then_title(self):
+        case = "pay/tests/TS-pay/TC-pay-ok.md"
+        self.write(
+            "pay/tests/TS-pay/TC-pay-declined.md",
+            self.text(case).replace("title: Payment succeeds", "title: Card declined")
+            .replace("# Payment succeeds", "# Card declined").replace("risk: high", "risk: critical")
+            .replace("description: A valid payment is taken.", 'description: "A declined card, says so."'),
+        )
+        sync.write(self.root)
+        self.assertEqual(
+            self.text("pay/tests/TS-pay/checklist.csv"),
+            "No,Title,Description,Covers,Purpose\n"
+            '1,Card declined,"A declined card, says so.",REQ-pay-1; EP-pay-create,Prove a payment works.\n'
+            "2,Payment succeeds,A valid payment is taken.,REQ-pay-1; EP-pay-create,Prove a payment works.\n",
+        )
+        self.assertIn("* [checklist.csv](checklist.csv)", self.text("pay/tests/TS-pay/index.md"))
+
+    def test_a_missing_checklist_is_out_of_date(self):
+        (self.root / "pay/tests/TS-pay/checklist.csv").unlink()
+        rules = {(item.rule, item.path) for item in self.findings(include_generated=True)}
+        self.assertIn(("generated.stale", "pay/tests/TS-pay/checklist.csv"), rules)
+        self.assertNotIn("layout.missing-file", {rule for rule, _ in rules})
+
     def test_sync_is_idempotent(self):
         self.edit(SERVICE, "# Reads\n\n* [TBL-payments](../../datastores/DB-main/TBL-payments.md)\n\n", "")
         self.assertNotEqual(sync.write(self.root), [])

@@ -4,11 +4,11 @@ from wikilib.schema import Schema
 
 HEADING_KEYS = {
     "name", "presence", "origin", "allow_none", "none_statuses", "nested", "links", "mermaid",
-    "requirements", "table", "generated", "stamped",
+    "requirements", "table", "numbered", "generated", "stamped",
 }
 FIELD_KINDS = {
     "string", "enum", "boolean", "integer", "uri", "timestamp", "date",
-    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested",
+    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested", "basis", "basis_list",
 }
 
 

@@ -1,8 +1,7 @@
 # SDLC Skills Wiki Schema
 
 Version 1. Rules for an SDLC Skills knowledge bundle, built on
-[OKF v0.2](okf-spec.md). The [sample](../sample/index.md) is a conformant worked
-example.
+[OKF v0.2](okf-spec.md).
 
 Every rule a program can check lives in [`schema.json`](schema.json). The tool
 `wiki-llm/tools/wiki_llm.py` enforces it, and the tables in these pages are
@@ -158,12 +157,16 @@ not yet built:
   Feature or ChangeRequest responsible:
   `* [CR-7](path) — modified — what is not live yet`.
 
-Whoever writes the target contract adds the entry. Whoever closes the Tasks
-that build it removes the entry and, when no entry is left, sets the status to
-`Active` and removes the section. The tool cross-checks entries against open
-ChangeRequests, Features, and Tasks.
+Whoever writes the target contract adds the entry. Once the parent is
+`Approved` (or `InDev`), whoever closes the Tasks that build it — or approves
+a parent whose Tasks are already `Done` — removes the entry and, when no entry
+is left, sets the status to `Active` and removes the section. While the parent
+is still `Draft`, `Proposed` or `ReqApproved`, closing a Task leaves its
+pending entries in place until the parent is approved. The tool cross-checks
+entries against open ChangeRequests, Features, and Tasks.
 
-Closing the last Task has three more consequences, which the tool checks:
+Closing the last Task of an approved parent (or approving one whose Tasks are
+all `Done`) has three more consequences, which the tool checks:
 
 - a concept that was `Removing` and has no entry left becomes `Deprecated`
   and loses the section (`pending.removing-file`). Its file stays: the Task
@@ -199,10 +202,15 @@ The tool checks that:
   record of the current version has its date (`basis.date`);
 - an `Approved` target was designed from its current version
   (`basis.approved`);
+- an approved target (`Approved`, a Feature `InDev`) has no Task written from
+  an older version (`basis.approved-task`). Requirements change only before
+  approval, so every Task catches up first: `sdlc-design-arch` approves only
+  once `sdlc-plan-tasks` has replanned them;
 - each TestSuite has one record per target it verifies (`basis.target`);
-- a design, story, TestSuite or Task that is not `Done` written from an older
-  version is reported as a warning (`basis.outdated`). It is cleared by
-  writing it again from the current version, or by a person confirming it is
+- a design, story, Task or TestSuite written from an older version is reported
+  as a warning (`basis.outdated`). It is cleared by writing it again from the
+  current version (for a `Done` Task, planning a new Task for any difference
+  and updating the `Done` Task's `basedOn`), or by a person confirming it is
   still current, which updates the record.
 
 `wiki_llm.py outdated --feature <key>` (or `--change <key>`) lists what is

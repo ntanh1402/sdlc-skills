@@ -1,6 +1,6 @@
 # WebFrontend
 
-[Common rules](schema.md) · [Example](../sample/shop/frontends/WEB-storefront/overview.md)
+[Common rules](schema.md)
 
 A browser application.
 

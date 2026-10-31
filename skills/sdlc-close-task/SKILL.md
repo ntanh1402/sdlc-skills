@@ -9,27 +9,27 @@ This skill records that a Task's code is merged. Its input is a Task key and
 the one code folder the Task was built in. Its output is one draft,
 `wiki/close-<Task key>`, that changes:
 
-- the Task: `status: Done`, `mergeCommitSha`, `mergedAt`;
+- the Task: `status: Done`, `mergeCommitSha`, `mergedAt` (its `basedOn` stays
+  at the version it was built from);
 - each Design file the Task covered: its pending entry removed and, when no
   entry is left, its status set to live;
-- the parent: a Feature `Approved` becomes `InDev`; a ChangeRequest whose
-  Tasks are now all `Done` becomes `Implemented`.
+- the parent: a Feature `Approved` becomes `InDev`; an `Approved`
+  ChangeRequest whose Tasks are now all `Done` becomes `Implemented`.
+
+The last two change only when the parent is approved; section 1 says what
+changes while it is not.
 
 One Task per run. Section 6 lists what it never does.
 
 ## Before you start
 
 Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. This skill uses the
-**short form** of `flow.md` section 8: no rounds and no Run plan, one stop
-that is the Intent and the Design gate together, then the Change-set gate.
-Then read the schema pages `schema.md` ("Pending changes"), `task.md`,
+`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
+short flow of the run and the approval gates: no rounds and no Run plan, one
+stop that is the Intent and the Design gate together, then the Change-set
+gate. Then read the schema pages `schema.md` ("Pending changes"), `task.md`,
 `feature.md`, `change-request.md` and the page of each Design type in the
 Task's scope, in the wiki's `.wiki-llm/schema/`.
-
-The write protocol says never to edit another step's output. Closing is this
-skill's own step: the edits listed above are its output, and it makes no
-other edit to those files.
 
 Other requests go elsewhere; say so and stop:
 
@@ -52,8 +52,7 @@ Refuse, as a refusal and not a question, when:
 |---|---|
 | The Task is `Done` | It is already closed; name its `mergeCommitSha` when it has one |
 | The Task is not on the default branch | Name the draft that holds it and ask to merge it first |
-| The parent is not agreed and designed: a Feature that is not `Approved` or `InDev`, or a ChangeRequest that is not `Approved` | The Requirements are not agreed yet, so the work cannot be recorded as done. Name the way out: agree the Requirements with `sdlc-write-spec`, then `sdlc-design-arch` when it says the design must be redone or approved. The Task stays `Todo` with its code merged until then |
-| `$T outdated` lists the Task: its `basedOn` is older than the parent's `version` | It was planned from an older spec. Name the way out: `sdlc-plan-tasks` checks it against the new version (and adds a Task for any difference), or `sdlc-edit-wiki` records that a person confirmed it is still current |
+| The parent is closed: a Feature that is `Released` or `Deprecated`, or a ChangeRequest that is `Implemented` or `Rejected` | The parent is already closed |
 
 When the user gave no code folder, ask for it once. Never guess it; "this
 folder" is an answer.
@@ -87,7 +86,17 @@ files: that is a review.
 
 **The wiki changes.** Read the Task's `# Planned scope`, each Design file it
 links, the parent's `overview.md`, and every other Task file in the parent's
-folder. Then work out, for each concept in the scope:
+folder.
+
+**While the parent is not approved** (a Feature `Draft` or `ReqApproved`, a
+ChangeRequest `Proposed` or `ReqApproved`), only the Task file and the parent
+folder's `log.md` change. The parent's status and the Design files'
+`# Pending changes` entries stay as they are: `sdlc-design-arch` removes the
+entries when it approves the parent.
+
+When the parent is `Approved` (or a Feature `InDev`), its Tasks are all at its
+current version: an approved parent never has an outdated Task
+(`basis.approved-task`). Work out, for each concept in the scope:
 
 | The concept | Change |
 |---|---|
@@ -102,8 +111,8 @@ and for the parent:
 |---|---|
 | A Feature that is `Approved` | `InDev` |
 | A Feature that is `InDev` | Nothing, even when this was its last Task: code merged is not code deployed |
-| A ChangeRequest whose other Tasks are all `Done` | `Implemented` |
-| A ChangeRequest with another `Todo` Task | Nothing |
+| An `Approved` ChangeRequest whose Tasks are now all `Done` | `Implemented` |
+| An `Approved` ChangeRequest with another `Todo` Task | Nothing |
 
 **Another close in progress.** `git -C "$WIKI" branch -a --list 'wiki/close-TASK-*' 'remotes/origin/wiki/close-TASK-*'`
 lists the close drafts that are not merged. The table above reads the other
@@ -157,7 +166,7 @@ Write exactly the changes approved in section 3:
   `* **Close**: TASK-coupon-api is Done; its code is merged as 3f2a91c. EP-apply-coupon is live. Written by an AI model with sdlc-close-task.`
 
 Change nothing else in those files, and write no `index.md`. Then follow
-`references/write-protocol.md` section 4 from step 5: the input check,
+`references/write-protocol.md` section 4 from step 4: the input check,
 `draft finish`, the Change-set gate, `draft commit`. Commit message:
 `close(<Task key>): <the Task's title>`.
 
@@ -170,7 +179,7 @@ and only when it has no uncommitted change
 `git -C "$SRC" worktree remove "<the worktree>"`. Otherwise leave it and say
 so. Never delete its branch.
 
-End with the summary of the short form, "Done" and "Next":
+End with the summary of `references/flow.md` section 3, "Done" and "Next":
 
 ```text
 Done: wiki/close-TASK-coupon-api, 4 files, pushed. Open the pull request.
@@ -178,7 +187,13 @@ Next: TASK-coupon-admin is the last Todo Task of FEAT-coupons.
 ```
 
 When the close leaves every Task of an `InDev` Feature `Done`, "Next" says
-that `sdlc-edit-wiki` sets the Feature `Released` when it ships.
+that `sdlc-edit-wiki` sets the Feature `Released` when it ships. When the
+parent is not approved yet, "Next" says that `sdlc-design-arch` removes the
+pending entries when it approves the parent. When the Task's `basedOn` is
+older than the parent's current `version`, "Next" also says that
+`sdlc-plan-tasks` checks the Task against the new version, adds a Task for
+any difference and updates its `basedOn`, which the parent needs before it can
+be approved.
 
 ## 6. What this skill never does
 
@@ -194,8 +209,8 @@ that `sdlc-edit-wiki` sets the Feature `Released` when it ships.
 - The merged commit was found by its trailer, or given by the person and
   checked to be on the remote's default branch.
 - The person answered whether the change was reviewed.
-- The parent was `Approved` (or a Feature `InDev`), and the Task's `basedOn`
-  named the parent's current version.
+- The parent was open, and the Design files and the parent changed only when
+  the parent was approved.
 - The wiki changes were approved file by file before the draft was started.
 - `draft finish` was `ok`, the change set was approved, and `draft commit`
   reported the branch.

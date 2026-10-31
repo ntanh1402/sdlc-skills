@@ -1,0 +1,44 @@
+diff --git a/src/api/orders.ts b/src/api/orders.ts
+index 46e2a4f..b2a9029 100644
+--- a/src/api/orders.ts
++++ b/src/api/orders.ts
+@@ -16,3 +16,16 @@ export async function createOrder(session: string, cartId: string, customerId: s
+   }
+   return response.json();
+ }
++
++export type Order = { orderId: string; totalUsd: number; status: string; createdAt: string };
++
++/** GET /orders?customerId=: the customer's own orders, newest first. */
++export async function listOrders(session: string, customerId: string): Promise<Order[]> {
++  const response = await fetch(`${ORDERS_URL}/orders?customerId=${customerId}&limit=50`, {
++    headers: { Authorization: `Bearer ${session}` },
++  });
++  if (!response.ok) {
++    throw new Error(`could not load orders: ${response.status}`);
++  }
++  return (await response.json()).orders;
++}
+diff --git a/src/pages/orders.tsx b/src/pages/orders.tsx
+new file mode 100644
+index 0000000..0652d7c
+--- /dev/null
++++ b/src/pages/orders.tsx
+@@ -0,0 +1,17 @@
++import { useEffect, useState } from "react";
++import { listOrders, Order } from "../api/orders";
++import { useSession } from "../state";
++
++/** /orders: the customer's order history. Needs a login. */
++export default function Orders() {
++  const session = useSession({ redirectTo: "/login?return=/orders" });
++  const [orders, setOrders] = useState<Order[] | null>(null);
++
++  useEffect(() => {
++    listOrders(session.token, session.customerId).then(setOrders);
++  }, [session.token, session.customerId]);
++
++  if (orders === null) return <p>Loading your orders…</p>;
++  if (orders.length === 0) return <p>You have no orders yet.</p>;
++  return <OrderList orders={orders} />;
++}

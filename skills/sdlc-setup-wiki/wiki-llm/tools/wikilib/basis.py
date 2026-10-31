@@ -88,11 +88,9 @@ def verifies(bundle: Bundle, suite: Concept) -> list[Concept]:
 
 
 def is_outdated(record: Record) -> bool:
-    """Written from an older version. A Done Task is history and never outdated."""
+    """Written from an older version than the target's current one."""
     current = version(record.target)
-    if current is None or record.version >= current:
-        return False
-    return not (record.holder.type == "Task" and record.holder.status == "Done")
+    return current is not None and record.version < current
 
 
 def outdated(bundle: Bundle, target: Concept) -> list[Record]:

@@ -1,6 +1,6 @@
 # Operation
 
-[Common rules](schema.md) · [Example](../sample/shop/externals/EXT-stripe/OP-payment-intents-create.md)
+[Common rules](schema.md)
 
 One call this application makes on an ExternalService.
 

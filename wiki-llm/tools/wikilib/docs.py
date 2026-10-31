@@ -28,6 +28,8 @@ KIND_TEXT = {
     "actor_stamps": "`{ by, at }`, or a list of them",
     "sources": "list of `{ id, resource, title }`",
     "string_list": "`[a, b]`",
+    "basis": "`{ version, at }`: a spec version and its `YYYY-MM-DD`",
+    "basis_list": "list of `{ id, version, at }`, one per target under `# Verifies`",
 }
 LEADING = ["type", "title", "description", "status"]
 TRAILING = ["generated", "verified", "sources", "resource", "stale_after", "tags"]
@@ -84,6 +86,8 @@ def _content(spec: dict) -> str:
     parts = []
     if "table" in spec:
         parts.append(f"table with columns {_codes(spec['table'])}")
+        if spec.get("numbered"):
+            parts.append(f"`{spec['table'][0]}` counts 1, 2, 3, … in order")
     if "mermaid" in spec:
         parts.append(f"Mermaid `{spec['mermaid']}` diagram")
     if "requirements" in spec:

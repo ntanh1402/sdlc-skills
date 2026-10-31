@@ -1,9 +1,10 @@
-# Paste-ready story
+# Paste-ready story output
 
-A person copies a story from the wiki into the tracker by hand. Print each
-story as plain Markdown that pastes cleanly: no frontmatter, no wiki links
-(they do not resolve outside the wiki), Requirement keys as plain text. The
-copy is printed in the chat and never written to the wiki.
+Before the summary of `sdlc-write-stories`, print each story added or changed
+in this run as plain Markdown that pastes cleanly into the tracker by hand: no
+frontmatter, no wiki links (they do not resolve outside the wiki), Requirement
+keys as plain text. This copy is printed in the chat and never written to the
+wiki.
 
 Print one block per story, separated by a line `---`:
 
@@ -32,5 +33,5 @@ Priority: P1 · Wiki: `shop/features/FEAT-gift-cards/STORY-gift-cards-pay-with-c
 - Leave out the Notes line when the story has no `# Notes`, and `Priority`
   when it has no `priority`.
 - The wiki path is relative to the wiki's `wiki/` folder, so the ticket
-  leads back to the story. When the story already has a `trackerKey`, add
-  `· Ticket: <trackerKey>`.
+  leads back to the story. When a revised story already has a `trackerKey`,
+  add `· Ticket: <trackerKey>`.

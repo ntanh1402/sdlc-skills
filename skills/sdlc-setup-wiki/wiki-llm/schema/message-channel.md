@@ -1,6 +1,6 @@
 # MessageChannel
 
-[Common rules](schema.md) · [Example](../sample/shop/channels/CHAN-order-created/overview.md)
+[Common rules](schema.md)
 
 A topic or queue and the contract of the messages on it.
 

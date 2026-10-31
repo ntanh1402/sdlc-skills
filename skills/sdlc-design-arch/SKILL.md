@@ -10,13 +10,17 @@ ChangeRequest whose Requirements are a draft (`Draft`, `Proposed`) or agreed
 (`ReqApproved`), and writes its approved target design:
 
 - **Feature**: `# Architecture` filled and `designBasedOn` set to the
-  Feature's version. The status becomes `Approved` only when the Feature is
-  `ReqApproved`; a `Draft` Feature stays `Draft`.
+  Feature's version. When the Feature is `ReqApproved` (and no existing Task
+  is outdated or uncovered), its status becomes `Approved`, or `InDev` when a
+  Task is already `Done` (removing the pending entries of concepts whose
+  Tasks are all `Done`). A `Draft` Feature stays `Draft`.
 - **ChangeRequest**: `# Delta` filled and `designBasedOn` set. When the
-  ChangeRequest is `ReqApproved`, in the same change: status `Approved`, and
-  the target Feature's Requirements and Architecture updated to the new
-  target. While it is `Proposed`, the Feature is not touched: it shows only
-  agreed changes.
+  ChangeRequest is `ReqApproved` (and no existing Task is outdated or
+  uncovered), in the same change: status `Approved` (or `Implemented` when
+  every Task is `Done`), the target Feature's Requirements and Architecture
+  updated to the new target, and pending entries removed for concepts whose
+  Tasks are all `Done`. While it is `Proposed`, the Feature is not touched: it
+  shows only agreed changes.
 - In both: every new or changed Design concept file written as its target,
   with a pending entry; decisions in `wiki/<app>/decisions/ADR-<name>.md`.
 
@@ -235,57 +239,93 @@ For each Design concept:
 
 - still in the design: rewrite it to the new target; its pending entry stays;
 - new to the design: write it as above, with its pending entry;
-- dropped from the design: remove this target's pending entry. A `Planned`
-  file with no entry left is deleted: it was never built. A `Modifying` or
-  `Removing` file with no entry left gets back the text it had before this
-  target's first design (`git log` on the file) and its live status;
-- a `Todo` Task of the target that plans a dropped concept loses that link
-  from its `# Planned scope`. It is the only edit this skill makes to a Task;
-  list each one under `## For other skills` (`sdlc-plan-tasks` replans it).
+- dropped from the design: when a `Done` Task of this target already built the
+  concept, its code is merged in the repository, so set the concept to
+  `status: Removing` with a `# Pending changes` entry (`removed`) so
+  `sdlc-plan-tasks` plans a new Task to remove the code. Otherwise remove this
+  target's pending entry: a `Planned` file with no entry left is deleted (it
+  was never built), and a `Modifying` or `Removing` file with no entry left
+  gets back the text it had before this target's first design (`git log` on
+  the file) and its live status;
+- a `Todo` Task of the target that has not started and plans a dropped
+  unbuilt concept loses that link from its `# Planned scope`. It is the only
+  edit this skill makes to a Task; list each one under `## For other skills`
+  (`sdlc-plan-tasks` replans it).
 
 Show the dropped and restored files at the Design gate.
 
 ## 6. Self review, finish and commit
 
 Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, also check by reading that:
+review, have the review sub-agent also check by reading that:
 
 - every Requirement appears in `## Traceability`;
 - the diagrams match the prose and the contracts;
 - every concept in `## Target delta` (or in `## Services` and `## Frontends`
-  for a new Feature) exists and has its pending entry;
-- no Task or TestSuite was edited, and no TestCase except by the removed-
-  Requirement fix, beyond the dropped links of a redesign;
+  for a new Feature) exists and has its pending entry (unless all its Tasks of
+  an approved target are already `Done`);
+- no Task, TestSuite or TestCase was edited beyond what `plan.md` lists
+  (dropping links to a concept a redesign deleted, or unlinking a Requirement
+  that approving a ChangeRequest removed);
 - `designBasedOn` names the target's current version and `versionDate`;
-- the status is `Approved` exactly when the target is `ReqApproved`, and the
-  target Feature of a ChangeRequest was changed only when the ChangeRequest
-  became `Approved`.
+- the status is `Approved` (or `InDev` / `Implemented` when `Done` Tasks
+  exist) only when the target was `ReqApproved` and none of its Tasks is
+  outdated (`basedOn` older than the target's `version`), and the target
+  Feature of a ChangeRequest was changed only when the ChangeRequest was
+  approved.
 
 Commit message: `arch(<Key>): <title>`. In the summary, "For other skills"
 lists the Tasks, stories and TestSuites reported out of date, and "Next" is
 "`sdlc-plan-tasks` and `sdlc-design-tests` after the merge". When the target
-is still a draft, add: "the Tasks can be built, but not closed until the
-Requirements are agreed with `sdlc-write-spec`".
+is still a draft, add: "the Tasks can be built and closed while the spec is a
+draft; the Design files' pending entries stay until the target is approved".
 
 ## 7. Approving a design that is current
 
-**Applying a ChangeRequest.** When a ChangeRequest becomes `Approved`, in
-the same draft: set `status: Approved`, and update the target Feature's
-Requirements (the Feature's copy becomes the current text) and its
-`# Architecture` to the new target. The Feature's `version` does not change:
-the ChangeRequest has its own. When that removes a Requirement a Feature user
-story lists, fix those stories in the same draft as the last rule of
-`user-story.md` says, list them in the Run plan and show the edits at the
-Design gate. When it removes a Requirement that TestCases cover, fix those
-cases the same way, as the last rule of `test-case.md` says. A changed
-Requirement keeps its key: its stories stay as they are.
+**When Tasks already exist.** An approved target never has an outdated Task
+(`basis.approved-task`): the Requirements cannot change after approval, so
+every Task must catch up with the current version before it. Before setting a
+`ReqApproved` target to `Approved`, `InDev` or `Implemented`, run
+`$T outdated` and `$T coverage tasks` for the target. If any Task, `Todo` or
+`Done`, is outdated (`basedOn` older than the target's `version`), or any
+Design concept is uncovered while Tasks exist, approve nothing: keep the
+status `ReqApproved`, list each outdated Task and uncovered concept in the
+summary, and name `sdlc-plan-tasks` under "For other skills" (it plans a Task
+for each difference and updates the `basedOn` of each `Done` Task it checked).
+Then run this skill again to approve.
+
+When the Tasks are current and at least one is `Done`, remove this target's
+`# Pending changes` entry from each Design concept whose covering Tasks of
+this target are all `Done`; when a concept has no pending entry left, remove
+`# Pending changes` and set its status to `Active` (or `Deprecated` when it
+was `Removing`). Set a Feature with any `Done` Task to `InDev` (otherwise
+`Approved`), and a ChangeRequest whose Tasks are all `Done` to `Implemented`
+(otherwise `Approved`).
+
+**Applying a ChangeRequest.** When a ChangeRequest is approved, in the same
+draft: set its status (`Approved` or `Implemented`), remove the pending
+entries of concepts whose Tasks of this ChangeRequest are all `Done`, and
+update the target Feature's Requirements (the Feature's copy becomes the
+current text) and its `# Architecture` to the new target. The Feature's
+`version` does not change: the ChangeRequest has its own. When that removes a
+Requirement a Feature user story lists, fix those stories in the same draft as
+the last rule of `user-story.md` says, unlink that Requirement's anchor to
+plain text in any Task's `# Acceptance`, list them in the Run plan and show
+the edits at the Design gate. When it removes a Requirement that TestCases
+cover, fix those cases the same way, as the last rule of `test-case.md` says.
+A changed Requirement keeps its key: its stories stay as they are.
 
 **The short run** (`APPROVE`): a `ReqApproved` target whose design was made
-from its current version. Use the short form of `references/flow.md`
-section 8 in the draft `arch-<Key>`. The one stop shows, file by file:
+from its current version. First do the check of "When Tasks already exist":
+when it fails, stop before any draft and give the summary it names. Otherwise
+use the short form of `references/flow.md` section 8 in the draft
+`arch-<Key>`. The one stop shows, file by file:
 
-- a Feature: `status: Approved`, and nothing else;
-- a ChangeRequest: `status: Approved` and the Feature update above.
+- a Feature: `status: Approved` (or `InDev` when a Task is `Done`, plus the
+  Design files whose pending entries for the Feature are removed);
+- a ChangeRequest: `status: Approved` (or `Implemented` when every Task is
+  `Done`), the Feature update above, and any Design files whose pending
+  entries for the ChangeRequest are removed.
 
 Then the Change-set gate and the commit, `arch(<Key>): approve`. A
 ChangeRequest whose Delta no longer fits the target Feature (another

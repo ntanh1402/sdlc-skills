@@ -32,6 +32,7 @@
     "heading": "Pending changes",
     "status_by_change": {"new": "Planned", "removed": "Removing", "modified": "Modifying"},
     "open_parents": {"Feature": ["Draft", "ReqApproved", "Approved", "InDev"], "ChangeRequest": ["Proposed", "ReqApproved", "Approved"]},
+    "approved_parents": {"Feature": ["Approved", "InDev"], "ChangeRequest": ["Approved"]},
     "open_requests": ["Proposed", "ReqApproved", "Approved"],
     "delta": ["Delta", "Target delta"],
     "feature_scope": ["Architecture"],

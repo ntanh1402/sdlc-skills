@@ -50,6 +50,16 @@ class TableAndDiagramTest(RuleTest):
         self.edit("pay/glossary.md", "| Role | Description |", "| Role | Meaning |")
         self.assertRule("content.table", "pay/glossary.md")
 
+    def test_test_data_is_a_numbered_table(self):
+        self.edit(CASE, "| No | Input | Value |", "| Input | Value | Note |")
+        self.assertRule("content.table", CASE)
+
+    def test_test_data_counts_from_one_in_order(self):
+        self.edit(CASE, "| 1 | card | 4242 4242 4242 4242 |", "| 1 | card | 4242 4242 4242 4242 |\n| 3 | amount | 20.00 |")
+        self.assertRule("content.table", CASE)
+        self.edit(CASE, "| 3 | amount |", "| 2 | amount |")
+        self.assertClean()
+
     def test_feature_architecture_needs_a_flowchart(self):
         self.edit(FEATURE, "flowchart LR", "graph LR")
         self.assertRule("content.mermaid", FEATURE)

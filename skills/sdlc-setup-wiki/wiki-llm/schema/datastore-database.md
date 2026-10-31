@@ -1,6 +1,6 @@
 # Database
 
-[Common rules](schema.md) · [Example](../sample/shop/datastores/DB-shop/overview.md)
+[Common rules](schema.md)
 
 A relational database. It owns its Tables as files in its folder.
 

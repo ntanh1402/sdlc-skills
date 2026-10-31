@@ -1,6 +1,6 @@
 # TestCase
 
-[Common rules](schema.md) · [Example](../sample/shop/tests/TS-checkout/TC-happy-path.md)
+[Common rules](schema.md)
 
 One test, written so a tester who did not design the system can run it.
 

@@ -53,19 +53,21 @@ Run it again from any other folder you want to link to the same wiki.
 | Test design | QA | `sdlc-design-tests`, alongside planning | TestSuites `Approved`, each with a `checklist.csv` | Merge the pull request |
 | Implementation | Developer | `sdlc-build-task`, once per Task | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
 | Code review | Reviewer | `sdlc-review-code` | Unchanged (read-only) | Decide on the findings, merge the code pull request |
-| Closing a Task | Developer | `sdlc-close-task` | Only once the Feature or ChangeRequest is `Approved`: Task `Done`; Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
+| Closing a Task | Developer | `sdlc-close-task` | Task `Done`; once the Feature or ChangeRequest is `Approved`: Design files live, Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
 | Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a suite `Implemented` |
 | Release | Release manager | Your usual tools, then `sdlc-edit-wiki` | Feature `Released` | Deploy. Then ask `sdlc-edit-wiki` to mark the Feature released |
 | Maintenance | Anyone | `sdlc-write-spec`, `sdlc-import`, `sdlc-edit-wiki` | A new ChangeRequest, or corrections | See below |
 
 **Starting before the Requirements are agreed.** A spec can be merged as a
 draft (`Draft`, `Proposed`). The architecture, stories, Tasks and TestSuites
-can all start from it; each records the spec `version` it was written from.
+can all start from it, and Tasks can be built and closed while the spec is a
+draft; each records the spec `version` it was written from. While the parent
+is not `Approved` yet, closing a Task marks the Task `Done` and leaves the
+parent's status and the Design files' `# Pending changes` entries in place.
 When the spec changes, its version goes up and `sdlc-ask-wiki` (or
-`wiki_llm.py outdated`) lists what was written from an older version, to
-redo or to confirm as still current. Code can be built from a draft, but
-`sdlc-close-task` records a Task as done only once its Feature or
-ChangeRequest is `Approved`: Requirements agreed and design current.
+`wiki_llm.py outdated`) lists what was written from an older version (including
+`Done` Tasks), so `sdlc-plan-tasks` plans a new Task for any difference or
+`sdlc-edit-wiki` confirms it is still current.
 
 **Maintenance.** A bug, a security fix or any change to a released Feature is
 a new ChangeRequest from `sdlc-write-spec`, and it goes through the same phases
@@ -99,7 +101,7 @@ flowchart TD
   build --> pr(["you: push, open the code PR"])
   pr --> review["sdlc-review-code"]
   review --> merge(["you: merge the code PR"])
-  merge -- "Feature or ChangeRequest Approved" --> close["sdlc-close-task"]
+  merge --> close["sdlc-close-task"]
   close --> m5(["you: merge the close PR"])
   m5 -- "next Task" --> build
   m5 -- "all Tasks Done, InDev" --> ship(["you: deploy"])
@@ -186,7 +188,7 @@ ask nothing unless something is missing, and they write nothing.
 
 The skills are listed in the order of the flow. "Say" is an example request;
 the names come from the sample wiki in
-[wiki-llm/sample/shop](wiki-llm/sample/shop).
+[forward-tests/sample/shop](forward-tests/sample/shop).
 
 ### sdlc-setup-wiki
 
@@ -325,13 +327,13 @@ the names come from the sample wiki in
 
 - **Use when:** a Task's code pull request is merged.
 - **Before:** the merge is on the code repository's default branch, with the
-  `Task: <key>` line that `sdlc-build-task` wrote. The Feature or
-  ChangeRequest is `Approved` (a Feature may be `InDev`), and the Task was
-  planned from its current spec version.
+  `Task: <key>` line that `sdlc-build-task` wrote.
 - **Say:** "Close TASK-gift-card-redeem; the code is in ../shop-orders".
-- **You get:** the Task `Done` with its merge commit, the Design files it
-  covered marked as built, and the Feature `InDev` or the ChangeRequest
-  `Implemented` (once all its Tasks are `Done`).
+- **You get:** the Task `Done` with its merge commit; and once the Feature or
+  ChangeRequest is `Approved`, the Design files it covered marked as built and
+  the Feature `InDev` or the ChangeRequest `Implemented` (once all its Tasks
+  are `Done`). While the parent is still a draft or `ReqApproved`, its status
+  and the Design files' pending entries stay until it is approved.
 - **Next:** merge the close pull request. Close the ticket in your tracker
   yourself.
 
@@ -386,8 +388,6 @@ Skills refuse rather than guess. The common refusals:
 | The wiki was set up by a newer release | Someone upgraded the wiki with newer skills | Update your installed skills (run `npx skills add ntanh1402/sdlc-skills -g` again) |
 | The wiki's tool copy was edited by hand | Files in `.wiki-llm/` were changed | Run `sdlc-setup-wiki` to restore them |
 | `<Key>` is in draft `wiki/…`, not on `main` | The previous step's pull request is not merged | Merge it, then run the skill again |
-| The Feature or ChangeRequest is not `Approved`, so the Task cannot be closed | Its Requirements are still a draft, or its design is behind the spec | Agree the requirements with `sdlc-write-spec`, then run `sdlc-design-arch` if it says so |
-| The Task was planned from an older spec version | The spec changed after the Tasks were planned | `sdlc-plan-tasks` again, or `sdlc-edit-wiki` to record that the Task is still current |
 | A change to the design is a new ChangeRequest | The Feature is already designed | `sdlc-write-spec` writes a ChangeRequest |
 | This is already built; use sdlc-import | Your brief describes something that already runs | `sdlc-import` records it |
 | The Application does not exist | No such Application in the wiki | `sdlc-setup-wiki`: "add application `<key>`" |
@@ -397,9 +397,38 @@ A wiki pull request can conflict when two drafts change the same files, for
 example the tasks and the tests of one Feature. Merge one, then ask your agent
 to run the tool's `refresh` on the other draft, and merge that one.
 
+## Working on this repository
+
+This repository is not a Wiki repository, so pass the sample explicitly:
+
+```bash
+python3 wiki-llm/tools/wiki_llm.py --root forward-tests/sample validate
+python3 wiki-llm/tools/wiki_llm.py --root forward-tests/sample sync --check
+python3 wiki-llm/tools/wiki_llm.py docs            # write the tables of the schema pages
+python3 wiki-llm/tools/wiki_llm.py docs --check    # report stale pages and broken links
+python3 -m unittest discover -s wiki-llm/tools/tests -t wiki-llm/tools   # the tool's tests
+```
+
+`skills/` holds the skills. The tool is edited only in `wiki-llm/`;
+`skills/sdlc-setup-wiki/wiki-llm/` is its release copy, rebuilt by
+`release.py`. A skill that runs the wiki's tool or depends on the schema has a
+`RELEASE` file holding the Release version.
+
+```bash
+python3 release.py           # after any change to wiki-llm/schema or wiki-llm/tools
+python3 release.py 1.1.0     # set a new Release version everywhere
+```
+
+Each skill owns its `references/` files and its `agents/openai.yaml`
+directly. The tests fail when the release copy or a `RELEASE` file is out of
+date.
+
 ## More
 
-- [`docs/user-guide/user-guide.md`](docs/user-guide/user-guide.md): the user
+- [`user-guide/user-guide.md`](user-guide/user-guide.md): the user
   guide, with one page per skill: the scenarios you will meet, what the skill
   does and what you do.
+- [`wiki-llm/schema/schema.md`](wiki-llm/schema/schema.md): the wiki schema and
+  its type rules.
 - [`CONTEXT.md`](CONTEXT.md): the terms used here.
+- [`docs/adr/`](docs/adr/): the decisions behind the design.

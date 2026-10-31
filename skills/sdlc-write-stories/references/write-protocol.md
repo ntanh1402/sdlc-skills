@@ -1,37 +1,31 @@
-# Writing to the project wiki
+# Writing a user-stories draft to the project wiki
 
-This file says how every change to the wiki is drafted, checked, approved
-and committed. The skill's own `SKILL.md` says what to write; this file says
-how.
+This file says how `sdlc-write-stories` drafts, checks, approves and commits
+its changes to the wiki. `SKILL.md` says what to write; this file says how.
 
-Read two files next to this one first. `read-protocol.md` finds `WIKI`, defines
-`T`, and says how to read the wiki and its schema. `flow.md` gives the steps of
-a run, the three approval gates, the questions, the Run plan, the self review
-and the summary. This file adds what a draft needs at each of those steps.
+Read `read-protocol.md` and `flow.md` next to this file first.
 
 ## 1. The rules
 
-- Every change goes into a **draft**: a branch `wiki/<key>` with its own
-  worktree in `WIKI/.worktrees/<key>/`. The default branch changes only when
-  the user merges the draft's pull request.
-- One lifecycle step is one draft and one pull request. A step reads only what
-  earlier steps merged into the default branch.
+- Every change goes into a **draft**: a branch `wiki/stories-<Key>` with its
+  own worktree in `WIKI/.worktrees/stories-<Key>/`. The default branch changes
+  only when the user merges the draft's pull request.
+- One lifecycle step is one draft and one pull request. This step reads only
+  what earlier steps merged into the default branch.
 - Stop at the three **approval gates** of `flow.md`: Intent, Design and
   Change-set. No draft is started before the Intent gate is approved.
 - Never merge, never open a pull request, never call a hosting service; the
   user does that.
-- Edit only what a person writes. Never edit an `index.md`, a TestSuite's
-  `checklist.csv` or a section the schema page marks as written by the tool;
-  `draft finish` writes those.
-- Never edit another step's output, unless your `SKILL.md` says the edit is a
-  correction, or it is the story fix of `user-story.md` or the TestCase fix
-  of `test-case.md` after a removed Requirement. When you find that a later step's output is out of date, name
-  the skill to run again. Adding or removing a `# References` entry is not
-  an edit of the concept: any step may link a Reference from a file it
-  writes, and the tool does not stamp the change.
-- Keys are names taken from titles, never numbers: `TASK-refund-endpoint`,
-  `ADR-idempotent-checkout`. A key on the default branch never changes. Before
-  the pull request is merged, `$T rename <old> <new>` changes one.
+- Edit only what a person writes. Never edit an `index.md`, `# Changed by`, or
+  any section the schema page marks as written by the tool; `draft finish`
+  writes those.
+- Never edit `overview.md`, the PRD, or another step's output, except dropping
+  a link to a deleted story from a Task's `# Stories` or a ChangeRequest
+  story's `# Affects` (with a log entry in each folder changed). Linking Tasks
+  to new or revised stories belongs to `sdlc-plan-tasks`.
+- Keys are names taken from titles, never numbers:
+  `STORY-gift-cards-pay-with-card`. A key on the default branch never changes.
+  Before the pull request is merged, `$T rename <old> <new>` changes one.
 
 ## 2. Check the versions
 
@@ -52,15 +46,11 @@ cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
 
 ## 3. The draft key
 
-The key is `<step>-<Key>`: the skill's step prefix, then the key of the Feature
-or ChangeRequest the step is about. The skill's `SKILL.md` names its prefix.
+The key is `stories-<Key>`: `stories-` followed by the key of the Feature or
+ChangeRequest (`stories-FEAT-coupons`, `stories-CR-sms-alerts`).
 
-```text
-spec-FEAT-coupons    arch-FEAT-coupons    tasks-CR-sms-alerts    tests-CR-sms-alerts
-```
-
-**First, look for a worktree.** When `WIKI/.worktrees/<step>-<Key>/` exists, an
-earlier run started this draft and did not commit it. Never discard it and
+**First, look for a worktree.** When `WIKI/.worktrees/stories-<Key>/` exists,
+an earlier run started this draft and did not commit it. Never discard it and
 never start it again: a draft with no commit yet passes the "merged" test of
 case 3 below, and its files and its `plan.md` exist nowhere else.
 
@@ -74,34 +64,31 @@ Otherwise decide what to do after `git fetch --quiet origin 2>/dev/null`:
 1. **The step's input is not on the default branch.** Stop. If
    `git branch -a --list 'wiki/*-<Key>' 'remotes/origin/wiki/*-<Key>'` shows the
    draft that holds it, say: "<Key> is in draft `wiki/<that branch>`, not on
-   `<default>`. Merge its pull request first." Otherwise name the skill that
-   writes the input.
-2. **`wiki/<step>-<Key>` exists and is not merged** into the default branch
-   (`git merge-base --is-ancestor wiki/<step>-<Key> "$DEFAULT"` fails). This is
-   a revision, for example after review: `$T draft resume <step>-<Key>`. Tell
+   `<default>`. Merge its pull request first." Otherwise name `sdlc-write-spec`.
+2. **`wiki/stories-<Key>` exists and is not merged** into the default branch
+   (`git merge-base --is-ancestor wiki/stories-<Key> "$DEFAULT"` fails). This is
+   a revision, for example after review: `$T draft resume stories-<Key>`. Tell
    the user that new commits join any pull request open for that branch.
-3. **`wiki/<step>-<Key>` exists and is merged.** Run
-   `$T draft discard <step>-<Key> --remote`, then `$T draft start <step>-<Key>`.
+3. **`wiki/stories-<Key>` exists and is merged.** Run
+   `$T draft discard stories-<Key> --remote`, then `$T draft start stories-<Key>`.
    Everything on that branch is already on the default branch, so deleting it
    loses nothing. If your environment refuses the deletion, ask the user to run
    the same `draft discard` command, then continue.
-4. **Otherwise** `$T draft start <step>-<Key>`.
+4. **Otherwise** `$T draft start stories-<Key>`.
 
 ## 4. The draft at each step
 
-The steps are those of `flow.md`, section 1. This section says what the draft
-needs at each one. A skill on the short form (`flow.md`, section 8) runs the
-same commands and writes no `plan.md`.
+The steps are those of `flow.md`, section 1:
 
 1. **Look up, questions, Intent gate.** Read the input on the default branch
    (`read-protocol.md`, section 2). `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
    lists the runs that stopped part-way; when one is for this request, resume
    it (section 3) and skip to the step its Run plan has reached. Otherwise no
    draft exists yet.
-2. **Draft.** Choose the key and start or resume the draft (section 3). Then:
+2. **Draft.** Start or resume `stories-<Key>` (section 3). Then:
 
    ```bash
-   cd "$WIKI/.worktrees/<key>"
+   cd "$WIKI/.worktrees/stories-<Key>"
    READ=$(git rev-parse "$DEFAULT")
    ```
 
@@ -110,22 +97,17 @@ same commands and writes no `plan.md`.
    earlier commits, which are not input. Write the Run plan to `plan.md` in
    this folder, the root of the worktree. Git ignores it there.
 3. **Design gate.** On rejection, stop: a draft started in this run is removed
-   with `cd "$WIKI" && $T draft discard <key>`; a resumed draft is never
-   discarded, whatever this run has written into it.
-4. **Write** the files under `wiki/` in the worktree. Follow the schema page of
-   each type you write (`.wiki-llm/schema/<type>.md`). Add an entry to the
-   `log.md` of every concept folder you change, under today's date, newest
-   first:
+   with `cd "$WIKI" && $T draft discard stories-<Key>`; a resumed draft is
+   never discarded, whatever this run has written into it.
+4. **Write** the story files under `wiki/` in the worktree, following
+   `.wiki-llm/schema/user-story.md`. Add an entry to the `log.md` of every
+   concept folder you change, under today's date, newest first:
 
    ```markdown
    ## 2026-10-02
 
-   * **Update**: Added the coupon Requirements. Written by an AI model with sdlc-write-spec.
+   * **Stories**: Wrote 3 user stories. Written by an AI model with sdlc-write-stories.
    ```
-
-   A change to `# References` only is logged as a **References** entry. A new
-   or changed Reference needs a person's approval of its whole folder; the
-   Change-set gate is that approval.
 
 5. **Input check.** Check whether the input changed on the default branch
    since you read it:
@@ -135,14 +117,16 @@ same commands and writes no `plan.md`.
    git diff --quiet "$READ" "$DEFAULT" -- <the input paths> || git diff --stat "$READ" "$DEFAULT" -- <the input paths>
    ```
 
-   If it changed, show the user what changed and go back to step 3. Do not
-   merge the default branch in here: `$T refresh` is for a pull request that
-   has conflicts (section 5).
-6. **Self review, then finish.** Do the self review of `flow.md`, section 6;
-   a skill on the short form has none and goes straight on. Then stamp, check and validate:
+   Because `sdlc-design-arch` may merge while this draft is open and writes
+   the same `overview.md` (`# Architecture` or `# Delta`, and `status`), when
+   `overview.md` changed, compare only its `# Requirements` between `READ` and
+   `$DEFAULT`. If the Requirements are unchanged, go on; if they changed, show
+   what changed and go back to step 3.
+6. **Self review, then finish.** Do the self review of `flow.md`, section 6.
+   Then stamp, check and validate:
 
    ```bash
-   $T draft finish --by "<skill name>/<the line in RELEASE>" --verified-by
+   $T draft finish --by "sdlc-write-stories/<the line in RELEASE>" --verified-by
    ```
 
    `--verified-by` without a value records the person in
@@ -152,8 +136,8 @@ same commands and writes no `plan.md`.
 7. **Change-set gate.** Run `$T draft diff`. Show the files it lists (those
    marked `authored: false` were written by the tool), a commit message, and
    what the self review could not fix. Ask for approval. A change returns to
-   step 4, or to step 3 if the design changes.
-8. **Commit, then the summary.**
+   step 4, or to step 3 if the stories change.
+8. **Commit, paste-ready copy, then the summary.**
 
    ```bash
    $T draft commit -m "<message>"; cd "$WIKI"
@@ -161,17 +145,19 @@ same commands and writes no `plan.md`.
 
    Run both in one command: `draft commit` removes the worktree you are in,
    and the `plan.md` with it. Judge the result by the JSON it prints (`ok`,
-   `branch`, `pushed`), not by an error about the current directory. In the
-   summary, "Done" names the branch `wiki/<key>` and says the user opens the
-   pull request. If there is no remote, say the branch must be pushed first.
+   `branch`, `pushed`), not by an error about the current directory. Print the
+   paste-ready copy of each added or changed story (`paste-format.md`), then
+   the summary: "Done" names the branch `wiki/stories-<Key>` and says the user
+   opens the pull request. If there is no remote, say the branch must be
+   pushed first.
 
 ## 5. When a step goes wrong
 
 | Situation | Do |
 |---|---|
 | `draft start` says the branch exists | Use section 3 again; never delete a draft that is not merged |
-| The pull request has conflicts, because another draft was merged first | `$T draft resume <key>` if the worktree is gone, then `$T refresh` in it. It resolves conflicts in tool-written files itself; for a file a person writes it stops and names it: resolve it with git and run `$T refresh` again |
-| `refresh` reports `ids.duplicate-key` or `ids.requirement-collision` | Another draft chose the same key: `$T rename <old> <new>` (with `--change CR-x` for a Requirement inside one ChangeRequest), then `$T refresh` |
+| The pull request has conflicts, because another draft was merged first | `$T draft resume stories-<Key>` if the worktree is gone, then `$T refresh` in it. It resolves conflicts in tool-written files itself; for a file a person writes it stops and names it: resolve it with git and run `$T refresh` again |
+| `refresh` reports `ids.duplicate-key` | Another draft chose the same key: `$T rename <old> <new>`, then `$T refresh` |
 | `draft finish` says `git config user.email` is not set | Ask the user for the id to record, and pass it: `--verified-by human:<id>` |
 | `draft commit` refuses because files changed after `finish` | Run step 6 again |
-| The user abandons the change | `cd "$WIKI" && $T draft discard <key> --remote` |
+| The user abandons the change | `cd "$WIKI" && $T draft discard stories-<Key> --remote` |

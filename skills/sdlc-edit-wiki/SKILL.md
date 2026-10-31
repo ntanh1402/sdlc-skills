@@ -13,11 +13,11 @@ decision goes through the skill that asks for that decision.
 ## Before you start
 
 Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. This skill uses the
-**short form** of `flow.md` section 8: no rounds and no Run plan, one stop
-that is the Intent and the Design gate together, then the Change-set gate.
-Then read `schema.md` ("Corrections", "Pending changes") and the schema page
-of each type you will edit, in the wiki's `.wiki-llm/schema/`.
+`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
+short flow of the run and the approval gates: no rounds and no Run plan, one
+stop that is the Intent and the Design gate together, then the Change-set
+gate. Then read `schema.md` ("Corrections", "Pending changes") and the schema
+page of each type you will edit, in the wiki's `.wiki-llm/schema/`.
 
 ## 1. What this skill edits
 
@@ -29,7 +29,7 @@ of each type you will edit, in the wiki's `.wiki-llm/schema/`.
 | A Task's `trackerKey`, `resource` and `prUrl` | The ticket and the pull request a person followed by hand. Never its status |
 | A user story's `trackerKey` and `resource` | The ticket a person made from the story's paste-ready copy |
 | A `verified` stamp | The person says they read the file and it is right: `$T verify <path>` in the draft worktree |
-| Still current for a new spec version | The person says a file `$T outdated` lists needs no change for the new version. Set its record to the target's current version: `designBasedOn` on a Feature or ChangeRequest, `basedOn` on a Task or story, the target's `basedOn` entry on a TestSuite, each `{ version, at }` copied from the target's `version` and `versionDate`. Add a log entry naming the person, for example `* **Still current**: TASK-refund-endpoint checked against version 3 by human:ana; no change.` Nothing else in the file changes |
+| Still current for a new spec version | The person says a file `$T outdated` lists needs no change for the new version. Set its record to the target's current version: `designBasedOn` on a Feature or ChangeRequest, `basedOn` on a Task or story, the target's `basedOn` entry on a TestSuite, each `{ version, at }` copied from the target's `version` and `versionDate`. Add a log entry naming the person, for example `* **Still current**: TASK-refund-endpoint checked against version 3 by human:ana; no change.` Nothing else in the file changes. A Task's parent is never approved here: an approved parent has no outdated Task, so this happens before `sdlc-design-arch` approves it |
 | A new Reference | Material the person gives or points to: a page, a short document already in Markdown, a code location at a commit or tag. Section 2 says how |
 | A `# References` entry added to or removed from any concept | The entry links a Reference of the same Application, with a note on what to take from it. It changes no status |
 | A Reference's status to `Deprecated` | The person says it no longer applies. It is never deleted |
@@ -136,13 +136,13 @@ The Application's own files have no log; the commit message says what
 changed. Never write `generated`, a section the tool writes, or an
 `index.md`.
 
-Then follow `references/write-protocol.md` section 4 from step 5: the input
+Then follow `references/write-protocol.md` section 4 from step 4: the input
 check, `draft finish`, the Change-set gate, `draft commit`. Commit message:
 `edit(<key>): <what changed>`, for example
 `edit(FEAT-catalog): released on 2026-10-04`.
 
-End with the summary of the short form: "Done" and "Next", and "For other
-skills" when part of the request was refused.
+End with the summary of `references/flow.md` section 3: "Done" and "Next",
+and "For other skills" when part of the request was refused.
 
 ## 5. What this skill never does
 

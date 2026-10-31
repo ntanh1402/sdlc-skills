@@ -1,6 +1,6 @@
 # Reference
 
-[Common rules](schema.md) · [Example](../sample/shop/references/REF-checkout-prd/overview.md)
+[Common rules](schema.md)
 
 Material a person approved for others to read while working: a PRD, a change brief, an architecture document, a test plan, a page explaining a domain term, a vendor's API documentation, or an existing implementation to follow. Any concept links it under `# References`.
 

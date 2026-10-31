@@ -1,6 +1,6 @@
 # Feature
 
-[Common rules](schema.md) · [Example](../sample/shop/features/FEAT-checkout/overview.md)
+[Common rules](schema.md)
 
 A capability a user or the business can recognise, with its requirements and approved target architecture.
 
@@ -79,10 +79,11 @@ A capability a user or the business can recognise, with its requirements and app
 - `## Frontends` appears only when the Feature has a user interface.
 - Status is `Draft` while the Requirements are written and `ReqApproved` once
   they are agreed. Neither is a gate: the architecture, stories, Tasks and
-  TestSuites may be written while the Feature is `Draft`. The status becomes
-  `Approved` once the Requirements are agreed, the Architecture is approved,
-  and the Architecture was designed from the current version
-  (`basis.approved`). `# Architecture` is `None` only while `Draft` or
+  TestSuites may be written, and Tasks built and closed, while the Feature is
+  `Draft` or `ReqApproved`. The status becomes `Approved` (or `InDev` when a
+  Task is already `Done`) once the Requirements are agreed, the Architecture is
+  approved, the Architecture was designed from the current version
+  (`basis.approved`), and no Task is outdated (`basis.approved-task`). `# Architecture` is `None` only while `Draft` or
   `ReqApproved`. Editing a `ReqApproved` Feature sets it back to `Draft`. From
   `Approved` on, the Requirements change only through a ChangeRequest or, once
   `Released`, a [correction](schema.md#corrections).

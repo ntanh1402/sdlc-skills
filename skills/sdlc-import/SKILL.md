@@ -34,20 +34,6 @@ at each step. Then read `schema.md` and `reference.md` in the wiki's
 `.wiki-llm/schema/`. The guide of the kind names the other schema pages; open
 only that guide.
 
-Four rules of the shared files read differently in this skill:
-
-- **"Never edit another step's output."** This skill edits a file another
-  skill wrote when the edit is a **correction**: the file was wrong about what
-  is built (`schema.md`, "Corrections"). Section 3 says which files may be
-  corrected.
-- **The draft key** is not built from a Feature or ChangeRequest key. Section 2
-  gives it.
-- **The Design gate** is taken group by group, and the files of a group are
-  written after its answer (section 5). Here the design is the files
-  themselves.
-- **A difference** found by a compare run is a question with no
-  recommendation, except the two proposals `references/compare.md` allows.
-
 Other requests go elsewhere; say so and stop:
 
 | Request | Skill |
@@ -327,31 +313,9 @@ schema pages require. For every file:
 - Never copy a secret, a credential or personal data from the Import source
   into the wiki. Name the setting, not its value.
 
-## 7. Self review, finish and commit
+## 7. Finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, also check that:
-
-- every file written names the Import source: in `sources`, or by linking
-  the document's Reference under `# References`;
-- no file has a status that means "not built yet" or a `# Pending changes`
-  entry, and no secret was copied;
-- every group in the Run plan has its answer, and the files of a group saved
-  unchecked are the ones you will name after `--unverified`.
-
-A fix to a file of an approved group changes what the person confirmed: show
-that group again and take its answer again.
-
-Finish with the groups the person did not check named after `--unverified`,
-each as a file or as a folder (every changed file under it):
-
-```bash
-$T draft finish --by "sdlc-import/<the line in RELEASE>" --verified-by \
-  --unverified wiki/shop/datastores/DB-shop/TBL-orders.md wiki/shop/channels/CHAN-order-created
-```
-
-With every group approved, leave `--unverified` out. `--unverified` without
-`--verified-by` is refused, and so is a path the draft did not change.
+Follow `references/write-protocol.md` section 4 from step 4.
 
 Commit message: `import(<main concept or document name>): <what was imported>`,
 for example `import(SVC-orders): the orders service from its code at 3f2a9c1`.
@@ -378,7 +342,5 @@ order of section 2.
 - Every group was approved, corrected, or saved as not checked; no file is
   marked confirmed that the person did not see in full.
 - The three lists were shown before the Change-set gate.
-- The self review found nothing it could not fix, or the person accepted what
-  was left at the Change-set gate.
 - `draft finish` was `ok`, the change set was approved, and `draft commit`
   reported the branch.

@@ -17,6 +17,15 @@ REPO = toolcopy.TOOL_HOME.parent
 SKILLS = REPO / "skills"
 SETUP = SKILLS / "sdlc-setup-wiki"
 FIX = "run `python3 release.py` to refresh it"
+LIFECYCLE = ("sdlc-write-spec", "sdlc-write-stories", "sdlc-design-arch", "sdlc-plan-tasks", "sdlc-design-tests", "sdlc-import")
+WRITERS = (*LIFECYCLE, "sdlc-close-task", "sdlc-edit-wiki")  # every skill that writes a Draft
+EXPECTED_REFERENCES = {
+    "read-protocol.md": (*WRITERS, "sdlc-build-task", "sdlc-ask-wiki", "sdlc-review-code"),
+    "flow.md": (*WRITERS, "sdlc-build-task"),
+    "write-protocol.md": WRITERS,
+    "code-checks.md": ("sdlc-build-task", "sdlc-review-code"),
+    "paste-format.md": ("sdlc-write-stories", "sdlc-ask-wiki"),
+}
 
 
 def sha(path: Path) -> str:
@@ -55,82 +64,58 @@ class ReleaseTest(unittest.TestCase):
         self.assertEqual(manifest["schema_version"], json.loads(
             (toolcopy.TOOL_HOME / "schema/schema.json").read_text(encoding="utf-8"))["schema_version"], FIX)
 
-    def test_shared_references_are_current(self):
-        release = release_module()
-        for name, owners in release.REFERENCES.items():
-            shared = (REPO / "skill-shared" / name).read_text(encoding="utf-8")
-            for skill in owners:
-                if (SKILLS / skill / "SKILL.md").is_file():
-                    copy = SKILLS / skill / "references" / name
-                    self.assertEqual(copy.read_text(encoding="utf-8"), shared, f"{copy}: {FIX}")
-
-    def test_every_skill_has_a_current_openai_yaml(self):
-        release = release_module()
-        entries = json.loads((REPO / "skill-shared/openai.json").read_text(encoding="utf-8"))
+    def test_every_skill_has_a_valid_openai_yaml(self):
         for skill in sorted(SKILLS.glob("*/SKILL.md")):
             name = skill.parent.name
-            self.assertIn(name, entries, f"add {name} to skill-shared/openai.json")
             yaml = skill.parent / "agents/openai.yaml"
-            self.assertEqual(yaml.read_text(encoding="utf-8"), release.openai_yaml(entries[name]), f"{yaml}: {FIX}")
+            self.assertTrue(yaml.is_file(), f"missing {yaml}")
+            text = yaml.read_text(encoding="utf-8")
+            self.assertTrue(text.startswith("interface:\n"), f"{yaml} must start with interface:")
+            for key in ("display_name", "short_description", "default_prompt"):
+                self.assertRegex(text, re.compile(rf"^  {key}: \".+\"$", re.MULTILINE), f"{yaml} missing {key}")
+            self.assertIn(f"${name}", text, f"{yaml} default_prompt should mention ${name}")
 
     def test_only_skills_that_check_the_wiki_carry_release(self):
         for name in ("sdlc-ask-wiki", "sdlc-convert-doc", "sdlc-review-code"):
             self.assertFalse((SKILLS / name / "RELEASE").exists(), name)
 
     def test_every_writer_carries_release(self):
-        release = release_module()
-        for name in release.WRITERS:
+        for name in WRITERS:
             if (SKILLS / name / "SKILL.md").is_file():
                 self.assertTrue((SKILLS / name / "RELEASE").is_file(), f"{name} writes to the wiki: it needs a RELEASE file")
 
-    def test_the_import_and_review_skills_get_their_references(self):
-        release = release_module()
-        entries = json.loads((REPO / "skill-shared/openai.json").read_text(encoding="utf-8"))
-        self.assertIn("sdlc-import", release.WRITERS)
-        self.assertIn("sdlc-import", release.REFERENCES["write-protocol.md"])
-        self.assertIn("sdlc-import", release.REFERENCES["read-protocol.md"])
-        self.assertIn("sdlc-review-code", release.REFERENCES["read-protocol.md"])
-        self.assertNotIn("sdlc-review-code", release.REFERENCES["write-protocol.md"])
-        for name in ("sdlc-import", "sdlc-review-code"):
-            self.assertEqual(sorted(entries[name]), sorted(release.OPENAI_KEYS), name)
+    def test_each_skill_owns_its_expected_references(self):
+        all_skills = [p.parent.name for p in sorted(SKILLS.glob("*/SKILL.md"))]
+        for ref_name, owners in EXPECTED_REFERENCES.items():
+            for skill in all_skills:
+                ref_path = SKILLS / skill / "references" / ref_name
+                if skill in owners:
+                    self.assertTrue(ref_path.is_file(), f"missing {ref_path}")
+                else:
+                    self.assertFalse(ref_path.exists(), f"unexpected {ref_path}")
 
-    def test_the_stories_skill_gets_its_references(self):
-        release = release_module()
-        entries = json.loads((REPO / "skill-shared/openai.json").read_text(encoding="utf-8"))
-        self.assertIn("sdlc-write-stories", release.WRITERS)
-        for name in ("read-protocol.md", "flow.md", "write-protocol.md", "paste-format.md"):
-            self.assertIn("sdlc-write-stories", release.REFERENCES[name], name)
-        self.assertIn("sdlc-ask-wiki", release.REFERENCES["paste-format.md"])
-        self.assertEqual(sorted(entries["sdlc-write-stories"]), sorted(release.OPENAI_KEYS))
-
-    def test_the_closing_skills_get_their_references(self):
-        release = release_module()
-        entries = json.loads((REPO / "skill-shared/openai.json").read_text(encoding="utf-8"))
-        for name in ("sdlc-close-task", "sdlc-edit-wiki"):
-            self.assertIn(name, release.WRITERS)
-            for reference in ("read-protocol.md", "flow.md", "write-protocol.md"):
-                self.assertIn(name, release.REFERENCES[reference], reference)
-        for reference in ("read-protocol.md", "flow.md", "code-checks.md"):
-            self.assertIn("sdlc-build-task", release.REFERENCES[reference], reference)
-        self.assertNotIn("sdlc-build-task", release.REFERENCES["write-protocol.md"])
-        self.assertEqual(release.REFERENCES["code-checks.md"], ("sdlc-build-task", "sdlc-review-code"))
-        for name in ("sdlc-build-task", "sdlc-close-task", "sdlc-edit-wiki"):
-            self.assertEqual(sorted(entries[name]), sorted(release.OPENAI_KEYS), name)
+    def test_every_referenced_file_in_skill_md_exists(self):
+        for skill in sorted(SKILLS.glob("*/SKILL.md")):
+            text = skill.read_text(encoding="utf-8")
+            for match in re.findall(r"`(references/[a-z0-9-]+\.md)`", text):
+                if match == "references/index.md":
+                    continue
+                self.assertTrue((skill.parent / match).is_file(), f"{skill.parent.name}/SKILL.md references missing {match}")
 
     def test_release_copy_carries_no_tests_or_sample(self):
         copy = SETUP / "wiki-llm"
         self.assertFalse((copy / "tools/tests").exists())
         self.assertFalse((copy / "sample").exists())
+        self.assertFalse((toolcopy.TOOL_HOME / "sample").exists())
 
 
 class ReleaseScriptTest(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.root = Path(self._tmp.name) / "sdlc-skills"
-        ignore = shutil.ignore_patterns("tests", "__pycache__", "sample")
+        ignore = shutil.ignore_patterns("tests", "__pycache__")
         shutil.copytree(REPO / "wiki-llm", self.root / "wiki-llm", ignore=ignore)
         shutil.copy(REPO / "release.py", self.root)
-        shutil.copytree(REPO / "skill-shared", self.root / "skill-shared")
         for name in ("sdlc-setup-wiki", "sdlc-write-spec", "sdlc-convert-doc", "sdlc-ask-wiki"):
             (self.root / "skills" / name).mkdir(parents=True)
             (self.root / "skills" / name / "SKILL.md").write_text("---\nname: x\n---\n", encoding="utf-8")
@@ -157,18 +142,9 @@ class ReleaseScriptTest(unittest.TestCase):
         self.assertEqual(manifest["release_version"], "9.9.0")
         self.assertIn("tools/wikilib/link.py", manifest["files"])
         self.assertEqual(sorted(result["written"]), [
-            "skills/sdlc-ask-wiki/agents/openai.yaml",
-            "skills/sdlc-ask-wiki/references/paste-format.md",
-            "skills/sdlc-ask-wiki/references/read-protocol.md",
-            "skills/sdlc-convert-doc/agents/openai.yaml",
             "skills/sdlc-setup-wiki/RELEASE",
-            "skills/sdlc-setup-wiki/agents/openai.yaml",
             "skills/sdlc-setup-wiki/wiki-llm/",
             "skills/sdlc-write-spec/RELEASE",
-            "skills/sdlc-write-spec/agents/openai.yaml",
-            "skills/sdlc-write-spec/references/flow.md",
-            "skills/sdlc-write-spec/references/read-protocol.md",
-            "skills/sdlc-write-spec/references/write-protocol.md",
             "wiki-llm/RELEASE",
         ])
 
@@ -178,6 +154,8 @@ class ReleaseScriptTest(unittest.TestCase):
         self.assertEqual((code, result["release_version"]), (0, version))
         self.assertEqual(release_of(self.root / "skills/sdlc-write-spec"), version + "\n")
         self.assertNotIn("wiki-llm/RELEASE", result["written"])
+        code, again = self.release()
+        self.assertEqual(again["written"], ["skills/sdlc-setup-wiki/wiki-llm/"])
 
     def test_the_release_copy_runs_on_its_own(self):
         self.release("2.1.0")
@@ -195,31 +173,6 @@ class ReleaseScriptTest(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("not a version", result["error"])
         self.assertEqual(release_of(self.root / "skills/sdlc-write-spec"), "0.0.1\n")
-
-    def test_copies_shared_references_and_writes_openai_yaml(self):
-        code, result = self.release()
-        self.assertEqual(code, 0, result)
-        shared = self.root / "skill-shared"
-        spec = self.root / "skills/sdlc-write-spec/references/write-protocol.md"
-        self.assertEqual(spec.read_text(encoding="utf-8"), (shared / "write-protocol.md").read_text(encoding="utf-8"))
-        self.assertFalse((self.root / "skills/sdlc-ask-wiki/references/write-protocol.md").exists())
-        flow = self.root / "skills/sdlc-write-spec/references/flow.md"
-        self.assertEqual(flow.read_text(encoding="utf-8"), (shared / "flow.md").read_text(encoding="utf-8"))
-        self.assertFalse((self.root / "skills/sdlc-ask-wiki/references/flow.md").exists())
-        self.assertFalse((self.root / "skills/sdlc-setup-wiki/references").exists())
-        yaml = (self.root / "skills/sdlc-ask-wiki/agents/openai.yaml").read_text(encoding="utf-8")
-        self.assertTrue(yaml.startswith('interface:\n  display_name: "SDLC Ask Wiki"\n'), yaml)
-        self.assertIn('  default_prompt: "Use $sdlc-ask-wiki ', yaml)
-        code, again = self.release()
-        self.assertEqual(again["written"], ["skills/sdlc-setup-wiki/wiki-llm/"])
-
-    def test_a_skill_missing_from_openai_json_stops_the_release(self):
-        (self.root / "skills/sdlc-new").mkdir()
-        (self.root / "skills/sdlc-new/SKILL.md").write_text("---\nname: x\n---\n", encoding="utf-8")
-        code, result = self.release("2.1.0")
-        self.assertEqual(code, 2)
-        self.assertIn("sdlc-new", result["error"])
-        self.assertEqual(release_of(self.root / "wiki-llm"), release_of(REPO / "wiki-llm"))
 
     def tag(self, version):
         for argv in (["init", "-q"], ["add", "-A"], ["commit", "-qm", "release"], ["tag", f"v{version}"]):
@@ -257,7 +210,7 @@ class ReleaseScriptTest(unittest.TestCase):
 
 
 class SkillPackageTest(unittest.TestCase):
-    """The rules of ADR 0003 and the runbook's skill rules for every skill package."""
+    """The rules of ADR 0003 for every skill package."""
 
     def skill_files(self):
         for path in sorted(SKILLS.rglob("*")):

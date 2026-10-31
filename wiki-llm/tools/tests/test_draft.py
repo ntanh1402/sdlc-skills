@@ -305,6 +305,19 @@ class DiffTest(DraftTest):
         self.assertIn("The main store.", result["diff"])
         self.assertEqual(result["base"], "main")
 
+    def test_checklist_is_tool_written(self):
+        worktree = self.start()
+        root = self.bundle(worktree)
+        case = "pay/tests/TS-pay/TC-pay-ok.md"
+        fixture.edit(root, case, "Prove a payment works.", "Prove a valid card is charged once.")
+        fixture.edit(root, "pay/tests/TS-pay/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Test design**: Sharper purpose.\n\n## 2026-09-01\n")
+        code, result = self.finish(worktree)
+        self.assertEqual(code, 0, result)
+        self.assertIn("pay/tests/TS-pay/checklist.csv", result["synced"])
+        self.assertNotIn("pay/tests/TS-pay/checklist.csv", result["stamped"])
+        files = {item["path"]: item["authored"] for item in self.tool("draft", "diff", cwd=worktree)[1]["files"]}
+        self.assertFalse(files["wiki/pay/tests/TS-pay/checklist.csv"])
+
     def test_new_files_are_in_the_diff(self):
         worktree = self.start()
         fixture.write(self.bundle(worktree), "pay/decisions/ADR-charge-later.md", "x\n")
@@ -464,7 +477,10 @@ CHANGE_LOG = fixture.LOG
 
 
 def change(title, requirement):
+    """A Proposed ChangeRequest that is not designed yet."""
     text = fixture.FILES["pay/change-requests/CR-1/overview.md"].replace("status: Approved", "status: Proposed")
+    text = text.replace("\ndesignBasedOn: { version: 1, at: 2026-08-20 }", "")
+    text = text[: text.index("# Delta")] + "# Delta\n\nNone — pending architecture\n"
     return text.replace("Accept coupons", title).replace("REQ-pay-2", requirement).replace("#req-pay-2", "#" + requirement.lower())
 
 

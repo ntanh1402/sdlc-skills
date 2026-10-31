@@ -57,8 +57,9 @@ $T outdated --feature FEAT-coupons            # Tasks planned from an older spec
 When `outdated` also lists the design itself (`designBasedOn` older than
 `version`), say in the first round that the design is behind the spec and
 recommend `sdlc-design-arch` first; go on only when the person says so. When
-the Requirements are still a draft, say that the Tasks can be built but not
-closed until they are agreed (`sdlc-close-task` refuses).
+the Requirements are still a draft, say that the Tasks can be built and
+closed while the spec is a draft, and if the Requirements change later, a new
+Task will be planned for the difference.
 
 Every state but `READY` is a refusal, not a question.
 
@@ -109,8 +110,10 @@ Follow `references/decomposition-rules.md` and `references/task-sizing.md`:
   that is already approved; test design is `sdlc-design-tests`.
 - Size XS to L. An XL Task is split.
 - Each Task's `# Planned scope` links the concepts it builds, with the
-  qualifier the design gave them. Each concept in the inventory has exactly
-  one owning Task.
+  qualifier the design gave them. Each concept in the inventory has one
+  owning Task (when a `Done` or started Task built an earlier version of a
+  concept and the design changed it, a new `Todo` Task owns the difference and
+  both Tasks keep the concept in `# Planned scope`).
 - `# Acceptance` states observable results and links the Requirements it
   satisfies by full path and anchor.
 - `# Stories` links the stories the Task serves: those whose Requirements its
@@ -130,19 +133,19 @@ repositories is two Tasks, one blocked by the other when the order matters.
 
 **Replanning.** Keep each existing Task's key. A `Done` Task is never
 rewritten. A `Todo` Task that has not started may be changed to match the new
-design. A Task the person said has started, or whose code is merged, is
-treated like a `Done` one: if the design or the spec changed under it, add a
-new Task for the difference, `# Blocked by` the old one, and say so at the
-Design gate.
+design. A `Done` Task, or a `Todo` Task the person said has started or whose
+code is merged, is kept as built: if the design or the spec changed under it,
+add a new Task for the difference, `# Blocked by` the old one, and say so at
+the Design gate.
 
 **Spec version.** Each Task's `basedOn` is
 `{ version: <the parent's version>, at: <its versionDate> }`. Write it on
-every new Task and on every Task you replan. A started or merged Task that
-got a Task for the difference also gets the current `basedOn`: together they
-cover the new version, so the old one can be closed. Its log entry says it
-was built from the older version and names the new Task. A Task the new
-version does not change gets the current `basedOn` too, once you have
-checked it against the change.
+every new Task and on every Task you replan. A `Done`, started or merged Task
+that got a Task for the difference also gets the current `basedOn`: together
+they cover the new version. Its log entry says it was built from the older
+version and names the new Task. A `Done` or `Todo` Task the new version does
+not change gets the current `basedOn` too, once you have checked it against
+the change.
 
 **Story links on any Task.** Adding a `# Stories` link, or dropping one to a
 story that no longer exists, is allowed on every Task, `Done` and started
@@ -182,35 +185,42 @@ design. Do not write `index.md`.
 ## 6. Self review, finish and commit
 
 Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, also check that:
+review, have the review sub-agent check by reading that:
 
-- `$T coverage tasks`, run in the worktree, reports nothing uncovered: no
-  concept without its Task and no story without a Task;
-- each concept of the inventory is in the `# Planned scope` of exactly one
-  Task, and no Task is XL;
+- each concept of the inventory is in the `# Planned scope` of one owning
+  Task (plus any earlier `Done` or started Task that built an older version
+  of it), and no Task is XL;
 - every `# Acceptance` states an observable result and links its
   Requirements;
-- no `Done` Task and no started Task was rewritten beyond its `# Stories`
-  and `# References` links and its `basedOn`, and no Design concept or user
-  story was touched;
-- `$T outdated` lists no Task of the folder that is not `Done`.
+- no `Done` Task and no started Task was rewritten beyond what `task.md`
+  allows on a `Done` Task (its `# Stories` and `# References` links and its
+  `basedOn`; this skill never unlinks a Requirement), and no Design concept or
+  user story was touched.
+
+Then run `$T coverage tasks` (which must report nothing uncovered: no concept
+without its Task and no user story without a Task) and `$T outdated` (no Task
+of the folder listed) in the worktree.
 
 Commit message: `tasks(<Key>): plan <n> tasks`. In the summary, "Next" names
 the Tasks of the first wave: the ones that can start once the pull request
 is merged. When the Requirements are still a draft, add that the Tasks can
-be built but are closed only once the target is `Approved`.
+be built and closed while the spec is a draft, and any later Requirement
+change will add a new Task for the difference. When the parent is
+`ReqApproved`, add that `sdlc-design-arch` can approve it once this pull
+request is merged: an approved parent needs every Task at its current
+version.
 
 ## Done when
 
 - The target, the scope inventory and the started Tasks were confirmed in the
   rounds, and the planning basis was approved at the Intent gate.
-- Every concept and duty in the scope inventory has exactly one owning Task,
+- Every concept and duty in the scope inventory has an owning Task,
   and every user story of the folder is linked by a Task.
-- No XL Task, no dependency cycle, no duplicate scope, no Task without
-  observable acceptance.
-- No Task that had started was rewritten, beyond its `# Stories` links and
-  its `basedOn`.
-- Every Task that is not `Done` has the parent's current `basedOn`.
+- No XL Task, no dependency cycle, no duplicate scope among unstarted `Todo`
+  Tasks, no Task without observable acceptance.
+- No `Done` or started Task was rewritten beyond what `task.md` allows on a
+  `Done` Task.
+- Every Task in the folder has the parent's current `basedOn`.
 - The self review found nothing it could not fix, or the person accepted what
   was left at the Change-set gate.
 - `coverage tasks` reports nothing, `draft finish` was `ok`, the change set was

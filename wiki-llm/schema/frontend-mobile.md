@@ -1,6 +1,6 @@
 # MobileFrontend
 
-[Common rules](schema.md) · [Example](../sample/shop/frontends/MB-shop/overview.md)
+[Common rules](schema.md)
 
 A native or cross-platform mobile application.
 

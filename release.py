@@ -5,9 +5,7 @@
     python3 release.py 1.1.0      set wiki-llm/RELEASE to 1.1.0 first
 
 The release copy is skills/sdlc-setup-wiki/wiki-llm/: the tool and schema the
-setup skill installs into a Wiki repository. The shared references in
-skill-shared/ are copied into each skill that uses them, and each skill's
-agents/openai.yaml is written from skill-shared/openai.json.
+setup skill installs into a Wiki repository.
 
 A patch release changes skills only. Once a release of a major.minor is
 tagged (v<version>), a change to the tool or schema needs a new minor version.
@@ -30,17 +28,6 @@ from wikilib import toolcopy  # noqa: E402
 from wikilib.errors import ToolError  # noqa: E402
 
 SETUP = HERE / "skills" / "sdlc-setup-wiki"
-SHARED = HERE / "skill-shared"
-LIFECYCLE = ("sdlc-write-spec", "sdlc-write-stories", "sdlc-design-arch", "sdlc-plan-tasks", "sdlc-design-tests", "sdlc-import")
-WRITERS = (*LIFECYCLE, "sdlc-close-task", "sdlc-edit-wiki")  # every skill that writes a Draft
-REFERENCES = {
-    "read-protocol.md": (*WRITERS, "sdlc-build-task", "sdlc-ask-wiki", "sdlc-review-code"),
-    "flow.md": (*WRITERS, "sdlc-build-task"),
-    "write-protocol.md": WRITERS,
-    "code-checks.md": ("sdlc-build-task", "sdlc-review-code"),
-    "paste-format.md": ("sdlc-write-stories", "sdlc-ask-wiki"),
-}
-OPENAI_KEYS = ("display_name", "short_description", "default_prompt")
 
 
 def _write(path: Path, text: str, written: list[str]) -> None:
@@ -49,11 +36,6 @@ def _write(path: Path, text: str, written: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
     written.append(path.relative_to(HERE).as_posix())
-
-
-def openai_yaml(entry: dict) -> str:
-    """A skill's agents/openai.yaml: the interface metadata some agents show."""
-    return "interface:\n" + "".join(f"  {key}: {json.dumps(entry[key])}\n" for key in OPENAI_KEYS)
 
 
 def _parts(version: str) -> tuple[int, ...]:
@@ -89,11 +71,6 @@ def release(version: str | None) -> dict:
         raise ToolError(f"not a version: {version}")
     copy = SETUP / "wiki-llm"
     _check_tool_change(version or toolcopy.release_version(), copy)
-    skills = sorted(path.parent for path in HERE.glob("skills/*/SKILL.md"))
-    entries = json.loads((SHARED / "openai.json").read_text(encoding="utf-8"))
-    missing = [skill.name for skill in skills if skill.name not in entries]
-    if missing:
-        raise ToolError(f"skill-shared/openai.json has no entry for {', '.join(missing)}")
 
     written: list[str] = []
     if version is not None:
@@ -103,13 +80,6 @@ def release(version: str | None) -> dict:
         _write(path, version + "\n", written)
     toolcopy.install_into(copy)
     written.append(copy.relative_to(HERE).as_posix() + "/")
-    for skill in skills:
-        _write(skill / "agents" / "openai.yaml", openai_yaml(entries[skill.name]), written)
-    for name, owners in REFERENCES.items():
-        text = (SHARED / name).read_text(encoding="utf-8")
-        for skill in skills:
-            if skill.name in owners:
-                _write(skill / "references" / name, text, written)
     return {"ok": True, "release_version": version, "written": written}
 
 

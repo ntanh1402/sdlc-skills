@@ -1,6 +1,6 @@
 # SearchIndex
 
-[Common rules](schema.md) · [Example](../sample/shop/datastores/IDX-products/overview.md)
+[Common rules](schema.md)
 
 A search index. It is a derived read model, not a source of truth.
 

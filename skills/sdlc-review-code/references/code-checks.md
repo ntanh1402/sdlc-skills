@@ -1,11 +1,12 @@
-# The checks of a code change
+# The checks of a code review against the wiki
 
-A code change is checked against the wiki by reading: the Task's
-`# Acceptance` and `# Planned scope`, the Design files linked there, and the
-Application's `conventions.md`. A Design file with a `# Pending changes`
-section holds the **target**, what the system will be once the pending work
-is built; the code is checked against the target. No check runs the code or
-its tests.
+In `sdlc-review-code`, a code change is checked against the wiki read-only by
+reading: the Task's `# Acceptance` and `# Planned scope` (when reviewing with
+a Task), the Design files in scope, and the Application's `conventions.md`. A
+Design file with a `# Pending changes` section holds the **target**, what the
+system will be once the pending work is built; the code is checked against the
+target. No check runs the code or its tests, and this skill never edits code
+or the wiki.
 
 ## The groups
 
@@ -41,8 +42,7 @@ its tests.
 - A Reference is context, never evidence: code that differs from a code
   example, or from a document a Reference holds, is not a finding unless the
   Task, a Design file or `conventions.md` states the same rule.
-- Never copy a secret or personal data from the code into a report, a Run
-  plan or a commit message.
+- Never copy a secret or personal data from the code into the report.
 
 Running the checks never changes the wiki. When the wiki is the wrong side,
 the remedy is a ChangeRequest with `sdlc-write-spec` when the design should

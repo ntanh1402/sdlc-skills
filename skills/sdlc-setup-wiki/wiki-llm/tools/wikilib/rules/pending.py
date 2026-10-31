@@ -3,9 +3,11 @@
 Terms used below:
   parent   a Feature or ChangeRequest
   open     a parent whose status is listed in schema `pending.open_parents`
+  approved an open parent whose status is listed in schema `pending.approved_parents`
   covers   a Task covers a concept when its `# Planned scope` links it
   entry    one list item under a concept's `# Pending changes`
   closed   a Task with status Done: its code is merged
+  current  a Task whose basedOn names its parent's current version
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 
-from .. import markdown
+from .. import basis, markdown
 from ..bundle import Bundle, Concept, Finding
 
 ORDER = 80
@@ -36,6 +38,16 @@ def check(bundle: Bundle) -> list[Finding]:
     def is_open(parent: Concept) -> bool:
         return parent.status in open_parents.get(parent.type, [])
 
+    def is_approved(parent: Concept) -> bool:
+        return schema.is_approved_parent(parent.type, parent.status)
+
+    def task_current_and_done(task: Concept) -> bool:
+        if task.status != "Done":
+            return False
+        entry = basis.parse_entry(task.meta.get("basedOn"))
+        current = basis.version(task.owner) if task.owner else None
+        return current is None or (entry is not None and entry[0] >= current)
+
     # (parent file, concept file) -> Tasks of that parent covering that concept
     coverage: dict[tuple[Path, Path], list[Concept]] = defaultdict(list)
     task_scope: list[tuple[Concept, Concept, str | None]] = []
@@ -48,8 +60,10 @@ def check(bundle: Bundle) -> list[Finding]:
                 task_scope.append((task, relation.concept, relation.qualifier))
 
     def all_done(parent: Concept, concept: Concept) -> bool:
+        if not is_approved(parent):
+            return False
         tasks = coverage.get((parent.path, concept.path), [])
-        return bool(tasks) and all(task.status == "Done" for task in tasks)
+        return bool(tasks) and all(task_current_and_done(task) for task in tasks)
 
     # parent file -> every Task in its folder
     tasks_of: dict[Path, list[Concept]] = defaultdict(list)
@@ -59,7 +73,7 @@ def check(bundle: Bundle) -> list[Finding]:
 
     def all_closed(parent: Concept) -> bool:
         tasks = tasks_of.get(parent.path, [])
-        return bool(tasks) and all(task.status == "Done" for task in tasks)
+        return bool(tasks) and all(task_current_and_done(task) for task in tasks)
 
     removing = status_by_change["removed"]
 
@@ -108,7 +122,7 @@ def check(bundle: Bundle) -> list[Finding]:
                 )
             if all_done(parent, concept):
                 findings.append(
-                    Finding("pending.leftover", concept.rel, f"every Task of {parent.key} that covers this concept is Done; remove the entry")
+                    Finding("pending.leftover", concept.rel, f"every Task of {parent.key} that covers this concept is Done and current; remove the entry")
                 )
         qualifiers = {qualifier for _, qualifier in entries[concept.path] if qualifier}
         if is_pending and qualifiers:
@@ -134,9 +148,9 @@ def check(bundle: Bundle) -> list[Finding]:
                 )
 
     for change in bundle.of_type("ChangeRequest"):
-        if all_closed(change) and change.status != "Implemented":
+        if is_approved(change) and all_closed(change):
             findings.append(
-                Finding("pending.request-implemented", change.rel, f"every Task of {change.key} is Done; set its status to Implemented, not {change.status}")
+                Finding("pending.request-implemented", change.rel, f"every Task of {change.key} is Done and current; set its status to Implemented, not {change.status}")
             )
     for feature in bundle.of_type("Feature"):
         if feature.status == "InDev" and all_closed(feature):

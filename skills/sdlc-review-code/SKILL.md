@@ -107,8 +107,7 @@ other work shares it.
 
 Read `references/code-checks.md` in this skill's folder: it holds the five
 groups (acceptance, contract, outside the scope, convention, not checked),
-the severity of each and the rules for a finding. `sdlc-build-task` holds the
-same file and fixes what the checks find; this skill only reports.
+the severity of each and the rules for a finding. This skill only reports.
 
 ## 5. The report
 

@@ -1,6 +1,6 @@
 # Convention
 
-[Common rules](schema.md) · [Example](../sample/shop/conventions.md)
+[Common rules](schema.md)
 
 The engineering rules every repository of the application follows. Build and review skills read this before writing or judging code.
 

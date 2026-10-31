@@ -1,6 +1,6 @@
 # TestSuite
 
-[Common rules](schema.md) · [Example](../sample/shop/tests/TS-checkout/overview.md)
+[Common rules](schema.md)
 
 A group of TestCases of one kind. It owns its TestCases as files in its folder.
 

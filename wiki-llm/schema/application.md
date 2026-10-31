@@ -1,6 +1,6 @@
 # Application
 
-[Common rules](schema.md) · [Example](../sample/shop/overview.md)
+[Common rules](schema.md)
 
 One product or system. Its folder holds everything known about it.
 

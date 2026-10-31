@@ -1,6 +1,6 @@
 # Task
 
-[Common rules](schema.md) · [Example](../sample/shop/change-requests/CR-sms-notifications/TASK-sms-channel.md)
+[Common rules](schema.md)
 
 One unit of build work. It lives in the folder of the Feature or ChangeRequest that caused it.
 
@@ -61,9 +61,11 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
   traceability, not scope.
 - `# Planned scope` links every Design concept the Task will create, change, or
   remove, qualified `new`, `modified`, or `removed`, matching the parent's design.
-- While the Task is not `Done`, each concept in its scope carries a pending entry
-  for the parent. Setting the Task to `Done` goes together with removing those
-  entries.
+- While the Task is not `Done`, or while its parent is not `Approved` yet
+  (`Draft`, `Proposed`, `ReqApproved`), each concept in its scope carries a
+  pending entry for the parent. Once the parent is `Approved` (or `InDev`) and
+  every Task of the parent covering a concept is `Done` and current, the entry
+  is removed.
 - A Task changes one code repository. Work in two repositories is two Tasks.
 - The status is `Todo` until the Task's code is merged, then `Done`. Progress
   in between is followed in the tracker, not here. `resource` is the tracker
@@ -71,7 +73,17 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
   or writes the tracker.
 - `mergedAt` and `mergeCommitSha` are written when the Task is closed. A
   person may add `prUrl`.
-- `basedOn` is the version of the parent the Task was planned from. A Task is
-  closed only when its parent is `Approved` (or a Feature `InDev`) and
-  `basedOn` is the parent's current version. A `Done` Task is never reported
-  as outdated. See [Spec versions](schema.md#spec-versions).
+- `basedOn` is the version of the parent the Task was planned or confirmed
+  from. A Task may be closed while its parent is still a draft or at a newer
+  version; when the parent's version changes after a Task is built or closed, a
+  new Task is planned for any difference and the earlier Task's `basedOn` is
+  updated to the current version. An approved parent (`Approved`, a Feature
+  `InDev`) has no outdated Task (`basis.approved-task`): its Tasks catch up
+  with the current version before it is approved, since its Requirements do not
+  change afterwards. See [Spec versions](schema.md#spec-versions).
+- A `Done` Task records what was built, so after the merge it changes only in
+  three ways: a `# Stories` or `# References` link added or dropped; its
+  `basedOn` updated once it was checked against a newer version of a parent
+  that is not approved yet; and, when a step removes a Requirement, that
+  Requirement's anchor in `# Acceptance` unlinked to plain text, so the prose
+  stays as built.

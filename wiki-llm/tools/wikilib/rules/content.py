@@ -46,6 +46,8 @@ def _table(concept: Concept, spec: dict, section: markdown.Section, findings: li
         findings.append(Finding("content.table", concept.rel, f"{name} needs a table with columns {' | '.join(spec['table'])}"))
     elif not rows or any(len(row) != len(header) or not all(row) for row in rows):
         findings.append(Finding("content.table", concept.rel, f"{name} needs at least one row and no empty cells"))
+    elif spec.get("numbered") and [row[0] for row in rows] != [str(number) for number in range(1, len(rows) + 1)]:
+        findings.append(Finding("content.table", concept.rel, f"{name}: the {header[0]} column counts 1, 2, 3, … in order"))
 
 
 def _mermaid(concept: Concept, spec: dict, section: markdown.Section, findings: list[Finding]) -> None:

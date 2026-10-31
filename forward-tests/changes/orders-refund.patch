@@ -1,0 +1,50 @@
+diff --git a/db/migration/V3__order_refund.sql b/db/migration/V3__order_refund.sql
+new file mode 100644
+index 0000000..d32940f
+--- /dev/null
++++ b/db/migration/V3__order_refund.sql
+@@ -0,0 +1,5 @@
++ALTER TABLE orders ADD COLUMN refunded_at timestamptz NULL;
++ALTER TABLE orders ADD COLUMN refund_reason text NULL;
++ALTER TABLE orders DROP CONSTRAINT orders_status_check;
++ALTER TABLE orders ADD CONSTRAINT orders_status_check
++    CHECK (status IN ('pending_payment', 'confirmed', 'cancelled', 'refunded'));
+diff --git a/src/main/java/com/acme/orders/OrderController.java b/src/main/java/com/acme/orders/OrderController.java
+index 8d2ad87..aca9437 100644
+--- a/src/main/java/com/acme/orders/OrderController.java
++++ b/src/main/java/com/acme/orders/OrderController.java
+@@ -65,4 +65,18 @@ public class OrderController {
+             case VENDOR_FAILED -> ResponseEntity.status(502).build();
+         };
+     }
++
++    public record Refund(String reason) {}
++
++    /** POST /orders/{id}/refund: refunds an order in full. */
++    @PostMapping("/{id}/refund")
++    public ResponseEntity<?> refund(@PathVariable UUID id, @RequestBody(required = false) Refund body) {
++        String reason = body == null ? null : body.reason();
++        if (reason != null && reason.length() > 200) {
++            return ResponseEntity.unprocessableEntity().build();
++        }
++        return orders.refund(id, reason)
++                ? ResponseEntity.ok(Map.of("orderId", id, "status", "refunded"))
++                : ResponseEntity.notFound().build();
++    }
+ }
+diff --git a/src/main/java/com/acme/orders/OrderService.java b/src/main/java/com/acme/orders/OrderService.java
+index 805b825..ba6df7b 100644
+--- a/src/main/java/com/acme/orders/OrderService.java
++++ b/src/main/java/com/acme/orders/OrderService.java
+@@ -97,4 +97,11 @@ public class OrderService {
+         db.update("UPDATE orders SET status = 'cancelled' WHERE order_id = ?", orderId);
+         return Cancel.CANCELLED;
+     }
++
++    public boolean refund(UUID orderId, String reason) {
++        int updated = db.update(
++                "UPDATE orders SET status = 'refunded', refunded_at = now(), refund_reason = ? WHERE order_id = ?",
++                reason, orderId);
++        return updated == 1;
++    }
+ }

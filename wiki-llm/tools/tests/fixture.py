@@ -13,6 +13,10 @@ from wikilib import sync
 
 G = "generated: { by: human:alice, at: 2026-09-01T09:00:00Z }"
 V = "verified: { by: human:bob, at: 2026-09-02T09:00:00Z }"
+B = "basedOn: { version: 1, at: 2026-08-15 }"
+CB = "basedOn: { version: 1, at: 2026-08-20 }"
+FV = "version: 1\nversionDate: 2026-08-15\ndesignBasedOn: { version: 1, at: 2026-08-15 }"
+CV = "version: 1\nversionDate: 2026-08-20\ndesignBasedOn: { version: 1, at: 2026-08-20 }"
 
 
 def page(frontmatter: str, body: str) -> str:
@@ -54,7 +58,7 @@ FILES: dict[str, str] = {
     ),
     # --------------------------------------------------------------------- feature
     "pay/features/FEAT-pay/overview.md": page(
-        f"type: Feature\ntitle: Pay\ndescription: Pay for an order.\nstatus: InDev\nownerTeam: payments\n{G}",
+        f"type: Feature\ntitle: Pay\ndescription: Pay for an order.\nstatus: InDev\nownerTeam: payments\n{G}\n{FV}",
         "# Pay\n\n# Requirements\n\n### REQ-pay-1\n\n**Must** — A shopper pays for an order. Functional. Verified by test.\n\n"
         "# Architecture\n\n## Context and constraints\n\nText.\n\n## High-level architecture\n\n"
         "```mermaid\nflowchart LR\n  Web --> Svc\n```\n\n"
@@ -69,20 +73,20 @@ FILES: dict[str, str] = {
     ),
     "pay/features/FEAT-pay/log.md": LOG,
     "pay/features/FEAT-pay/TASK-pay-001.md": page(
-        f"type: Task\ntitle: Create the payments table\ndescription: Add the table.\nstatus: Done\n{G}",
+        f"type: Task\ntitle: Create the payments table\ndescription: Add the table.\nstatus: Done\n{G}\n{B}",
         "# Create the payments table\n\n# Acceptance\n\nTable exists. Satisfies [REQ-pay-1](overview.md#req-pay-1).\n\n"
         "# Stories\n\n* [STORY-pay-checkout](STORY-pay-checkout.md)\n\n"
         "# Planned scope\n\n* [TBL-payments](../../datastores/DB-main/TBL-payments.md) — new — the table.",
     ),
     "pay/features/FEAT-pay/STORY-pay-checkout.md": page(
-        f"type: UserStory\ntitle: Pay at checkout\ndescription: A shopper pays for an order.\npriority: P1\n{G}",
+        f"type: UserStory\ntitle: Pay at checkout\ndescription: A shopper pays for an order.\npriority: P1\n{G}\n{B}",
         "# Pay at checkout\n\nAs a **shopper**, I want to pay for my order, so that it is placed.\n\n"
         "# Acceptance criteria\n\n1. **Given** a cart, **when** the shopper pays, **then** the order is placed.\n"
         "   ([REQ-pay-1](overview.md#req-pay-1))\n\n"
         "# Requirements\n\n* [REQ-pay-1](overview.md#req-pay-1)",
     ),
     "pay/features/FEAT-pay/TASK-pay-002.md": page(
-        f"type: Task\ntitle: Build the refund endpoint\ndescription: Add refunds.\nstatus: Todo\n{G}",
+        f"type: Task\ntitle: Build the refund endpoint\ndescription: Add refunds.\nstatus: Todo\n{G}\n{B}",
         "# Build the refund endpoint\n\n# Acceptance\n\nRefund works.\n\n"
         "# Planned scope\n\n* [EP-pay-refund](../../services/SVC-pay/EP-pay-refund.md) — new — the endpoint.\n\n"
         "# Blocked by\n\n* [TASK-pay-001](TASK-pay-001.md)\n\n"
@@ -91,7 +95,7 @@ FILES: dict[str, str] = {
     # -------------------------------------------------------------- change request
     "pay/change-requests/CR-1/overview.md": page(
         f"type: ChangeRequest\ntitle: Accept coupons\ndescription: Add a coupon code.\nstatus: Approved\n"
-        f"changeType: feature\nriskLevel: low\n{G}",
+        f"changeType: feature\nriskLevel: low\n{G}\n{CV}",
         "# Accept coupons\n\n# Changes\n\n* [FEAT-pay](../../features/FEAT-pay/overview.md)\n\n# Reason\n\nMarketing.\n\n"
         "# Requirements\n\n### REQ-pay-2\n\n**Should** — A shopper applies one coupon. Functional. Verified by test.\n\n"
         "# Delta\n\n## Target delta\n\n* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md) — modified — adds `couponCode`.\n\n"
@@ -101,7 +105,7 @@ FILES: dict[str, str] = {
     ),
     "pay/change-requests/CR-1/log.md": LOG,
     "pay/change-requests/CR-1/STORY-pay-coupon.md": page(
-        f"type: UserStory\ntitle: Pay with a coupon\ndescription: A shopper applies a coupon.\n{G}",
+        f"type: UserStory\ntitle: Pay with a coupon\ndescription: A shopper applies a coupon.\n{G}\n{CB}",
         "# Pay with a coupon\n\nAs a shopper, I want to apply a coupon, so that I pay less.\n\n"
         "# Acceptance criteria\n\n1. Given a coupon, when the shopper pays with it, then the price drops. "
         "([REQ-pay-2](overview.md#req-pay-2))\n\n"
@@ -109,7 +113,7 @@ FILES: dict[str, str] = {
         "# Affects\n\n* [STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md) — paying now takes a coupon.",
     ),
     "pay/change-requests/CR-1/TASK-pay-003.md": page(
-        f"type: Task\ntitle: Add the coupon field\ndescription: Accept a coupon.\nstatus: Todo\n{G}",
+        f"type: Task\ntitle: Add the coupon field\ndescription: Accept a coupon.\nstatus: Todo\n{G}\n{CB}",
         "# Add the coupon field\n\n# Acceptance\n\nCoupon accepted.\n\n"
         "# Stories\n\n* [STORY-pay-coupon](STORY-pay-coupon.md)\n\n"
         "# Planned scope\n\n* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md) — modified — the new field.",
@@ -220,7 +224,8 @@ FILES: dict[str, str] = {
     "pay/frontends/MB-shop/log.md": LOG,
     # ---------------------------------------------------------------------- tests
     "pay/tests/TS-pay/overview.md": page(
-        f"type: TestSuite\ntitle: Pay Suite\ndescription: End-to-end payment tests.\nstatus: Approved\nsuiteType: e2e\n{G}",
+        f"type: TestSuite\ntitle: Pay Suite\ndescription: End-to-end payment tests.\nstatus: Approved\nsuiteType: e2e\n{G}\n"
+        "basedOn:\n  - { id: FEAT-pay, version: 1, at: 2026-08-15 }",
         "# Pay Suite\n\n# Verifies\n\n* [FEAT-pay](../../features/FEAT-pay/overview.md)",
     ),
     "pay/tests/TS-pay/log.md": LOG,
@@ -228,7 +233,7 @@ FILES: dict[str, str] = {
         f"type: TestCase\ntitle: Payment succeeds\ndescription: A valid payment is taken.\nrisk: high\n{G}",
         "# Payment succeeds\n\n# Covers\n\n* [REQ-pay-1](../../features/FEAT-pay/overview.md#req-pay-1)\n"
         "* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md)\n\n# Purpose\n\nProve a payment works.\n\n"
-        "# Preconditions\n\nA cart.\n\n# Test data\n\nOne card.\n\n# Steps\n\n"
+        "# Preconditions\n\nA cart.\n\n# Test data\n\n| No | Input | Value |\n|---|---|---|\n| 1 | card | 4242 4242 4242 4242 |\n\n# Steps\n\n"
         "| Step | Action | Expected result | Validation |\n|---|---|---|---|\n| 1 | Pay | Paid | Row exists |\n\n"
         "# Postconditions and cleanup\n\nDelete the payment.",
     ),

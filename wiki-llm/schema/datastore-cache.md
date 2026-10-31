@@ -1,6 +1,6 @@
 # Cache
 
-[Common rules](schema.md) · [Example](../sample/shop/datastores/CACHE-catalog/overview.md)
+[Common rules](schema.md)
 
 A key-value cache.
 

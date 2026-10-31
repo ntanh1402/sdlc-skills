@@ -18,9 +18,7 @@ It writes code, never the wiki: section 8 lists what it never does.
 Read, in this skill's folder, `references/read-protocol.md`,
 `references/flow.md` and `references/code-checks.md`. `flow.md` gives the
 steps of the run and the three gates; this file says what is this skill's own
-at each step. This skill has no write protocol and makes no draft: where
-`flow.md` says "the worktree", it is a git worktree of the code repository
-(section 3).
+at each step.
 
 Find the wiki as the read protocol says, and check that it matches this
 skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
@@ -70,9 +68,8 @@ A refusal is not a question.
 Feature `Draft` or `ReqApproved`, a ChangeRequest `Proposed` or
 `ReqApproved`), or `$T outdated` lists this Task (its `basedOn` is older than
 the parent's `version`), say so in the first round and go on only when the
-person says so: the Requirements may still change, and `sdlc-close-task`
-records the Task as done only once the parent is `Approved` and the Task's
-`basedOn` is current.
+person says so: the Requirements may still change, and if they do,
+`sdlc-plan-tasks` will plan a new Task for the difference.
 
 **A blocker that is not `Done`.** When a Task under `# Blocked by` is `Todo`,
 say so in the first round and go on only when the person says so: its code
@@ -231,15 +228,11 @@ origin 2>/dev/null`, then `git -C "$WIKI" diff --stat "$READ" "$DEFAULT" --
 <the Task file and each Design file in its scope>`. If it prints anything,
 show it and go back to the Design gate.
 
-Do the self review of `flow.md` section 6, by reading only, with the checks
-of `references/code-checks.md`: acceptance, contract, outside the scope and
-convention. Fix what they find and record each fix. What you cannot fix, and
-everything under "Not checked", is shown at the gate.
+Do the self review of `flow.md` section 6 with `references/code-checks.md`.
 
-**Change-set gate.** In the worktree, `git add -A`, then show
-`git diff --cached --stat` and the diff, the commit message, and what the
-self review could not fix. The commit message follows `conventions.md` and
-ends with the trailer, after an empty line:
+**Change-set gate.** In the worktree, `git add -A`, then run the Change-set
+gate of `flow.md` (table in section 1 and section 6). The commit message
+follows `conventions.md` and ends with the trailer, after an empty line:
 
 ```text
 Add the apply-coupon endpoint

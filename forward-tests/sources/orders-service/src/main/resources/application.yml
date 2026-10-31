@@ -1,0 +1,21 @@
+server:
+  port: 8080
+management:
+  endpoints.web.base-path: /actuator   # health check: /actuator/health
+spring:
+  datasource:
+    url: jdbc:postgresql://db.internal:5432/shop
+    username: orders
+    password: Xk9-orders-prod-2f7a        # a secret: never copy it anywhere
+  kafka:
+    bootstrap-servers: kafka.internal:9092
+orders:
+  topic: order.created
+  cancel-window-minutes: 30
+payments:
+  base-url: http://payments.internal:8080
+  timeout-ms: 3000
+shipwell:
+  base-url: https://api.shipwell.example
+  api-key: ${SHIPWELL_API_KEY}
+  timeout-ms: 2000

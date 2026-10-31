@@ -1,9 +1,10 @@
-# Paste-ready story
+# Paste-ready story output
 
-A person copies a story from the wiki into the tracker by hand. Print each
-story as plain Markdown that pastes cleanly: no frontmatter, no wiki links
-(they do not resolve outside the wiki), Requirement keys as plain text. The
-copy is printed in the chat and never written to the wiki.
+When asked in `sdlc-ask-wiki` for the paste-ready copy of a story ("give me
+the story for the tracker" or similar), print each requested story as plain
+Markdown that pastes cleanly into a tracker: no frontmatter, no wiki links
+(they do not resolve outside the wiki), Requirement keys as plain text. Print
+only the blocks below and nothing else.
 
 Print one block per story, separated by a line `---`:
 

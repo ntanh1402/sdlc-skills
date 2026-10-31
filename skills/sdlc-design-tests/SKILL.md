@@ -168,10 +168,8 @@ both.
 ## 6. Self review, finish and commit
 
 Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, also check that:
+review, have the review sub-agent check by reading that:
 
-- `$T coverage tests --feature <FEAT>` (or `--change <CR>`), run in the
-  worktree, reports nothing uncovered except the gaps the user accepted;
 - every case has its risk, concrete data, complete steps, a validation for
   each step that needs one, clean-up and links;
 - no suite or case is written twice, no existing case was changed except
@@ -181,6 +179,9 @@ review, also check that:
 - each suite's `basedOn` names the current version of each target it was
   designed for;
 - each accepted risk or gap is recorded in its suite's `log.md`.
+
+Then run `$T coverage tests --feature <FEAT>` (or `--change <CR>`) in the
+worktree; it must report nothing uncovered except the gaps the user accepted.
 
 Commit message: `tests(<Key>): design <n> cases`. In the summary, "Not done"
 names each gap the user accepted, and "Next" says the suites can be turned

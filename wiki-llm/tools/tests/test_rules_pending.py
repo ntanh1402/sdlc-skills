@@ -85,6 +85,22 @@ class PendingTest(RuleTest):
         self.edit(CHANGE_TASK, "status: Todo", "status: Done")
         self.assertReported("pending.leftover", CREATE)
 
+    def test_entry_stays_while_parent_is_not_approved_even_when_tasks_are_done(self):
+        self.edit(CHANGE, "status: Approved", "status: Proposed")
+        self.edit(CHANGE_TASK, "status: Todo", "status: Done")
+        self.assertClean()
+
+    def test_entry_stays_while_done_task_is_outdated(self):
+        # An approved Feature with an outdated Task breaks basis.approved-task; the entry still stays.
+        self.edit(
+            FEATURE,
+            "version: 1\nversionDate: 2026-08-15\ndesignBasedOn: { version: 1, at: 2026-08-15 }",
+            "version: 2\nversionDate: 2026-09-10\ndesignBasedOn: { version: 2, at: 2026-09-10 }",
+        )
+        self.edit(FEATURE_TASK, "status: Todo", "status: Done")
+        self.assertIn(("basis.approved-task", FEATURE_TASK), self.found())
+        self.assertNotIn(("pending.leftover", REFUND), self.found())
+
     # 7. status agrees with the entries
     def test_new_entry_needs_planned(self):
         self.edit(REFUND, "status: Planned", "status: Modifying")
@@ -124,6 +140,11 @@ class PendingTest(RuleTest):
 
     def test_change_request_with_no_task_is_not_asked_to_be_implemented(self):
         self.remove(CHANGE_TASK)
+        self.assertNotIn("pending.request-implemented", {rule for rule, _ in self.found()})
+
+    def test_unapproved_change_request_with_every_task_done_stays_open(self):
+        self.edit(CHANGE, "status: Approved", "status: ReqApproved")
+        self.edit(CHANGE_TASK, "status: Todo", "status: Done")
         self.assertNotIn("pending.request-implemented", {rule for rule, _ in self.found()})
 
     def test_feature_in_dev_with_every_task_done_is_a_warning(self):

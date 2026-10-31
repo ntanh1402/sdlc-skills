@@ -1,13 +1,15 @@
 """Write the parts of a bundle that are derived from other parts.
 
 Two kinds of generated content:
-  * every `index.md`, written whole;
+  * every `index.md`, and each TestSuite's `checklist.csv`, written whole;
   * sections whose heading spec in schema.json has a `generated` block,
     written between that heading and the next heading of the same level.
 """
 
 from __future__ import annotations
 
+import csv
+import io
 import os
 from pathlib import Path
 
@@ -81,6 +83,43 @@ def _concept_index(bundle: Bundle, concept: Concept) -> str:
     return _page(blocks)
 
 
+RISK_ORDER = ("critical", "high", "med", "low")
+
+
+def _covered_key(relation) -> str:
+    """The key of one `# Covers` entry: REQ-… for a Requirement, else the concept's key."""
+    if relation.kind == "Requirement":
+        return "REQ-" + relation.anchor[4:]
+    if relation.concept is not None:
+        return relation.concept.key
+    return relation.item.label or relation.item.text
+
+
+def _one_line(text: str) -> str:
+    return " ".join(markdown.strip_fences(text).split())
+
+
+def checklist(bundle: Bundle, suite: Concept) -> str:
+    """`checklist.csv` of a TestSuite: one row per TestCase, highest risk first, then by title."""
+
+    def order(case: Concept) -> tuple[int, str, str]:
+        risk = case.meta.get("risk")
+        rank = RISK_ORDER.index(risk) if risk in RISK_ORDER else len(RISK_ORDER)
+        return rank, case.title.lower(), case.key
+
+    out = io.StringIO()
+    writer = csv.writer(out, lineterminator="\n")
+    writer.writerow(["No", "Title", "Description", "Covers", "Purpose"])
+    for number, case in enumerate(sorted(bundle.owned(suite, "TestCase"), key=order), start=1):
+        covers = "; ".join(_covered_key(relation) for relation in bundle.relations(case, ["Covers"]))
+        purpose = case.section(["Purpose"])
+        writer.writerow([number, case.title, case.description, covers, _one_line(purpose.text) if purpose else ""])
+    return out.getvalue()
+
+
+GENERATED_FILES = {"checklist.csv": checklist}
+
+
 def _indexes(bundle: Bundle) -> dict[Path, str]:
     result: dict[Path, str] = {bundle.root / "index.md": _root_index(bundle)}
     for app in bundle.of_type("Application"):
@@ -92,6 +131,9 @@ def _indexes(bundle: Bundle) -> dict[Path, str]:
     for concept in bundle.concepts:
         if concept.folder is not None and concept.type != "Application":
             result[concept.folder / "index.md"] = _concept_index(bundle, concept)
+            for entry in bundle.schema.types[concept.type].get("extra_files", []):
+                if entry.get("origin") == "generated":
+                    result[concept.folder / entry["name"]] = GENERATED_FILES[entry["name"]](bundle, concept)
     return result
 
 

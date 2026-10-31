@@ -1,0 +1,5 @@
+No,Title,Description,Covers,Purpose
+1,Provider outage does not fail checkout,Prove notification outage is isolated from checkout and retried.,REQ-order-notifications-failure-never-blocks; EP-orders-create,Prove notification outage is isolated from checkout and retried.
+2,Redelivery is idempotent,Prove broker redelivery cannot duplicate customer contact.,REQ-order-notifications-failure-never-blocks,Prove broker redelivery cannot duplicate customer contact.
+3,Email sent,Prove one order event produces one recorded email delivery.,REQ-order-notifications-confirmation-sent,Prove one order event produces one recorded email delivery.
+4,SMS sent,Prove SMS honors customer opt-out.,REQ-order-notifications-channel-opt-out; REQ-order-notifications-channel-opt-out; ADR-twilio-for-sms; SVC-notifications; SUB-order-created; TBL-customers; TBL-notifications; EXT-twilio; OP-messages-create,Prove SMS honors customer opt-out.

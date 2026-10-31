@@ -1,6 +1,6 @@
 # Table
 
-[Common rules](schema.md) · [Example](../sample/shop/datastores/DB-shop/TBL-orders.md)
+[Common rules](schema.md)
 
 One table of a Database.
 

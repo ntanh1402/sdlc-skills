@@ -1,6 +1,6 @@
 # Endpoint
 
-[Common rules](schema.md) · [Example](../sample/shop/services/SVC-orders/EP-orders-create.md)
+[Common rules](schema.md)
 
 One synchronous operation a Service exposes.
 

@@ -13,7 +13,7 @@ import os
 import sys
 from pathlib import Path
 
-from wikilib import coverage, docs, draft, link, locate, rename, scaffold, sync, toolcopy, validate
+from wikilib import basis, coverage, docs, draft, link, locate, rename, scaffold, sync, toolcopy, validate
 from wikilib.bundle import Bundle
 from wikilib.errors import Refused, ToolError
 from wikilib.schema import Schema
@@ -78,6 +78,14 @@ def cmd_coverage(args: argparse.Namespace) -> int:
     bundle = Bundle.load(locate_root(args.root), Schema.load())
     type_name, key = ("Feature", args.feature) if args.feature else ("ChangeRequest", args.change)
     result = coverage.report(bundle, args.what, type_name, key)
+    _print(result)
+    return 0 if result["ok"] else 1
+
+
+def cmd_outdated(args: argparse.Namespace) -> int:
+    bundle = Bundle.load(locate_root(args.root), Schema.load())
+    type_name, key = ("Feature", args.feature) if args.feature else ("ChangeRequest", args.change)
+    result = basis.report(bundle, coverage.subject(bundle, type_name, key))
     _print(result)
     return 0 if result["ok"] else 1
 
@@ -167,6 +175,11 @@ def build_parser() -> argparse.ArgumentParser:
     subject.add_argument("--feature", help="a Feature key")
     subject.add_argument("--change", help="a ChangeRequest key")
     coverage_parser.set_defaults(run=cmd_coverage)
+    outdated_parser = commands.add_parser("outdated", help="what was written from an older version of a Feature or ChangeRequest")
+    subject = outdated_parser.add_mutually_exclusive_group(required=True)
+    subject.add_argument("--feature", help="a Feature key")
+    subject.add_argument("--change", help="a ChangeRequest key")
+    outdated_parser.set_defaults(run=cmd_outdated)
     draft_parser = commands.add_parser("draft", help="a branch and worktree holding unapproved changes")
     actions = draft_parser.add_subparsers(dest="action", required=True)
     for name, text in (("start", "create the draft branch wiki/<key> and its worktree"),

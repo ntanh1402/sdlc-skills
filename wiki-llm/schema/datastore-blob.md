@@ -1,6 +1,6 @@
 # BlobStore
 
-[Common rules](schema.md) · [Example](../sample/shop/datastores/BLOB-product-images/overview.md)
+[Common rules](schema.md)
 
 An object or file store.
 

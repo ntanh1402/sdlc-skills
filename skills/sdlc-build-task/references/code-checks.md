@@ -1,11 +1,15 @@
-# The checks of a code change
+# Self-review checks for a Task's code change
 
-A code change is checked against the wiki by reading: the Task's
-`# Acceptance` and `# Planned scope`, the Design files linked there, and the
-Application's `conventions.md`. A Design file with a `# Pending changes`
-section holds the **target**, what the system will be once the pending work
-is built; the code is checked against the target. No check runs the code or
-its tests.
+Check the code and unit tests written in the worktree against the wiki by
+reading only: the Task's `# Acceptance` and `# Planned scope`, the Design files
+linked there, and the Application's `conventions.md`. A Design file with a
+`# Pending changes` section holds the **target**, what the system will be once
+the pending work is built; the code is checked against the target. No check
+runs the code or its tests.
+
+Report what was checked, every `must fix` and `should fix` finding with its
+code location and wiki path, and everything under "Not checked" without editing
+any file.
 
 ## The groups
 
@@ -15,7 +19,7 @@ its tests.
 | Contract | A place where the code and a Design file in scope disagree: a field, its type, whether it is required, a status code, a validation, a behaviour step, a payload, a column, an index, a timeout | `must fix` |
 | Outside the scope | A contract the change alters whose Design file is not in the Task's `# Planned scope`; or a contract the wiki has no file for: a new endpoint, table, channel or vendor call | `must fix` |
 | Convention | A rule of `conventions.md` the change breaks | `should fix` |
-| Not checked | What you could not check, and why; and differences that belong to other pending work, with its key | — |
+| Not checked | What you could not check by reading, and why; and differences that belong to other pending work, with its key | — |
 
 ## Rules
 
@@ -41,10 +45,8 @@ its tests.
 - A Reference is context, never evidence: code that differs from a code
   example, or from a document a Reference holds, is not a finding unless the
   Task, a Design file or `conventions.md` states the same rule.
-- Never copy a secret or personal data from the code into a report, a Run
-  plan or a commit message.
-
-Running the checks never changes the wiki. When the wiki is the wrong side,
-the remedy is a ChangeRequest with `sdlc-write-spec` when the design should
-change, or `sdlc-import` on the code folder when the wiki records what is
-built wrongly.
+- Never copy a secret or personal data from the code into the review report.
+- Running these checks never changes the wiki. When the wiki appears to be the
+  wrong side rather than the code, report the contradiction with the remedy: a
+  ChangeRequest with `sdlc-write-spec` when the design should change, or
+  `sdlc-import` on the code folder when the wiki records what is built wrongly.

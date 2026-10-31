@@ -1,6 +1,7 @@
 # Reading the project wiki
 
-This file says how to find the project's wiki repository and how to read it.
+This file says how `sdlc-ask-wiki` finds the project's wiki repository, reads
+it read-only, and formats its answers.
 
 ## 1. Find the wiki repository
 
@@ -19,7 +20,7 @@ the checking tool in `.wiki-llm/`. Find it in this order:
    path; only sdlc-setup-wiki takes one.
 
 Below, `WIKI` is the wiki repository's folder and `T` is its tool, run from
-inside `WIKI` or from inside a draft worktree of it:
+inside `WIKI`:
 
 ```bash
 cd "$WIKI"
@@ -52,9 +53,6 @@ local `main`, else `master`.
 - In an answer, say which branch and commit you read
   (`git rev-parse --short "$DEFAULT"`) whenever it is not the checked-out one.
 
-A skill that writes reads its input inside its draft worktree instead, which
-starts from the default branch (see `write-protocol.md`).
-
 ## 3. Find your way around
 
 The wiki in `wiki/` holds one folder per Application. In each, every concept is
@@ -68,8 +66,8 @@ one file or one folder named by its key, for example
 - **Forward.** A link is a relative path. Follow it.
 - **Backward.** Open the target and read its tool-written section: a Table's
   `# Used by`, a Channel's `# Publishers` and `# Subscribers`, a Feature's
-  `# Change history`. For anything else, search for the key:
-  `grep -rl "SVC-orders" wiki/ --include='*.md'`.
+  `# Change history`, a Reference's `# Referenced by`. For anything else,
+  search for the key: `grep -rl "SVC-orders" wiki/ --include='*.md'`.
 - **References.** A Reference is material a person approved to be read while
   working: a PRD, a change brief, a test plan, a domain page, a vendor's
   documentation, a code example. Find the ones that apply in two ways, and
@@ -88,9 +86,10 @@ one file or one folder named by its key, for example
   whose file describes more than what is deployed.
 - **Unconfirmed.** `grep -rL "^verified:" wiki/ --include='*.md'` lists files
   nobody has confirmed (indexes and logs appear too; ignore them).
-- **Gaps.** `$T coverage tests --feature FEAT-x` and
-  `$T coverage tasks --change CR-x` list Requirements no TestCase covers and
-  Design concepts no Task plans.
+- **Gaps.** `$T coverage tests --feature FEAT-x`,
+  `$T coverage tasks --change CR-x` and `$T coverage stories --feature FEAT-x`
+  list Requirements no TestCase covers, Design concepts no Task plans, and
+  Functional Requirements no user story lists.
 - **Outdated.** `$T outdated --feature FEAT-x` (or `--change CR-x`) lists the
   design, stories, Tasks and TestSuites written from an older version of the
   spec. These are the only tool commands a reader needs.
@@ -116,12 +115,11 @@ Two statuses matter to every skill:
   `Implemented`; or `Rejected`.
 
 `Draft`, `Proposed` and `ReqApproved` are not gates: the design, stories,
-Tasks and TestSuites may be written before the Requirements are agreed. Only
-`sdlc-close-task` waits for `Approved`. Each Feature and ChangeRequest has a
-`version`, and what is written from it records the version it read
-(`designBasedOn`, `basedOn`). `$T outdated --feature <key>` (or
-`--change <key>`) lists what was written from an older version
-(`schema.md`, "Spec versions").
+Tasks and TestSuites may be written, and Tasks built and closed, before the
+Requirements are agreed. Each Feature and ChangeRequest has a `version`, and
+what is written from it records the version it read (`designBasedOn`,
+`basedOn`). `$T outdated --feature <key>` (or `--change <key>`) lists what was
+written from an older version (`schema.md`, "Spec versions").
 
 ## 5. Answering
 

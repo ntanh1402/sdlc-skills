@@ -147,10 +147,9 @@ step; go on. Different: show what changed and go back to step 3.
 ## 5. Self review, finish and commit
 
 Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, also check that:
+review, have the review sub-agent check by reading (with
+`references/story-rules.md`) that:
 
-- `$T coverage stories`, run in the worktree, reports nothing;
-- `$T validate` reports no `story.*` or `ids.story-format` finding;
 - each story is one actor's goal and passes the INVEST check of
   `references/story-rules.md`;
 - each criterion has real values and cites only Requirements its story
@@ -158,6 +157,9 @@ review, also check that:
 - no file outside the story files and the folder's `log.md` changed, except
   a dropped link to a deleted story and its log entry;
 - every story of the folder has the current `basedOn`.
+
+Then run `$T coverage stories` (which must report nothing) and `$T validate`
+(no `story.*` or `ids.story-format` finding) in the worktree.
 
 Commit message: `stories(<Key>): <n> user stories`, for example
 `stories(FEAT-gift-cards): 3 user stories`.

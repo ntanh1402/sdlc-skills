@@ -1,0 +1,5 @@
+No,Title,Description,Covers,Purpose
+1,Double submit is one order,Prove checkout idempotency prevents duplicate order and charge.,REQ-checkout-pay-before-confirm; ADR-idempotent-checkout,Prove checkout idempotency prevents duplicate order and charge.
+2,Happy path,Prove a shopper completes purchase and receives confirmation.,REQ-checkout-complete-purchase; SVC-orders; SVC-cart; TBL-orders; CHAN-order-created,Prove a shopper completes purchase and receives confirmation.
+3,Payment declined,Prove a declined payment cannot confirm or announce an order.,REQ-checkout-pay-before-confirm; SVC-payments,Prove a declined payment cannot confirm or announce an order.
+4,Empty cart rejected,Prove invalid empty checkout has no side effects.,REQ-checkout-complete-purchase,Prove invalid empty checkout has no side effects.

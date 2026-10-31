@@ -1,0 +1,5 @@
+No,Title,Description,Covers,Purpose
+1,Password never plaintext,Prove credentials never persist or appear in logs as plaintext.,REQ-accounts-credential-safety; TBL-customers,Prove credentials never persist or appear in logs as plaintext.
+2,Login rate limited,Prove repeated failed authentication is throttled.,EP-accounts-login,Prove repeated failed authentication is throttled.
+3,No user enumeration,Prove login does not disclose whether an account exists.,REQ-accounts-credential-safety,Prove login does not disclose whether an account exists.
+4,Session expires,Prove expired sessions cannot authorize profile access.,REQ-accounts-login-session,Prove expired sessions cannot authorize profile access.

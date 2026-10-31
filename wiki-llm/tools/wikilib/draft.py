@@ -176,9 +176,9 @@ def changes(tree: Worktree, base_commit: str, paths: tuple[str, ...] = ()) -> di
 
 
 def _authored(tree: Worktree, base_commit: str, path: str, status: str, schema: Schema) -> bool:
-    """False for a file the tool writes whole (index.md) and for a Markdown file
+    """False for a file the tool writes whole (index.md, checklist.csv) and for a Markdown file
     whose change lies only in generated sections or provenance fields."""
-    if Path(path).name == "index.md" and path.startswith(BUNDLE_DIR + "/"):
+    if Path(path).name in schema.tool_files() and path.startswith(BUNDLE_DIR + "/"):
         return False
     if status != "M" or not path.endswith(".md"):
         return True
@@ -295,7 +295,7 @@ def finish(
     needing = set()
     for path, status in changed.items():
         file = tree.path / path
-        if file.name in ("log.md", "index.md") or (status != "D" and file not in authored):
+        if file.name == "log.md" or file.name in schema.tool_files() or (status != "D" and file not in authored):
             continue
         holder = bundle.content_holder(file)
         if holder is not None:
@@ -439,7 +439,7 @@ def refresh(cwd: Path, schema: Schema | None = None) -> dict:
         manual: list[str] = []
         for path in conflicted:
             file = tree.path / path
-            if file.name == "index.md":
+            if file.name in schema.tool_files():
                 git.run(tree.path, "checkout", "--ours", "--", path)
             else:
                 text = resolve_generated(file.read_text(encoding="utf-8", errors="replace"), schema) if file.is_file() else None

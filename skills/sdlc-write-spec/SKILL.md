@@ -32,7 +32,8 @@ Read, in this skill's folder, `references/read-protocol.md`,
 steps of the run and the three gates; this file says what is this skill's own
 at each step. Then read the schema pages `schema.md`, `feature.md`,
 `change-request.md` and `reference.md` in the wiki's `.wiki-llm/schema/`.
-When a revision removes a Requirement, also `user-story.md` and `test-case.md`.
+When a revision removes a Requirement, also `user-story.md`, `task.md` and
+`test-case.md`.
 
 Other requests go elsewhere; say so and stop:
 
@@ -147,10 +148,11 @@ must be on the default branch.
 
 Prepare the PRD with `references/prd-templates.md` and write it straight to
 its content file in the worktree (`prd.md` or `change-prd.md` in the
-Reference folder, as section 4 shows). The PRD is the design and one of the
-outputs, so it is written once: the person approves the text that will be
-committed, and a resumed run still has it. Prepare a table mapping each
-Requirement to the PRD sections it comes from.
+Reference folder, as section 4 shows; in a revision, edit the content file of
+the existing Reference). The PRD is the design and one of the outputs, so it
+is written once: the person approves the text that will be committed, and a
+resumed run still has it. Prepare a table mapping each Requirement to the PRD
+sections it comes from.
 
 Write the Run plan: its `## Files` are `overview.md` and `log.md` in the
 Feature's or ChangeRequest's folder, and the PRD's Reference folder:
@@ -222,18 +224,22 @@ the status keeps both.
 **Approved.** The Design gate's answer is the status, with one exception: a
 **Feature** marked `ReqApproved` whose `designBasedOn` names its version
 after this run (the architecture was designed from exactly these
-Requirements) becomes `Approved` instead. Say so at the Design gate. A
-ChangeRequest never becomes `Approved` here: approving it also rewrites its
-Feature, which is `sdlc-design-arch`'s.
+Requirements) and that has no `Done` or outdated Tasks becomes `Approved`
+instead. Say so at the Design gate. A Feature that already has a `Done` Task,
+or a ChangeRequest, never becomes `Approved` here: approving it also updates
+Design files or its target Feature, which is `sdlc-design-arch`'s.
 
-**Stories after a removed Requirement.** A revision that removes a
-Requirement a user story in the same folder lists fixes those stories in the
-same draft, as the last rule of `user-story.md` says: drop the Requirement
-and each criterion that links only it; delete a story left with no
-Functional Requirement and drop the links to it. Nothing else in a story
-changes. Fix the TestCases that cover it the same way, as the last rule of
-`test-case.md` says. List these files in the Run plan, show the edits at the
-Design gate and log them.
+**Stories, Tasks and TestCases after a removed Requirement.** A revision that
+removes a Requirement a user story in the same folder lists fixes those
+stories in the same draft, as the last rule of `user-story.md` says: drop the
+Requirement and each criterion that links only it; delete a story left with
+no Functional Requirement and drop the links to it. Nothing else in a story
+changes. In any Task of the folder whose `# Acceptance` links the removed
+Requirement, unlink `[REQ-x](overview.md#req-x)` to plain text `` `REQ-x` ``
+so the Task's prose stays as built; `sdlc-design-arch` and `sdlc-plan-tasks`
+plan a new Task to remove or adjust any already-built code. Fix the TestCases
+that cover it the same way, as the last rule of `test-case.md` says. List
+these files in the Run plan, show the edits at the Design gate and log them.
 
 **New or revised ChangeRequest** `change-requests/CR-<name>/`: frontmatter
 `type: ChangeRequest`, `title`, `description`, `status` (`Proposed` or
@@ -247,7 +253,7 @@ Feature.
 
 **The PRD**, a Reference folder `references/REF-<name>-prd/` for a Feature or
 `references/REF-<name>-change-prd/` for a ChangeRequest, as `reference.md`
-says. In a revision, edit the content file of the existing Reference.
+says:
 
 - `overview.md` summarises it and lists the content file:
 
@@ -269,9 +275,9 @@ says. In a revision, edit the content file of the existing Reference.
   * [prd.md](prd.md) — the PRD as approved.
   ```
 
-- The content file `prd.md` or `change-prd.md` holds the PRD itself, with no
+- The content file `prd.md` or `change-prd.md` was written in step 3 (with no
   frontmatter: `# Gift cards PRD`, then the sections of
-  `references/prd-templates.md`.
+  `references/prd-templates.md`).
 - `log.md` starts as below, with a **PRD** entry.
 
 **`log.md`** in each folder. A new folder starts with:
@@ -296,20 +302,22 @@ not `features/index.md`, which the tool rewrites whenever any Feature merges),
 the target Feature's `overview.md` (ChangeRequest mode) and the file being
 revised (revision mode).
 
-In the self review, also check that:
+In the self review, have the review sub-agent also check by reading that:
 
 - every Requirement is one testable behaviour or constraint, has a key,
-  priority, type and verification, and maps to approved PRD text;
-- the PRD's content file was not changed after the Design gate, and the
-  Feature or ChangeRequest links its Reference under `# References`;
+  priority, type and verification, and maps to the PRD content file;
+- the PRD Reference folder has its content file, `overview.md` and `log.md`,
+  and the Feature or ChangeRequest links its Reference under `# References`;
 - a ChangeRequest left the target Feature unchanged, and its `# Delta` is
   `None — pending architecture` unless it was already designed;
 - `# Architecture`, `# Delta` and `designBasedOn` are as they were;
 - `version` went up by exactly 1 when a Requirement or the PRD changed, and
   not otherwise, with `versionDate` today;
-- the status is the one the Design gate decided, or `Approved` by the rule
-  above;
-- no user story links a removed Requirement.
+- the status matches `plan.md` (a Feature marked `ReqApproved` whose
+  `designBasedOn` names its `version` after this run, with no `Done` or
+  outdated Tasks, is `Approved`);
+- no user story links a removed Requirement, and no Task's `# Acceptance`
+  links one.
 
 Commit message: `spec(<Key>): <title>`, for example
 `spec(FEAT-gift-cards): Gift cards`.
@@ -330,8 +338,9 @@ stored: the list empties as those steps run.
 | Not designed yet | "`sdlc-design-arch` after the merge, even while the Requirements are a draft; `sdlc-write-stories` at the same time if you want user stories" |
 | Designed from an older version | "`sdlc-design-arch` again for the new version" |
 | A Feature that became `Approved` | "`sdlc-plan-tasks` and `sdlc-design-tests` after the merge, if not done yet" |
-| A ChangeRequest `ReqApproved` whose Delta is current | "`sdlc-design-arch` again to approve it: no redesign, it updates the Feature and sets `Approved`" |
-| A draft that is designed and current | "Mark the Requirements agreed with this skill when they are; the Tasks can be built but not closed until then" |
+| A Feature or ChangeRequest `ReqApproved` whose design is current but that has an outdated Task (`$T outdated` lists a Task) | "`sdlc-plan-tasks` first: an approved target has no outdated Task. Then `sdlc-design-arch` again to approve it" |
+| A ChangeRequest `ReqApproved` whose Delta is current, or a Feature `ReqApproved` whose Architecture is current and that already has `Done` Tasks, with no outdated Task | "`sdlc-design-arch` again to approve it: no redesign, it updates the Feature / Design files and sets the status" |
+| A draft that is designed and current | "Mark the Requirements agreed with this skill when they are; the Tasks can be built and closed meanwhile" |
 
 ## Done when
 

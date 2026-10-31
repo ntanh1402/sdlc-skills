@@ -1,6 +1,6 @@
 ---
 name: sdlc-write-stories
-description: Break the Requirements of a Feature or ChangeRequest in the project wiki into user stories, while they are a draft or once they are agreed - one actor goal each, "As a … I want … so that …", with Given/When/Then acceptance criteria that cite the Requirements, and a paste-ready copy for the tracker. Use when a business analyst wants user stories, a story breakdown or story acceptance criteria for requirements, wants existing stories regrouped, or the spec changed after the stories were written. Not for writing or changing Requirements, architecture, tasks, test design, tracker sync or code.
+description: Break the Requirements of a Feature or ChangeRequest in the project wiki into user stories, while they are a draft or once they are agreed - one actor goal each, "As a … I want … so that …", with numbered pass/fail acceptance criteria that cite the Requirements, and a paste-ready copy for the tracker. Use when a business analyst wants user stories, a story breakdown or story acceptance criteria for requirements, wants existing stories regrouped, or the spec changed after the stories were written. Not for writing or changing Requirements, architecture, tasks, test design, tracker sync or code.
 ---
 
 # Write the user stories
@@ -90,8 +90,8 @@ $T outdated --feature FEAT-coupons              # stories written from an older 
 When the Requirements are still a draft, say so in the first round: the
 stories may have to change when the spec does. A story `outdated` lists was
 written from an older version: compare its Requirements at that version with
-the current ones (`git log -p` on the `overview.md`) and revise it only where
-the change touches it.
+the current ones (`git log -p` on the `overview.md`), and revise it only when
+the change touches it; a story you revise is rewritten whole.
 
 Every state but `READY` is a refusal, not a question.
 
@@ -175,7 +175,8 @@ and, for a ChangeRequest, the changed Feature's `overview.md` and the Feature
 stories it affects.
 
 Prepare every story in full, with `references/story-format.md`: the
-sentence, the numbered criteria with real values, the Requirements, and for
+sentence, the numbered pass/fail criteria with real values, the
+Requirements, and for
 a ChangeRequest `# Affects`. Prepare the coverage matrix: each Requirement of
 the inventory to the stories that list it, and each optional Requirement no
 story lists.
@@ -193,16 +194,19 @@ summary, then the coverage matrix, then the Run plan. Ask for approval.
 In the draft worktree, in the Feature's or ChangeRequest's folder, write each
 story as `STORY-<feature-name>-<name>.md`, with
 `basedOn: { version: <the folder's Feature or ChangeRequest version>, at: <its versionDate> }`.
-In a revision, keep each existing story's key, and give each story you
-revise, or checked against the new version, the current `basedOn`. Delete a story whose Requirements were all removed, say why in
-the log, and drop the links to it from every Task's `# Stories` and every
-ChangeRequest story's `# Affects`, with a log entry in each folder changed. Add an entry to the folder's `log.md`, for example
+In a revision, keep each existing story's key, rewrite each story you touch
+whole in the current form (`references/story-rules.md`, "Revisions"), and
+give each story you revise, or checked against the new version, the current
+`basedOn`. Delete a story whose Requirements were all removed, or that was
+folded into another story, and change the links to it, as "Revisions" in
+`references/story-rules.md` says. Add an entry to the folder's `log.md`, for
+example
 `* **Stories**: Wrote 3 user stories. Written by an AI model with sdlc-write-stories.`
 
 Do not touch `overview.md`, the PRD or the changed Feature's stories, and
-change a Task only to drop a link to a deleted story. Linking Tasks to the
-stories is `sdlc-plan-tasks`. Do
-not write `index.md` or `# Changed by`: `draft finish` does.
+change a Task only to drop or replace a link to a deleted story. Linking Tasks
+to the stories is `sdlc-plan-tasks`. Do not write `index.md`, `# Changed by`
+or `# Test cases`: `draft finish` does.
 
 **Input check.** `sdlc-design-arch` may merge while this draft is open, and
 it writes the same `overview.md` (its `# Architecture` or `# Delta`, and the
@@ -217,12 +221,13 @@ Read `references/paste-format.md` now. Follow `write-protocol.md` section 3, "At
 section 5". In the self review (`write-protocol.md` section 5), have the review
 sub-agent check by reading (with `references/story-rules.md`) that:
 
-- each story is one actor's goal and passes the INVEST check of
-  `references/story-rules.md`;
-- each criterion has real values and cites only Requirements its story
-  lists;
+- each story is one actor's goal on one surface and passes the INVEST check
+  of `references/story-rules.md`;
+- no story is made only of RULEs of another story's SPINE;
+- each criterion is a pass/fail statement with real values and cites only
+  Requirements its story lists;
 - no file outside the story files and the folder's `log.md` changed, except
-  a dropped link to a deleted story and its log entry;
+  a dropped or replaced link to a deleted story and its log entry;
 - every story of the folder has the current `basedOn`.
 
 Then run `$T coverage stories` (which must report nothing) and `$T validate`

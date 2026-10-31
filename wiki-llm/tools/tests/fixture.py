@@ -81,7 +81,7 @@ FILES: dict[str, str] = {
     "pay/features/FEAT-pay/STORY-pay-checkout.md": page(
         f"type: UserStory\ntitle: Pay at checkout\ndescription: A shopper pays for an order.\npriority: P1\n{G}\n{B}",
         "# Pay at checkout\n\nAs a **shopper**, I want to pay for my order, so that it is placed.\n\n"
-        "# Acceptance criteria\n\n1. **Given** a cart, **when** the shopper pays, **then** the order is placed.\n"
+        "# Acceptance criteria\n\n1. A shopper who pays for a cart gets the order placed.\n"
         "   ([REQ-pay-1](overview.md#req-pay-1))\n\n"
         "# Requirements\n\n* [REQ-pay-1](overview.md#req-pay-1)",
     ),
@@ -107,7 +107,7 @@ FILES: dict[str, str] = {
     "pay/change-requests/CR-1/STORY-pay-coupon.md": page(
         f"type: UserStory\ntitle: Pay with a coupon\ndescription: A shopper applies a coupon.\n{G}\n{CB}",
         "# Pay with a coupon\n\nAs a shopper, I want to apply a coupon, so that I pay less.\n\n"
-        "# Acceptance criteria\n\n1. Given a coupon, when the shopper pays with it, then the price drops. "
+        "# Acceptance criteria\n\n1. Paying with a valid coupon lowers the price. "
         "([REQ-pay-2](overview.md#req-pay-2))\n\n"
         "# Requirements\n\n* [REQ-pay-2](overview.md#req-pay-2)\n\n"
         "# Affects\n\n* [STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md) — paying now takes a coupon.",

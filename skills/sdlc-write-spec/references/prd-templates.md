@@ -5,24 +5,36 @@ mapping for the Design gate.
 
 ## Feature PRD (`references/REF-<name>-prd/prd.md`)
 
-Use these headings, in this order, under the `# <Feature> PRD` title:
+Use these headings, in this order, under the `# <Feature> PRD` title. They
+follow the common industry PRD shape, so the PRD can be turned into a
+document outside the wiki by dropping its links, without restructuring.
 
 ```markdown
-## Objective
-## Users and actors
+## Summary
 ## Problem and evidence
-## Scope
-## User and system flow
+## Goals and success metrics
+## Users and personas
+## User flows
 ## Business rules
-## Functional requirements
-## Nonfunctional requirements
-## Data and events
-## Success measures
-## Acceptance
-## Risks and constraints
-## Assumptions and open questions
+## Requirements
+## Release and rollout
+## Risks, assumptions and open questions
 ## Out of scope
 ```
+
+- `## Summary`: two or three sentences: what changes for whom, and why now.
+- `## Goals and success metrics`: a primary metric and a guardrail metric,
+  each with its baseline and target when known.
+- `## User flows`: one subsection per flow, with its happy, alternate and
+  failure paths.
+- `## Requirements` holds only this line, because the Requirements live once,
+  in the Feature's `overview.md`:
+  `The Requirements are listed in the Feature's overview.md, under # Requirements.`
+- `## Release and rollout`: only when the brief names phases, a feature
+  flag, a migration of users or data, or a deadline; otherwise leave the
+  heading out.
+- No metadata block: status, version, owner team, priority, target release
+  and Epic key are the Feature's fields.
 
 ## Change PRD (`references/REF-<name>-change-prd/change-prd.md`)
 
@@ -35,12 +47,14 @@ Under the `# <Change> PRD` title:
 ## Changed flow
 ## Changed and regression requirements
 ## Impact hypothesis
-## Risk
-## Acceptance
 ## Constraints and compatibility
-## Assumptions and open questions
+## Risks, assumptions and open questions
 ## Out of scope
 ```
+
+`## Changed and regression requirements` holds only this line:
+`The Requirements are listed in the ChangeRequest's overview.md, under # Requirements.`
+It names in prose the guarantees that must not regress.
 
 ## Content quality
 
@@ -91,7 +105,7 @@ After the PRD, show one mapping row per Requirement:
 ```markdown
 | Requirement | PRD sections | Verification | Notes |
 |---|---|---|---|
-| REQ-wishlist-save-product | User and system flow; Functional requirements | test | New behaviour |
+| REQ-wishlist-save-product | User flows; Business rules | test | New behaviour |
 ```
 
 Every Requirement maps to approved PRD text. Every acceptance-critical

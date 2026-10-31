@@ -17,7 +17,7 @@ A copy (`cp -R`) of the directory kept by `sdlc-design-arch/first-feature.md`, w
 - The Design gate shows one row per Task with its repository, the coverage matrix, the waves and the Run plan
 - At the Design gate, `<wiki>/.worktrees/tasks-FEAT-gift-cards/plan.md` lists one line per Task file and the folder's `log.md`
 - The Change-set gate says what the self review checked and fixed, as `## Self review` of the Run plan records it
-- Every new and changed concept has exactly one owning Task
+- Every new and changed concept is covered by a Task; no Task links two stories
 - Sizes XS–L
 - `TASK-*.md` files in `FEAT-gift-cards/`, `status: Todo`, no `trackerKey`
 - `coverage tasks --feature FEAT-gift-cards` empty on the branch

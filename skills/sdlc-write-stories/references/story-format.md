@@ -24,12 +24,14 @@ the card I was given.
 
 # Acceptance criteria
 
-1. **Given** a card with a balance of 50, **when** the customer pays an order
-   of 30 with it, **then** the order is paid and the card keeps 20.
+1. A card with a balance of 50 pays an order of 30 in full and keeps a
+   balance of 20.
    ([REQ-gift-cards-redeem-at-checkout](overview.md#req-gift-cards-redeem-at-checkout))
-2. **Given** a card with a balance of 10, **when** the customer pays an order
-   of 30, **then** they pay the other 20 by another method.
+2. A card with a balance of 10 pays 10 of an order of 30, and the customer
+   pays the other 20 by another method.
    ([REQ-gift-cards-split-payment](overview.md#req-gift-cards-split-payment))
+3. A card never pays more than its balance, and its balance never goes below
+   0. ([REQ-gift-cards-redeem-at-checkout](overview.md#req-gift-cards-redeem-at-checkout))
 
 # Requirements
 
@@ -58,9 +60,8 @@ I can pay another way before I lose my cart.
 
 # Acceptance criteria
 
-1. **Given** a card that expired yesterday with a balance of 50, **when** the
-   customer pays with it, **then** checkout says the card has expired and
-   offers the other payment methods.
+1. A card that expired yesterday with a balance of 50 pays nothing; checkout
+   says the card has expired and offers the other payment methods.
    ([REQ-gift-cards-expiry](overview.md#req-gift-cards-expiry))
 
 # Requirements
@@ -78,5 +79,5 @@ I can pay another way before I lose my cart.
   ChangeRequest that the story was written from.
 - Leave out `trackerKey` and `resource`; a person adds them after making the
   ticket. Leave out `# Notes` and `# Affects` when they have nothing to say.
-- `generated` and `verified` are written by `draft finish`; `# Changed by`
-  and `index.md` by the tool.
+- `generated` and `verified` are written by `draft finish`; `# Changed by`,
+  `# Test cases` and `index.md` by the tool.

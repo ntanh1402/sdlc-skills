@@ -1,6 +1,6 @@
 ---
 name: sdlc-design-tests
-description: Design traceable TestSuites and TestCases for a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - unit, integration, e2e, load or security suites, one case per file with risk, numbered concrete data, steps with request and response payloads and explicit validations, and a generated checklist per suite, covering every requirement, contract and failure branch. Use when QA, developers, security or performance roles need test design or test coverage from a design, or when the spec changed after the tests were designed. Does not write runnable test code; not for requirements, architecture or tasks.
+description: Design traceable TestSuites and TestCases for a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - integration, e2e, load or security suites, one case per file with risk, numbered concrete data, steps with request and response payloads and explicit validations, and a generated checklist per suite, covering every requirement, contract and failure branch. Use when QA, developers, security or performance roles need test design or test coverage from a design, or when the spec changed after the tests were designed. Does not write runnable test code; not for requirements, architecture or tasks.
 ---
 
 # Design the tests
@@ -34,8 +34,8 @@ cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
 | `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
 
 Then read the schema pages `schema.md`, `test-suite.md`, `test-case.md`,
-`feature.md`, `change-request.md`, `architecture-decision.md` and the page of
-each Design type in scope, in the wiki's `.wiki-llm/schema/`.
+`user-story.md`, `feature.md`, `change-request.md`, `architecture-decision.md`
+and the page of each Design type in scope, in the wiki's `.wiki-llm/schema/`.
 
 | Request | Skill |
 |---|---|
@@ -78,7 +78,8 @@ Every state but `READY` is a refusal, not a question.
 
 Then read the Requirements, the Architecture or Delta, the decisions, every
 Endpoint, Channel, Subscription, Table and External contract in scope, the
-quality targets and risks, the References they link and those about testing
+quality targets and risks, the PRD's user flows, the user stories in the
+target's folder, the References they link and those about testing
 in `references/index.md` (a test plan the user gave is one), and the existing
 TestSuites that verify the target (`grep -rl "<Key>" wiki/<app>/tests/`).
 Run `$T outdated --feature <Key>` (or `--change <Key>`): a suite it lists was
@@ -88,6 +89,9 @@ design is behind the spec and recommend `sdlc-design-arch` first; go on only
 when the person says so. List:
 
 - every Requirement and acceptance outcome;
+- every acceptance criterion of every user story, as a partition of the
+  Requirement it cites;
+- every PRD user flow that spans two or more stories;
 - every new, changed or removed contract;
 - every frontend route or screen with its access rule and its empty, loading,
   error and offline states, when a frontend is in scope;
@@ -149,13 +153,16 @@ The first round names the target and its state, shows the inventory, and asks
 the person to choose the suite types. Recommend the types that apply, each with
 its evidence:
 
-- `unit`: isolated rules, transformations, validations, error mapping;
 - `integration`: service, datastore, external and message boundaries;
 - `e2e`: actor outcomes across the deployed flow, through the owning frontend
   when there is one;
 - `load`: throughput, latency, saturation, recovery and capacity;
 - `security`: authentication, authorization, abuse, secrets, injection,
   privacy and audit.
+
+Propose only these four types. A developer's unit tests are written with the
+code (`sdlc-build-task`), and isolated rules and validations are proven at
+the `integration` seam; `unit` is kept in the schema for older suites.
 
 The same round asks about the seams each suite tests at, the exclusions, and
 the wiki question; the usual answer to that one is "nothing: only suites and
@@ -259,6 +266,9 @@ that:
   expected response, and `# Test data` is numbered from 1;
 - each suite's `basedOn` names the current version of each target it was
   designed for;
+- every acceptance criterion of every user story has a case that proves it,
+  and the `e2e` suite has a case for each PRD user flow that spans two or
+  more stories;
 - each accepted risk or gap is recorded in its suite's `log.md`.
 
 Then run `$T coverage tests --feature <FEAT>` (or `--change <CR>`) in the

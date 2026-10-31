@@ -231,6 +231,14 @@ is written once: the person approves the text that will be committed, and a
 resumed run still has it. Prepare a table mapping each Requirement to the PRD
 sections it comes from.
 
+**An older PRD in a revision.** When the existing PRD does not have the
+headings of `references/prd-templates.md`, rewrite it whole in that shape as
+part of this revision, and at the Design gate name each piece of its old
+content that no new section takes (an `## Acceptance` list, `## Data and
+events`) as a gap: dropped, moved to a Requirement, or kept under business
+rules. Never revise a Feature or ChangeRequest only to reshape its PRD: that
+would raise its version for no change in behaviour.
+
 Write the Run plan (`write-protocol.md` section 4): its `## Files` are
 `overview.md` and `log.md` in the Feature's or ChangeRequest's folder, and the
 PRD's Reference folder: `overview.md`, `log.md` and the content file (already

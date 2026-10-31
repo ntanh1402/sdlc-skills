@@ -97,8 +97,8 @@ worktree of its own and leaves the person's checkout as it is.
 **Read**, on the wiki's default branch:
 
 - the Task: `# Acceptance`, the Requirements it links, `# Planned scope`,
-  and the user stories under `# Stories`, for the actor's goal and the
-  scenarios its code must satisfy (read only);
+  and the user story under `# Stories`, if any, for the actor's goal and the
+  acceptance criteria its code must satisfy (read only);
 - each Design file in the scope: its contract, which is the target, and its
   `# Pending changes` entry for this Task's parent;
 - the parent's `# Architecture` or `# Delta`, and the decisions it links;

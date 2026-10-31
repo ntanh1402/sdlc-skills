@@ -1,6 +1,6 @@
 ---
 name: sdlc-plan-tasks
-description: Plan the build Tasks of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - ordered, independently verifiable Tasks with planned scope, acceptance, size, dependencies and parallel waves, covering every concept its design adds, changes or removes, each Task linked to the user stories it serves. Use when an architecture needs a task breakdown, implementation plan or backlog, when a design or spec changed and its Tasks must be replanned, or when user stories were written and the Tasks must link them. Not for requirements, architecture, test design, tracker sync or code.
+description: Plan the build Tasks of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - ordered, independently verifiable Tasks with planned scope, acceptance, size, dependencies and parallel waves, covering every concept its design adds, changes or removes, each Task serving at most one user story. Use when an architecture needs a task breakdown, implementation plan or backlog, when a design or spec changed and its Tasks must be replanned, or when user stories were written and the Tasks must link them. Not for requirements, architecture, test design, tracker sync or code.
 ---
 
 # Plan the tasks
@@ -8,8 +8,9 @@ description: Plan the build Tasks of a designed Feature or ChangeRequest in the 
 This skill is a lifecycle step after the design. It takes a Feature or
 ChangeRequest whose design is merged, whether its Requirements are a draft or
 agreed, and writes `TASK-<name>.md` files into its folder, so that every Design concept its
-design adds, changes or removes is planned by exactly one Task, and every
-user story in the folder is linked by at least one Task.
+design adds, changes or removes is in the planned scope of at least one Task,
+every user story in the folder is linked by at least one Task, and each Task
+serves at most one story.
 
 Its draft prefix is `tasks-`: the draft for `FEAT-coupons` is
 `wiki/tasks-FEAT-coupons`. It may run at the same time as `sdlc-design-tests`
@@ -74,7 +75,7 @@ Accept one `FEAT-*` or `CR-*` key. Read it on the default branch:
 
 | State | When | Do |
 |---|---|---|
-| `READY` | A Feature `Draft`, `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`, whose `# Architecture` or `# Delta` is not `None`; and `coverage tasks` reports uncovered concepts or stories no Task links, the design changed under `Todo` Tasks, or `outdated` lists a Task | Go on |
+| `READY` | A Feature `Draft`, `ReqApproved`, `Approved` or `InDev`, or a ChangeRequest `Proposed`, `ReqApproved` or `Approved`, whose `# Architecture` or `# Delta` is not `None`; and `coverage tasks` reports uncovered concepts or stories no Task links, the design changed under `Todo` Tasks, `outdated` lists a Task, or the person asks to replan | Go on |
 | `NEEDS_DESIGN` | `# Architecture` or `# Delta` is `None` | Stop: route to `sdlc-design-arch` |
 | `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft |
 | `CLOSED` | A Feature that is `Released` or `Deprecated`, or a ChangeRequest that is `Implemented` or `Rejected` | Stop: say it is closed; a change to a Released Feature goes through a ChangeRequest (`sdlc-write-spec`); route nowhere else |
@@ -187,17 +188,25 @@ Follow `references/decomposition-rules.md` and `references/task-sizing.md`:
   that is already approved; test design is `sdlc-design-tests`.
 - Size XS to L. An XL Task is split.
 - Each Task's `# Planned scope` links the concepts it builds, with the
-  qualifier the design gave them. Each concept in the inventory has one
-  owning Task (when a `Done` or started Task built an earlier version of a
-  concept and the design changed it, a new `Todo` Task owns the difference and
-  both Tasks keep the concept in `# Planned scope`).
+  qualifier the design gave them. Each concept in the inventory is in the
+  `# Planned scope` of at least one Task. When several stories change
+  different parts of one concept, each of their Tasks lists it with a note
+  naming its part. When several stories only use a concept (read or call it
+  without changing it), a story owns it if its acceptance criteria are what
+  the concept delivers; the owning story's Task builds it. When no story owns it, one
+  foundation Task with no `# Stories` builds it. Either way, the other Tasks
+  that use it are `# Blocked by` that Task (examples in
+  `references/decomposition-rules.md`, "Stories and coverage"). When a
+  `Done` or started Task built an earlier version of a concept and the
+  design changed it, a new `Todo` Task takes the difference and both Tasks
+  keep the concept in `# Planned scope`.
 - `# Acceptance` states observable results and links the Requirements it
   satisfies by full path and anchor.
-- `# Stories` links the stories the Task serves: those whose Requirements its
-  `# Acceptance` satisfies. Every story of the folder is linked by at least
-  one Task. A Task that serves no story (a migration, a spike, a
-  Nonfunctional Requirement) has no `# Stories`. A Task links only stories of
-  its own folder.
+- `# Stories` links the one story the Task serves: the story whose
+  acceptance criteria its `# Acceptance` delivers. A Task that serves no
+  story (a foundation Task, a migration, a spike, a Nonfunctional
+  Requirement) has no `# Stories`. Every story of the folder is linked by
+  at least one Task. A Task links only stories of its own folder.
 - `# Blocked by` links the Tasks it waits for; no cycles.
 - `# References` links the References a developer needs for this Task: those
   the Feature or ChangeRequest and the Design files in its `# Planned scope`
@@ -224,11 +233,11 @@ version and names the new Task. A `Done` or `Todo` Task the new version does
 not change gets the current `basedOn` too, once you have checked it against
 the change.
 
-**Story links on any Task.** Adding a `# Stories` link, or dropping one to a
-story that no longer exists, is allowed on every Task, `Done` and started
-ones included: it is traceability, not scope, and it is the only edit made
-to those, besides `# References`. A run whose only work is linking stories
-plans no new Task.
+**Story links on any Task.** Adding a `# Stories` link to a Task that has
+none, or dropping one to a story that no longer exists, is allowed on every
+Task, `Done` and started ones included: it is traceability, not scope, and it
+is the only edit made to those, besides `# References`. A run whose only work
+is linking stories plans no new Task.
 
 ## 4. Run plan and the Design gate
 
@@ -240,10 +249,10 @@ ChangeRequest's `overview.md` and, for a ChangeRequest, the target Feature's
 `overview.md`.
 
 Prepare the task plan: in dependency order, one row per Task with its key,
-title, type, size, repository, planned scope, stories, acceptance summary,
-blockers and confidence; then the coverage matrix (each inventory row to its
-owning Task, and each story to the Tasks that link it) and the parallel waves (Tasks with no unfinished blocker start
-together).
+title, type, size, repository, planned scope, story, acceptance summary,
+blockers and confidence; then the coverage matrix (each inventory row to the
+Tasks that cover it, and each story to the Tasks that link it) and the
+parallel waves (Tasks with no unfinished blocker start together).
 
 Write the Run plan (`write-protocol.md` section 4). Its `## Files` are one line
 per Task file, added or changed, with its planned scope in a few words, and the
@@ -269,9 +278,14 @@ Follow `write-protocol.md` section 3, "At section 6", with the self review of
 its section 5. In the self review, have the review sub-agent check by reading
 that:
 
-- each concept of the inventory is in the `# Planned scope` of one owning
-  Task (plus any earlier `Done` or started Task that built an older version
-  of it), and no Task is XL;
+- each concept of the inventory is in the `# Planned scope` of at least one
+  Task, and no Task is XL;
+- each concept several stories need is either split into named parts
+  across their Tasks, or built by one Task (the owning story's Task, or a
+  foundation Task when no story owns it) that the other Tasks using it are
+  `# Blocked by`; each `Todo` Task that shares a concept with another Task
+  names its part in the note;
+- each Task links at most one story, and every story is linked by a Task;
 - every `# Acceptance` states an observable result and links its
   Requirements;
 - no `Done` Task and no started Task was rewritten beyond what `task.md`
@@ -312,10 +326,10 @@ it is and what comes next.
 
 - The target, the scope inventory and the started Tasks were confirmed in the
   rounds, and the planning basis was approved at the Intent gate.
-- Every concept and duty in the scope inventory has an owning Task,
-  and every user story of the folder is linked by a Task.
-- No XL Task, no dependency cycle, no duplicate scope among unstarted `Todo`
-  Tasks, no Task without observable acceptance.
+- Every concept and duty in the scope inventory is covered by a Task, every
+  user story of the folder is linked by a Task, and no Task links two stories.
+- No XL Task, no dependency cycle, no part of a concept planned twice among
+  unstarted `Todo` Tasks, no Task without observable acceptance.
 - No `Done` or started Task was rewritten beyond what `task.md` allows on a
   `Done` Task.
 - Every Task in the folder has the parent's current `basedOn`.

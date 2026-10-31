@@ -11,10 +11,10 @@
 
 In professional software engineering, translating business objectives into shipping code relies on a three-tier decomposition hierarchy:
 1. **PRD (Product Requirements Document):** Macro level — Strategic intent, customer problem, product behavior, success metrics, and boundaries (**The "Why" and "What"**).
-2. **User Story:** Meso level — Vertical slices of end-user value, persona goals, and testable acceptance criteria (**The "Who", "What", and "Confirmation"**).
+2. **User Story:** Meso level — Vertical slices of end-user value, persona goals, and **rule-based verification checklists** (**The "Who", "What", and "Confirmation"**).
 3. **Task (Engineering Task / Subtask):** Micro level — Concrete engineering work, architectural seams, schema changes, and pull request deliverables (**The "How" and Implementation**).
 
-This document details canonical industry standards, authoritative frameworks (SVPG, Mike Cohn, Dan North, Bill Wake, Atlassian, Linear, Shape Up), exact structural schemas, practical templates, traceability models, and modern adaptations for AI-assisted software development lifecycles.
+This document details canonical industry standards, authoritative frameworks (SVPG, Mike Cohn, Ron Jeffries, Bill Wake, Gojko Adzic, Atlassian, Shape Up), structural schemas, templates, traceability models, and how they map to AI-assisted SDLC schemas.
 
 ---
 
@@ -24,14 +24,14 @@ This document details canonical industry standards, authoritative frameworks (SV
 A PRD articulates what problem a feature solves, for whom, how the product should behave from an outside-in perspective, and how success is measured.
 
 * **Primary Authorities:**
-  * **Marty Cagan / Silicon Valley Product Group (SVPG):** *Inspired: How to Create Tech Products Customers Love*. Cagan defines the PRD's purpose as addressing the four fundamental product risks before building: **Value risk**, **Usability risk**, **Feasibility risk**, and **Business Viability risk**.
+  * **Marty Cagan / Silicon Valley Product Group (SVPG):** *Inspired: How to Create Tech Products Customers Love*. Defines the PRD's purpose as addressing four product risks before building: **Value risk**, **Usability risk**, **Feasibility risk**, and **Business Viability risk**.
   * **Lenny Rachitsky (Lenny's Newsletter):** Standardized modern lightweight 1-pagers used across Figma, Airbnb, Stripe, and Uber.
   * **Amazon Working Backwards (PR-FAQ):** Focuses on customer-centric clarity by writing the press release and FAQ first.
-  * **Basecamp / Ryan Singer (*Shape Up*):** Replaces sprawling waterfall specs with "Pitches" defining problem, appetite, solution, rabbit holes, and no-gos.
+  * **Basecamp / Ryan Singer (*Shape Up*):** Replaces sprawling waterfall specs with bounded "Pitches" defining problem, appetite, solution, rabbit holes, and no-gos.
 
 ### 1.2 Evolution: Waterfall vs. Modern Agile PRDs
-* **Traditional Antipattern (Waterfall PRD):** 50+ page document produced in isolation, specifying every database field and UI button before discovery or development begins, obsolete before release.
-* **Modern Best Practice (Living / Lean PRD):** 2–5 page collaborative document focusing strictly on the **Problem**, **User Outcomes**, and **System Behavior**, explicitly leaving technical architecture to engineering.
+* **Traditional Antipattern (Waterfall PRD):** 50+ page document produced in isolation, specifying every database column and UI button before discovery or development begins.
+* **Modern Best Practice (Living / Lean PRD):** 2–5 page collaborative document focusing strictly on **Problem**, **User Outcomes**, and **System Behavior**, leaving technical architecture to engineering.
 
 ### 1.3 Standard Industry PRD Structure
 
@@ -39,15 +39,15 @@ A PRD articulates what problem a feature solves, for whom, how the product shoul
 | :--- | :--- | :--- |
 | **1. Header & Metadata** | Title, Owner/Author, Tech Lead, Designer, Status (Draft/In Review/Approved), Target Milestone/Release. | Establishes single-threaded ownership and document lifecycle state. |
 | **2. Executive Summary / Context** | 2–3 sentence overview of the initiative. | Enables cross-functional stakeholders to grasp intent in 30 seconds. |
-| **3. Problem Statement & Customer Insights** | The specific user pain point, customer quotes, quantitative drop-off data, user research findings. | Validates **Value Risk**; grounds the project in genuine human and market needs. |
-| **4. Goals & Success Metrics (KPIs)** | Primary North Star metric, secondary guardrail metrics, direct OKR alignment. | Distinguishes shipping features from delivering business outcomes. |
-| **5. Target Audience & Personas** | Primary persona(s), secondary persona(s), anti-personas (who this is NOT for). | Prevents designing for the generic "everyone" user. |
-| **6. Out of Scope / Non-Goals** | Explicit list of what will deliberately NOT be built in this version/release. | The #1 mechanism to combat scope creep and preserve sprint velocity. |
-| **7. User Flows & System Behavior** | Step-by-step user journeys, interaction patterns, wireframes/Figma mocks, edge/error states. | Validates **Usability Risk**; provides engineering with behavioral context. |
-| **8. Functional Requirements** | Prioritized list of required capabilities (MoSCoW or P0/P1/P2), written as system obligations. | Foundation for traceability and automated test coverage. |
-| **9. Non-Functional Requirements (NFRs)** | Performance SLAs (latency/throughput), security/auth, privacy/compliance (GDPR/SOC2), accessibility (WCAG), availability. | Validates **Feasibility & Viability Risks**; avoids late production surprises. |
-| **10. Risks, Assumptions & Open Questions** | Unvalidated technical assumptions, third-party vendor limits, pending stakeholder decisions. | Surfaced early so spikes or discovery can resolve unknowns. |
-| **11. Release & GTM Strategy** | Phased rollout (internal alpha, private beta, GA), feature flags, telemetry events, support docs. | Ensures operational readiness beyond code merging. |
+| **3. Problem Statement & Evidence** | Specific user pain point, customer quotes, quantitative drop-off data, research findings. | Validates **Value Risk**; grounds the project in evidence rather than opinion. |
+| **4. Goals & Success Metrics (KPIs)** | Primary outcome metric, secondary guardrail metrics, OKR alignment. | Distinguishes shipping features from delivering business outcomes. |
+| **5. Target Audience & Personas** | Primary persona(s), secondary persona(s), anti-personas (who this is NOT for). | Prevents designing for a generic "everyone" user. |
+| **6. Out of Scope / Non-Goals** | Explicit list of what will deliberately NOT be built in this version/release. | The primary mechanism to prevent scope creep. |
+| **7. User Flows & Business Rules** | Step-by-step user journeys, domain invariants, edge/error states, UX mockups. | Validates **Usability Risk**; provides behavioral context to derive requirements and stories. |
+| **8. Functional Requirements** | Prioritized list of required capabilities (MoSCoW or P0–P3), written as atomic system obligations. | Foundation for traceability, user stories, and test coverage. |
+| **9. Non-Functional Requirements (NFRs)** | Performance SLAs (latency/throughput), security/auth, privacy/compliance, accessibility, availability. | Validates **Feasibility & Viability Risks**; prevents production surprises. |
+| **10. Risks, Assumptions & Open Questions** | Unvalidated technical assumptions, third-party limits, pending stakeholder decisions. | Surfaces unknowns early so spikes or discovery can resolve them. |
+| **11. Release & Rollout Strategy** | Phased rollout (alpha, beta, GA), feature flags, telemetry events, migration constraints. | Ensures operational readiness beyond code merging. |
 
 ### 1.4 Production Markdown Template: Modern PRD
 
@@ -58,55 +58,52 @@ A PRD articulates what problem a feature solves, for whom, how the product shoul
 - **Author:** [Product Manager Name]
 - **Engineering Lead:** [Tech Lead Name]
 - **Design Lead:** [Product Designer Name]
-- **Status:** Draft | In Review | Approved | Shipped
-- **Target Release:** [e.g., Q4 2026 / Sprint 42]
+- **Status:** Draft | ReqApproved | Approved | Released
+- **Target Release:** [e.g., Q4 2026]
 - **Tracking Epic:** [e.g., PROJ-1024]
 
 ---
 
-## 1. Problem Statement & Context
-- **Customer Problem:** [Describe the exact problem users experience in plain English.]
-- **Evidence & Data:** [e.g., 28% of cart drop-offs occur at checkout step 2; 45 customer support tickets in September.]
-- **Strategic Fit:** [How this connects to company priorities or quarterly OKRs.]
+## 1. Problem Statement & Evidence
+- **Customer Problem:** [Exact problem users experience in plain English.]
+- **Evidence & Data:** [e.g., 28% of cart drop-offs occur at checkout step 2; 45 support tickets in September.]
+- **Strategic Fit:** [Connection to company priorities or quarterly OKRs.]
 
 ## 2. Goals & Success Metrics
 - **Primary Success Metric:** [e.g., Increase checkout completion rate from 62% to 70%.]
 - **Guardrail Metric:** [e.g., Payment error rate must remain < 0.1%.]
-- **Non-Goals:** [What we are explicitly NOT trying to solve here.]
 
 ## 3. Target Audience & Personas
-- **Primary Persona:** [e.g., Casual Shopper making a one-time purchase.]
-- **Secondary Persona:** [e.g., Support Agent issuing refunds.]
+- **Primary Persona:** [e.g., Signed-in shopper redeeming a pre-funded gift card.]
+- **Secondary Persona:** [e.g., Support agent inspecting order payment methods.]
 
-## 4. User Journey & Core Experience
+## 4. User Flows & Business Rules
 - **Happy Path Flow:**
-  1. User navigates to cart and clicks "Pay with Gift Card".
-  2. User enters 16-digit card number and PIN.
-  3. System validates balance and applies amount to order total.
-- **Edge Cases & Failure Scenarios:**
-  - Card expired or empty balance.
-  - Partial balance coverage (split tender).
-- **Design Link:** [Figma Canvas / Prototype URL]
+  1. Shopper selects "Pay with Gift Card" at checkout.
+  2. Shopper enters 16-digit card number and 4-digit PIN.
+  3. System validates active balance and deducts up to the order total.
+- **Business Rules & Edge Cases:**
+  - Expired or deactivated cards are rejected without modifying cart state.
+  - Partial balance coverage requires a secondary payment method for the remainder (split tender).
 
 ## 5. Requirements
 
 ### Functional Requirements
-- **FR-01 (Must/P0):** System shall allow users to redeem a valid gift card balance against an order total.
-- **FR-02 (Must/P0):** System shall reject expired or deactivated gift cards with an actionable error message.
-- **FR-03 (Should/P1):** System shall support split tender if the gift card balance is less than order total.
+- **REQ-gift-cards-redeem (Must):** A shopper can redeem an active gift card balance against an order total. Functional. Verified by test.
+- **REQ-gift-cards-reject-invalid (Must):** Checkout rejects expired, unknown, or zero-balance gift cards with a specific reason. Functional. Verified by test.
+- **REQ-gift-cards-split-tender (Should):** When a gift card balance is less than the order total, checkout applies the full card balance and collects the remainder via a second payment method. Functional. Verified by test.
 
-### Non-Functional Requirements (NFRs)
-- **NFR-01 (Performance):** Gift card balance lookups must respond within 300ms at p95.
-- **NFR-02 (Security):** Full gift card PINs must never be stored in plain text or emitted in system logs.
-- **NFR-03 (Reliability):** Redemption calls must be idempotent via unique transaction idempotency keys.
+### Non-Functional Requirements (NFRs) & Constraints
+- **REQ-gift-cards-latency (Should):** Gift card balance validation and redemption complete within 300ms at p95. Nonfunctional. Verified by test.
+- **REQ-gift-cards-pin-security (Must):** Gift card PINs are never stored in plain text or written to logs. Constraint. Verified by inspection.
 
-## 6. Out of Scope (Version 1)
+## 6. Out of Scope
 - Physical gift card barcode scanning via device camera.
-- Purchasing digital gift cards (redemption only).
+- Purchasing new gift cards (redemption only).
 
-## 7. Risks, Dependencies & Open Questions
-- **Dependencies:** Payment Gateway v2 API migration must be live before rollout.
-- **Open Questions:** [Question 1: Legal sign-off on escheatment laws for unused balances?]
+## 7. Risks, Assumptions & Open Questions
+- **Assumptions:** Core Ledger API supports atomic balance holds.
+- **Open Questions:** Legal sign-off on escheatment rules for expired cards in EU jurisdictions.
 ```
 
 ---
@@ -114,90 +111,108 @@ A PRD articulates what problem a feature solves, for whom, how the product shoul
 ## 2. User Story
 
 ### 2.1 Purpose & Authority
-A User Story is a concise, placeholder for conversation that captures one actor's desire to achieve a discrete goal for a demonstrable benefit. It slices software vertically to deliver end-user value.
+A User Story captures one actor's goal and the business value it delivers, paired with **rule-based verification criteria** that define the exact conditions of satisfaction. It slices product functionality vertically across layers so each story delivers demonstrable user value.
 
 * **Primary Authorities:**
-  * **Connextra (2001) / Mike Cohn (*User Stories Applied*, 2004):** Created the canonical template: `As a [role], I want [capability], so that [benefit]`.
+  * **Connextra (2001) / Mike Cohn (*User Stories Applied*, 2004):** Established the canonical persona-goal-benefit template (`As a [role], I want [capability], so that [benefit]`) and rule-oriented acceptance criteria as conditions of satisfaction.
   * **Ron Jeffries (Extreme Programming - XP):** The **3 C's**:
-    1. **Card:** A physical or digital card capturing the essence of the story.
-    2. **Conversation:** Ongoing dialogue between product, engineers, and testers to flesh out nuances.
-    3. **Confirmation:** The acceptance criteria that prove the story is complete.
-  * **Bill Wake (2003):** The **INVEST** mnemonic for story quality:
-    * **I**ndependent — Minimizes coupling between stories.
-    * **N**egotiable — Captures the outcome, not a rigid implementation mandate.
-    * **V**aluable — Delivers recognizable value to a customer or user.
-    * **E**stimable — Sufficiently clear for engineers to size.
-    * **S**mall — Sized to fit comfortably within an iteration/sprint (typically 1–3 days).
-    * **T**estable — Unambiguous acceptance criteria allow automated or objective testing.
-  * **Dan North (2006):** Behavior-Driven Development (BDD) and the **Given-When-Then** (Gherkin) acceptance format.
+    1. **Card:** Concise statement of who wants what and why.
+    2. **Conversation:** Collaborative refinement between product, engineering, and QA.
+    3. **Confirmation:** Objective acceptance criteria checklist verifying completion.
+  * **Bill Wake (2003):** The **INVEST** quality model (**I**ndependent, **N**egotiable, **V**aluable, **E**stimable, **S**mall, **T**estable).
+  * **Gojko Adzic (*Specification by Example*, 2011) & Atlassian Agile Coach:** Distinguish **Rule-Oriented Acceptance Criteria (Verification Checklists)**—which state invariant business rules, boundaries, and pass/fail conditions—from step-by-step test scripts.
 
-### 2.2 Slicing Principles: Vertical vs. Horizontal
-* **The Antipattern (Horizontal Slicing):**
-  * *Story 1:* "Build gift card database schema" (Delivers zero user value).
-  * *Story 2:* "Create backend gift card API" (Delivers zero user value).
-  * *Story 3:* "Build frontend gift card modal" (Only now is there value, but risks surface late).
-* **The Industry Standard (Vertical Slicing):**
-  * Slicing thin end-to-end functionality across UI, API, and DB layers:
-    * *Story A:* "Redeem gift card for full order payment" (Vertical slice: UI -> API -> DB).
-    * *Story B:* "Split payment when gift card balance is insufficient" (Next vertical slice).
+### 2.2 Why Rule-Based Verification Checklists for User Story AC
+Industry practice recognizes two formats for Acceptance Criteria: **Rule-Based Verification Checklists** and **Scenario-Based (Given/When/Then)**. In structured SDLC systems where detailed test cases (`TestCase`) already hold step-by-step inputs and execution scripts, **Rule-Based Verification Checklists** are the superior standard for User Stories:
 
-### 2.3 Standard Industry User Story Structure
+1. **No Duplication with Test Cases:** `Given/When/Then` scenarios with concrete test data duplicate the job of QA test cases (`TestCase`). Rule checklists define *what rules must hold*, while test cases define *concrete data and steps to exercise those rules*.
+2. **Higher Signal-to-Noise Ratio:** Validation rules, field constraints, permission boundaries, state transitions, and error conditions read cleanly as atomic checklist rules rather than repetitive Gherkin prose.
+3. **Direct Developer & Reviewer Verification:** Engineers and PR reviewers can tick off each rule one-by-one as a binary Pass/Fail verification list before opening or approving a PR.
+
+### 2.3 Anatomy of a Rule-Based Verification Criterion
+Every item in a User Story's `# Acceptance criteria` checklist must satisfy four rules:
+1. **Atomic & Binary (Pass/Fail):** States exactly one verifiable rule, constraint, or outcome that is unambiguously true or false.
+2. **Concrete Thresholds & Outcomes:** Names exact boundaries, state changes, or error behaviors (e.g., *"16-digit card number and 4-digit PIN"*, *"retains remaining balance"*), never vague qualifiers (*"validates properly"*, *"user-friendly error"*).
+3. **Covers Happy Path, Boundaries & Rejections:** Includes the primary success rule, boundary conditions (e.g., partial balance / split tender), and failure/rejection rules (e.g., expired card, duplicate submission).
+4. **Explicit Requirement Traceability:** Ends with a direct link to the PRD Requirement(s) (`REQ-*`) that the rule verifies.
+
+### 2.4 Strategy: How to Break User Stories from a Feature or ChangeRequest
+A Feature's `# Requirements` list in `overview.md` mixes primary user actions, validation/rejection rules, optional extensions, and NFRs at the same flat level. Mapping `1 REQ = 1 Story` produces broken stories (e.g., *"Learn why a gift card is refused"*), while mapping `1 Feature = 1 Story` produces an unshippable epic.
+
+Use this **5-Step Algorithm** to decompose a Feature or ChangeRequest into independent, Jira-ready User Stories:
+
+#### Step 1: Classify Every `REQ-*` into One of 4 Roles
+| Role Tag | Definition | Story Treatment | Example |
+| :--- | :--- | :--- | :--- |
+| **`[SPINE]`** | A primary user action that achieves an end-to-end goal. | Forms the core of a candidate Story. | `REQ-gift-cards-redeem`: Pay order with a gift card. |
+| **`[RULE]`** | A validation, rejection, calculation, or invariant that only triggers *during* a `[SPINE]` action. | **Never its own Story** — folded into its `[SPINE]` Story as checklist items. | `REQ-gift-cards-reject-invalid`: Reject expired, unknown, or zero-balance cards. |
+| **`[EXTENSION]`** | A secondary variation or capability increment on top of a `[SPINE]` that can ship in a later sprint. | Becomes a separate follow-up Story. | `REQ-gift-cards-split-tender`: Split payment across gift card + secondary method. |
+| **`[NFR]`** | A `Nonfunctional` or `Constraint` requirement (latency, rate limit, security). | **Never its own Story** — attaches to the `[SPINE]` Story it constrains (or stays in Tasks if pure infra). | `REQ-gift-cards-pin-security`: Mask PIN and never log it in plain text. |
+
+#### Step 2: Group `[SPINE]` Requirements by `Actor × Surface`
+* Each `[SPINE]` requirement for a distinct **Actor + Surface** (e.g., *Shopper on Storefront* vs. *Support Agent on Admin Portal*) starts as one Story.
+* **Merge two `[SPINE]` requirements** only when the same actor performs both on the same screen, at the same priority (`Must`), and one is trivial without the other (e.g., *Apply coupon* + *Clear coupon* on the same input).
+* **For a ChangeRequest:** Write stories only for added/modified `Functional` `REQ-*` in the CR (`Proposed`/`ReqApproved`), linking impacted Feature stories under `# Affects`. A pure `refactor`, `perf`, or `security` CR with zero `Functional` `REQ-*` gets **0 User Stories**.
+
+#### Step 3: Fold `[RULE]` and Observable `[NFR]` Requirements into Their `[SPINE]` Story
+Attach every `[RULE]` and user-observable `[NFR]` (plus idempotency/retry guarantees) to the `[SPINE]` Story it governs, expanding them into binary pass/fail items in `# Acceptance criteria`.
+
+#### Step 4: Split Oversized `[SPINE]` Stories Along the 5 Vertical Patterns
+When a single `[SPINE]` Story is still too large for one sprint, split vertically—never horizontally by technical layer (UI vs. API vs. DB):
+1. **By Rule / Calculation Type:** Basic fixed/% discount (Story 1) → BOGO / tiered discount (Story 2).
+2. **By Workflow Step:** Apply gift card at checkout (Story 1) → Save gift card to account wallet (Story 2).
+3. **By Input / Payment Variation:** Full-balance gift card payment (Story 1) → Split tender payment (Story 2).
+4. **By CRUD Lifecycle:** Create & view (Story 1) → Edit, deactivate, or bulk-archive (Story 2).
+5. **By Actor / Role:** Customer self-service (Story 1) → Support agent manual override (Story 2).
+
+#### Step 5: Pass the 3-Question Jira Independence Gate
+Every resulting Story must answer **Yes** to all three questions:
+1. **Shippable & QA-Testable Alone?** If only this Story (and any base Story it extends) deploys to staging today, can a user complete a real goal and can QA pass every item on its checklist?
+2. **Single Actor & Surface?** Does one persona perform this goal on one surface?
+3. **Fits One Sprint (3–8 Checklist Rules)?** Can its Sub-tasks merge and verify within one sprint?
+
+### 2.5 Standard Industry User Story Structure
 
 | Element | Industry Standard Specification | Purpose |
 | :--- | :--- | :--- |
-| **Metadata** | Story ID/Key, Parent Epic/Feature link, Priority (P1/P2 or High/Med), Estimate (Story Points). | Backlog planning and traceability. |
-| **Title** | Short, active verb phrase (e.g., "Redeem Gift Card at Checkout"). | Quick identification in board views and pull requests. |
-| **Story Statement** | `As a <persona>, I want <action/capability>, so that <outcome/value>`. | Anchors the technical work to human empathy and business value. |
-| **Context & Notes** | Background assumptions, boundary constraints, UX mockup links. | Provides context for the engineering conversation. |
-| **Acceptance Criteria (AC)** | Written as either: <br>1. **Scenario-based (Given/When/Then)**, or <br>2. **Rule-based verification checklists**. | Defines explicit conditions of satisfaction for developers and QA. |
-| **Traceability Link** | Explicit link back to PRD functional requirement (`REQ-XXX`). | Guarantees requirement coverage and prevents gold plating. |
+| **Metadata** | Story Key (`STORY-*`), Parent Feature/ChangeRequest, `basedOn` spec version, Priority (`P0`–`P3`), `trackerKey`. | Backlog planning, spec version staleness detection, and tracker sync. |
+| **Title** | Short, active verb phrase (e.g., "Redeem gift card at checkout"). | Scannable identification in boards and PRs. |
+| **Story Statement** | `As a <persona>, I want <goal>, so that <benefit/value>.` | Anchors technical work to actor empathy and outcome value. |
+| **Acceptance Criteria** | **Rule-based verification checklist**: numbered or checkbox (`- [ ]` / `1.`) pass/fail rules with concrete constraints, boundaries, and outcomes, each citing its `REQ-*`. | Defines explicit, binary conditions of satisfaction for engineers and QA. |
+| **Requirements** | Explicit links to parent `REQ-*` entries in `overview.md`. | Guarantees 100% functional requirement coverage and prevents scope creep. |
+| **Notes / Context** | Optional scope boundaries, UX links, or exclusions. | Captures supporting context without cluttering the verification checklist. |
 
-### 2.4 Production Markdown Template: User Story
+### 2.6 Production Markdown Template: User Story (Rule-Based AC)
 
 ```markdown
-# STORY-checkout-giftcard-redeem: Redeem Gift Card at Checkout
-
-**Parent Epic:** [FEAT-checkout-payments]  
-**Priority:** P1  
-**Estimate:** 3 Story Points  
-**Traceability:** Implements [FR-01] from Payments PRD  
-
+---
+type: UserStory
+title: Redeem gift card at checkout
+description: A customer applies an active gift card balance to pay full or partial order total.
+priority: P1
+basedOn: { version: 1, at: 2026-10-31 }
 ---
 
-### Story Statement
-**As a** customer checking out an order,  
-**I want to** apply my gift card balance to my order total,  
-**so that** I can use pre-funded credit instead of my credit card.
+# Redeem gift card at checkout
 
----
+As a **customer checking out an order**, I want to apply my gift card balance to my order total, so that I can use pre-funded store credit instead of a credit card.
 
-### Acceptance Criteria
+# Acceptance criteria
 
-#### Scenario 1: Full Payment via Gift Card (Happy Path)
-- **Given** a customer has a shopping cart total of $40.00,
-- **And** the customer enters a valid gift card with an active balance of $50.00,
-- **When** the customer submits the gift card for redemption,
-- **Then** the cart balance due becomes $0.00,
-- **And** the order summary reflects "Gift Card Applied: -$40.00",
-- **And** the remaining gift card balance is retained as $10.00 upon final order submission.
+1. [ ] Accepting a valid 16-digit gift card number and 4-digit PIN with a balance greater than or equal to the order total sets the remaining amount due to `0.00` and deducts the order total from the card balance upon order placement. ([REQ-gift-cards-redeem](overview.md#req-gift-cards-redeem))
+2. [ ] Accepting a valid gift card whose balance is less than the order total applies the entire card balance to the order, sets the card balance to `0.00` upon order placement, and requires a secondary payment method for the remaining balance due. ([REQ-gift-cards-split-tender](overview.md#req-gift-cards-split-tender))
+3. [ ] Submitting an expired, deactivated, unknown, or zero-balance gift card rejects the redemption, leaves the cart balance due unchanged, and displays the specific rejection reason (`expired`, `invalid card or PIN`, or `zero balance`). ([REQ-gift-cards-reject-invalid](overview.md#req-gift-cards-reject-invalid))
+4. [ ] Submitting duplicate redemption requests for the same checkout session is idempotent and deducts the gift card balance at most once. ([REQ-gift-cards-redeem](overview.md#req-gift-cards-redeem))
 
-#### Scenario 2: Expired or Invalid Gift Card (Failure Path)
-- **Given** a customer enters a gift card number that is expired or does not exist,
-- **When** the customer submits the card,
-- **Then** the system rejects the redemption,
-- **And** displays: "This gift card number is invalid or has expired. Please check the number or use another payment method.",
-- **And** the cart balance due remains unchanged.
+# Requirements
 
-#### Scenario 3: Idempotency & Concurrency Protection
-- **Given** a redemption request is in flight,
-- **When** the user double-clicks the "Apply" button or re-submits identical payloads,
-- **Then** the system executes the balance deduction exactly once.
+* [REQ-gift-cards-redeem](overview.md#req-gift-cards-redeem)
+* [REQ-gift-cards-split-tender](overview.md#req-gift-cards-split-tender)
+* [REQ-gift-cards-reject-invalid](overview.md#req-gift-cards-reject-invalid)
 
----
+# Notes
 
-### Design & Reference Artifacts
-- **Figma Design:** [Figma Component Link](https://figma.com/...)
-- **Error Copy Matrix:** [Confluence / Docs Reference](https://wiki/...)
+Physical barcode scanning via device camera is out of scope for v1.
 ```
 
 ---
@@ -205,147 +220,151 @@ A User Story is a concise, placeholder for conversation that captures one actor'
 ## 3. Engineering Task (Technical Task / Subtask)
 
 ### 3.1 Purpose & Authority
-An Engineering Task is an operational unit of technical execution created under a User Story or Architectural Decision. While the User Story articulates **customer value**, the Task articulates **engineering mechanics**.
+An Engineering Task is an operational unit of technical execution scoped to a single repository. While a User Story articulates **user value and business rules**, a Task articulates **architecture seams, contracts, and code verification**.
 
 * **Primary Authorities:**
-  * **Scrum Guide & Extreme Programming (XP):** Decomposing items in Sprint Planning into discrete developer tasks.
-  * **Atlassian Jira / GitHub Issues / GitLab:** Hierarchy definitions where tasks represent specific commits, pull requests, and component-level deliverables.
-  * **Kent Beck (Test-Driven Development):** Breaking features into verifiable code steps (Red-Green-Refactor, interface contracts, implementation, migrations).
+  * **Scrum Guide & Extreme Programming (XP):** Decomposing stories into discrete developer tasks during planning.
+  * **Bill Wake (2003):** **SMART** tasks (**S**pecific, **M**easurable, **A**chievable, **R**elevant, **T**ime-boxed).
+  * **Kent Beck (*Test-Driven Development*):** Breaking changes into verifiable contract, implementation, and unit test steps.
 
-### 3.2 Granularity & Sizing Rules
-* **Time Horizon:** Sized in hours or days (typically **0.5 days to 2 days maximum**). If a task exceeds 2 days, it must be decomposed further.
-* **Single Ownership:** Exactly one developer owns an active task.
-* **Deliverable:** Maps cleanly to a single Pull Request (PR) or focused commit series.
+### 3.2 Strategy: How to Break Tasks from User Stories and System Design Outcomes (Jira Tree Model)
+In Jira and similar trackers, work items form a **strict 3-level tree**:
+* **Epic (`FEAT-*` or `CR-*`)** → **Story (`STORY-*`)** → **Sub-task (`TASK-*` with 1 Story)**
+* **Epic (`FEAT-*` or `CR-*`)** → **Technical Task / Spike (`TASK-*` with 0 Stories)**
+
+Because a Jira Sub-task can have **at most one parent Story**, a `Task` must link **0 or 1 `UserStory`** (`# Stories` never links 2+ stories).
+
+#### The 4-Step Task Decomposition Algorithm
+
+1. **Step 1 — Partition by Repository (`resource`):**
+   * One `Task` changes **at most one code repository** (`Service.resource`, `WebFrontend.resource`, `MobileFrontend.resource`).
+   * A User Story that spans Backend (`SVC-*`) and Frontend (`WEB-*`) always splits at the repository boundary into separate Sub-tasks under that Story.
+
+2. **Step 2 — Slice Story Sub-tasks (`1 Story`) vs. Epic Tech Tasks (`0 Stories`):**
+   Use the following matrix to map every System Design concept (`# Architecture` / `## Target delta`) into Tasks:
+
+| System Design Outcome | Bundle as a Story Sub-task (`# Stories`: 1 Story) when… | Split as an Epic Tech Task (`# Stories`: omitted) or Separate Sub-task when… |
+| :--- | :--- | :--- |
+| **`Database` / `Table` (`DB-*`, `TBL-*`), `Cache`, `SearchIndex`, `BlobStore`** | Used by **one** Story (or created by the first Story that ships) in the same service repo and fits within `L` alongside its `EP-*`/`SUB-*`. | Shared by **2+ parallel Stories** in the same sprint, or requires a multi-step/backfill migration with independent rollback. |
+| **`ExternalService` / `Operation` (`EXT-*`, `OP-*`)** | Called by **one** Story's `EP-*` or `SUB-*` in the same repo. | Shared across multiple Stories or requires a standalone SDK/auth/circuit-breaker foundation first. |
+| **`MessageChannel` (`CHAN-*`)** | Defined in the producer repo as part of one Story's vertical backend slice. | Shared event contract between multiple teams/repos that must merge in Wave 1 to unblock parallel producer/consumer work. |
+| **`Endpoint` (`EP-*`) + `Service` (`SVC-*`)** | **Default `[BE]` Story Sub-task:** Implements the synchronous backend rules (`# Validations`, `# Status codes`, `# Flowchart`) for **one** `UserStory`. | Split into 2 Sub-tasks under the same Story only if the Story touches multiple complex endpoints that would exceed `L`. |
+| **`Subscription` / Consumer (`SUB-*`)** | **Default `[SUB]` Story Sub-task:** Implements the async consumer (`# Validations`, `# Idempotency`, `# Failure behavior`) for **one** `UserStory` in the worker/consumer service repo. | Epic Tech Task (`0` Stories) only if the consumer handles an infrastructure/NFR stream with no user story. |
+| **`WebFrontend` / `MobileFrontend` (`WEB-*`, `MB-*`)** | **Default `[FE]` Story Sub-task:** Implements routes, UI state, and `EP-*` calls for **one** `UserStory` in that frontend repo. | When 2 Stories both modify `WEB-storefront`, each Story gets its **own** `[FE]` Sub-task listing `WEB-storefront — modified` with a note on its slice. |
+| **`ArchitectureDecision` (`ADR-*`) & NFRs** | Fold ADR/NFR obligations (idempotency headers, PII masking, rate limits) directly into the `# Acceptance` of the Story Sub-tasks they govern. | Create an Epic-level `spike`, observability, perf, or cleanup Task (`0` Stories) when an ADR/NFR is repo-wide or pre-dates story execution. |
+
+3. **Step 3 — Derive Task `# Acceptance` from Story Checklist + Design Contracts:**
+   Each Task's `# Acceptance` combines:
+   * The subset of its parent `UserStory`'s **Rule-Based Verification Checklist** enforced by this repository.
+   * All contract rules from `# Planned scope` (`EP-*` status codes/validations/flowchart exits; `SUB-*` idempotency/retries/DLQ; `TBL-*` constraints/indexes).
+   * Unit and component tests required to prove those branches.
+
+4. **Step 4 — Order into Parallel Execution Waves (`# Blocked by`):**
+   * **Wave 1:** Risk spikes (`spike`), Epic-level shared foundations (`TBL-*`, `CHAN-*`, `EXT-*`), and `[BE]` Sub-tasks of base Stories that bundle their own table.
+   * **Wave 2:** `[BE]` and `[SUB]` Sub-tasks blocked by Wave 1 foundations or producer endpoints.
+   * **Wave 3:** `[FE]` Sub-tasks (`WEB-*` / `MB-*`) blocked by their Story's `[BE]` Sub-task, plus final cleanup/removal Tasks.
 
 ### 3.3 Standard Industry Task Structure
 
 | Element | Industry Standard Content | Why It Matters |
 | :--- | :--- | :--- |
-| **1. Metadata** | Task Key/ID, Parent Story ID, Component/Repository, Owner, Estimate (Hours/T-shirt), Status (Todo/In Progress/Review/Done). | Tracks execution progress and ownership in sprint boards. |
-| **2. Objective** | Concise technical description of what code/system is being created or changed. | Focuses the engineer on specific system boundaries. |
-| **3. Planned Scope & Files** | Modules, services, database tables, config files, or API routes to modify. | Prevents unintended collateral changes across the codebase. |
-| **4. Technical Implementation Steps** | Detailed checklist of technical operations (migrations, interfaces, business logic, endpoints). | Serves as an execution guide and prevents forgotten steps. |
-| **5. Technical Acceptance / DoD** | Unit test threshold, lint/type checks, migration reversibility, performance targets. | Ensures objective code quality before merge review. |
-| **6. Dependencies & Blockers** | Upstream migrations or prerequisite PRs (`Blocked by TASK-123`). | Clarifies critical path in parallel execution. |
-| **7. Verification / Test Protocol** | Exact `curl` commands, CLI script, or integration test instructions to verify the work. | Allows PR reviewers and QA to validate without guesswork. |
+| **1. Metadata** | Task Key (`TASK-*`), Status (`Todo`/`Done`), `basedOn` spec version, `taskType` (`dev`/`test`/`design`/`spike`), `estimate` (`XS`–`L`), `priority`, `prUrl`, `mergeCommitSha`. | Tracks execution, sizing, spec currency, and merge provenance. |
+| **2. Acceptance** | Observable technical results, HTTP status codes, events emitted, error handling, unit tests required, and links to satisfied `REQ-*`. | Defines objective Definition of Done for coding and PR review. |
+| **3. Stories** | Links to the `STORY-*` files in the same folder that this Task serves. | Connects code changes back to user-facing verification checklists. |
+| **4. Planned Scope** | Exact Design concepts (`EP-*`, `TBL-*`, `WEB-*`) qualified as `new`, `modified`, or `removed`. | Bounds the blast radius of code changes for engineers and AI agents. |
+| **5. Blocked By** | Upstream Tasks (`TASK-*`) that must merge first (e.g., schema migration before endpoint). | Enables topological sorting into parallel execution waves. |
+| **6. References** | Relevant reference docs or code examples (`REF-*`) with guidance on what pattern to follow. | Prevents reinventing existing codebase patterns. |
 
-### 3.4 Common Technical Task Prefix Conventions
-Teams frequently classify tasks by domain prefix to clarify execution specialization:
-* `[MIG]` / `[DB]` — Database migrations, indices, DDL changes.
-* `[API]` / `[BE]` — Backend endpoints, service layer logic, controller routes.
-* `[FE]` / `[UI]` — Frontend components, state management, style integration.
-* `[INT]` — External API client integration, SDK wrapper.
-* `[OBS]` / `[OPS]` — Telemetry, Prometheus metrics, structured logging, CI/CD pipeline.
-* `[SEC]` — Secrets management, authorization gates, sanitization.
-
-### 3.5 Production Markdown Template: Engineering Task
+### 3.4 Production Markdown Template: Engineering Task
 
 ```markdown
-# TASK-payments-giftcard-redeem-endpoint: [API] Implement Gift Card Redeem Endpoint
-
-**Parent Story:** [STORY-checkout-giftcard-redeem]  
-**Component:** `services/payment-service`  
-**Assignee:** [Engineer Name]  
-**Estimate:** 1 Day (S)  
-**Status:** In Progress  
-**Blocked by:** [TASK-payments-giftcard-schema-migration]  
-
+---
+type: Task
+title: Build gift card redeem endpoint
+description: Validate gift card PIN and hold balance for checkout orders.
+status: Todo
+basedOn: { version: 1, at: 2026-10-31 }
+taskType: dev
+estimate: M
+priority: P1
 ---
 
-### 1. Objective
-Expose `POST /v1/payments/gift-cards/redeem` to validate and hold balances for active checkout sessions, integrating with the Core Ledger client.
+# Build gift card redeem endpoint
 
-### 2. Planned Scope
-- `src/controllers/gift_card_controller.ts` (Endpoint handler)
-- `src/services/gift_card_service.ts` (Business logic & ledger lock)
-- `src/dtos/redeem_request.dto.ts` (Zod validation schema)
-- `src/clients/ledger_client.ts` (External RPC/HTTP client)
-- `tests/unit/gift_card_service.test.ts`
-- `tests/integration/redeem_endpoint.test.ts`
+# Acceptance
 
-### 3. Implementation Checklist
-- [ ] Define input validation schema (`giftCardNumber`: 16 digits, `pin`: 4-6 digits, `amount`: positive integer in cents).
-- [ ] Enforce idempotency header (`Idempotency-Key` UUID required).
-- [ ] Implement atomic balance hold call to Ledger service.
-- [ ] Add structured log event: `gift_card.redeem.attempt` and `gift_card.redeem.success`.
-- [ ] Return standard HTTP status codes:
-  - `200 OK` on successful redemption with applied amount and remaining balance.
-  - `400 Bad Request` on malformed payload or checksum failure.
-  - `404 Not Found` if card number does not exist.
-  - `409 Conflict` on concurrent card locking or duplicate idempotency key with conflicting payload.
-  - `422 Unprocessable Entity` if card is expired or has zero balance.
+`POST /v1/payments/gift-cards/redeem` validates the 16-digit card number and 4-digit PIN, places an atomic hold on the card balance up to the order total, returns `200` with `appliedAmountCents` and `remainingBalanceCents`, returns `422` on expired or zero-balance cards, returns `409` on conflicting duplicate `Idempotency-Key`, never logs the PIN, and includes unit tests covering each status code. Satisfies [REQ-gift-cards-redeem](overview.md#req-gift-cards-redeem), [REQ-gift-cards-reject-invalid](overview.md#req-gift-cards-reject-invalid), and [REQ-gift-cards-pin-security](overview.md#req-gift-cards-pin-security).
 
-### 4. Technical Acceptance Criteria & Definition of Done
-- [ ] All unit tests pass with >= 85% branch coverage on new logic.
-- [ ] Integration test covers happy path and concurrent duplicate requests.
-- [ ] Type check and lint pass clean (`npm run lint && npm run typecheck`).
-- [ ] Sensitive card PIN is masked in all request/response log outputs.
-- [ ] PR passes automated CI pipeline and receives >= 1 senior peer approval.
+# Stories
 
-### 5. Verification Steps
-```bash
-# Verify happy path redemption:
-curl -X POST http://localhost:8080/v1/payments/gift-cards/redeem \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: $(uuidgen)" \
-  -d '{"cardNumber": "1111222233334444", "pin": "1234", "orderId": "ord_999", "amountCents": 3000}'
-```
+* [STORY-gift-cards-redeem-at-checkout](STORY-gift-cards-redeem-at-checkout.md)
+
+# Planned scope
+
+* [EP-gift-card-redeem](../../services/SVC-payments/EP-gift-card-redeem.md) — new — redemption endpoint and validation rules.
+* [OP-ledger-hold](../../externals/EXT-core-ledger/OP-ledger-hold.md) — new — atomic balance hold call.
+
+# Blocked by
+
+* [TASK-gift-card-redemptions-table](TASK-gift-card-redemptions-table.md)
+
+# References
+
+* [REF-idempotency-middleware](../../references/REF-idempotency-middleware/overview.md) — reuse the `Idempotency-Key` header guard; do not add a custom lock table.
 ```
 
 ---
 
-## 4. Comparative Synthesis: PRD vs. User Story vs. Task
+## 4. Comparative Synthesis: PRD vs. User Story vs. Task (plus TestCase)
 
-| Dimension | PRD (Product Requirements Document) | User Story | Task (Engineering Task) |
-| :--- | :--- | :--- | :--- |
-| **Primary Question** | **Why** are we building this, and **what** does the product do? | **Who** benefits, and **what value** is delivered? | **How** do we implement and test the specific code changes? |
-| **Owner** | Product Manager (PM) | Product Owner / PM (collaborating with Tech Lead & UX) | Software Engineer / Developer |
-| **Audience** | Leadership, Cross-functional Team (Eng, Design, QA, GTM) | Agile Delivery Team (Developers, QA, PO, Designers) | Engineering Peers, Code Reviewers, Tech Lead |
-| **Scope Level** | Macro (Feature / Epic / Initiative level) | Meso (Single persona interaction / capability slice) | Micro (Bounded code change / single PR / component) |
-| **Granularity** | Weeks to Months (Release cycle) | 1 to 3 Days (Sprint cadence) | 2 to 16 Hours (Commit/PR cadence) |
-| **Acceptance Criteria** | High-level system behavior, NFRs, and business metrics | Given/When/Then scenarios or functional verification criteria | Technical DoD, unit test coverage, code style, CI status |
-| **Estimation Metric** | T-shirt sizes / Dev Weeks (Roadmapping) | Story Points / Relative Complexity (Velocity) | Hours / T-Shirt sizes (Sprint capacity) |
-| **Lifecycle State** | Draft -> In Review -> Approved -> Shipped | Backlog -> Ready -> In Dev -> Verified -> Done | Todo -> In Progress -> Code Review -> Merged |
+| Dimension | PRD (`prd.md` + `REQ-*`) | User Story (`STORY-*`) | Engineering Task (`TASK-*`) | Test Case (`TC-*`) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Primary Question** | **Why** are we building this, and **what** must the system do? | **Who** benefits, **what goal** do they achieve, and **what rules verify it**? | **How** and **where** do we build and unit-test the code? | **How** do we prove the system works with concrete inputs and steps? |
+| **Owner** | Product Manager / BA | Product Manager / BA | Software Engineer / Tech Lead | QA / Developer |
+| **Scope Level** | Macro (Feature / ChangeRequest) | Meso (One actor goal across layers) | Micro (One repository, one PR) | Verification (One scenario / risk path) |
+| **Acceptance Format** | Atomic `REQ-*` statements with MoSCoW priority, type, and verification method | **Rule-based verification checklist** (binary pass/fail rules traced to `REQ-*`) | Technical observable outcomes, contracts (`EP-*`, `TBL-*`), and unit test expectations | Concrete `# Test data` table + step-by-step `# Steps` (`Action`, `Expected result`, `Validation`) |
+| **Lifecycle State** | `Draft` -> `ReqApproved` -> `Approved` -> `InDev` -> `Released` | Stateless in wiki (tracked in external issue tracker) | `Todo` -> `Done` (with `mergeCommitSha`) | Suite: `Draft` -> `Approved` -> `Implemented` |
 
 ---
 
 ## 5. Traceability Architecture
 
-A high-performing software organization maintains strict bi-directional traceability from strategic vision down to code commits:
-
 ```mermaid
-graph TD
-    subgraph Strategic Level
-        PRD["PRD: Feature Specification<br/>(e.g., REF-payments-prd.md)"]
-        REQ1["Requirement: REQ-01 (Full Payment)"]
-        REQ2["Requirement: REQ-02 (Split Tender)"]
+flowchart TD
+    subgraph Strategic["Strategic Spec Level (sdlc-write-spec)"]
+        PRD["PRD Reference<br/>(REF-gift-cards-prd/prd.md)"]
+        REQ1["REQ-gift-cards-redeem (Must, Functional)"]
+        REQ2["REQ-gift-cards-reject-invalid (Must, Functional)"]
+        REQ3["REQ-gift-cards-pin-security (Must, Constraint)"]
         PRD --> REQ1
         PRD --> REQ2
+        PRD --> REQ3
     end
 
-    subgraph Agile Value Level
-        STORY1["User Story: STORY-gift-card-pay<br/>(Full balance redemption)"]
-        STORY2["User Story: STORY-gift-card-split<br/>(Split tender payment)"]
-        REQ1 -.->|Satisfied by| STORY1
-        REQ2 -.->|Satisfied by| STORY2
+    subgraph StoryLevel["User Value & Rule Verification (sdlc-write-stories)"]
+        STORY1["STORY-gift-cards-redeem-at-checkout<br/>Rule-Based Verification Checklist"]
+        REQ1 -.->|Verified by Rule 1, 4| STORY1
+        REQ2 -.->|Verified by Rule 3| STORY1
     end
 
-    subgraph Technical Execution Level
-        TASK1["Task: [DB] Gift card schema migration"]
-        TASK2["Task: [API] Redeem endpoint implementation"]
-        TASK3["Task: [UI] Checkout balance component"]
-        STORY1 --> TASK1
-        STORY1 --> TASK2
-        STORY1 --> TASK3
+    subgraph ArchAndTask["Architecture & Execution (sdlc-design-arch / sdlc-plan-tasks)"]
+        EP["Design Contract: EP-gift-card-redeem"]
+        TBL["Design Contract: TBL-gift-card-redemptions"]
+        TASK1["TASK-gift-card-redemptions-table (Wave 1)"]
+        TASK2["TASK-gift-card-redeem-endpoint (Wave 2)"]
+        REQ1 --> EP
+        REQ2 --> EP
+        REQ3 --> EP
+        TBL --> TASK1
+        EP --> TASK2
+        TASK1 -->|Blocks| TASK2
+        STORY1 -.->|Served by| TASK2
     end
 
-    subgraph Code & Verification
-        PR1["Git PR: feat(db): add gift cards table"]
-        PR2["Git PR: feat(api): POST /redeem endpoint"]
-        PR3["Git PR: feat(ui): gift card form modal"]
-        TASK1 --> PR1
-        TASK2 --> PR2
-        TASK3 --> PR3
+    subgraph TestLevel["Scenario Verification (sdlc-design-tests)"]
+        TC1["TC-redeem-full-balance<br/>(Concrete Test Data & Steps)"]
+        REQ1 -.->|Covered by| TC1
+        EP -.->|Covered by| TC1
     end
 ```
 
@@ -354,50 +373,30 @@ graph TD
 ## 6. Industry Anti-Patterns & Failure Modes
 
 ### 6.1 PRD Anti-Patterns
-1. **The Architecture Hallucination:** Product managers specifying API endpoints, SQL schema types, or internal design patterns in the PRD.
-   * *Correction:* PMs specify **observable behavior** and **data sensitivity**; architects/engineers decide technical contracts.
-2. **Missing Non-Goals:** Failing to state what is *out of scope*, resulting in unconstrained expansion during development.
-3. **Vanity Output Metrics:** Measuring success by "feature shipped on time" rather than "conversion lifted by X%".
+1. **Architecture Hallucination:** Specifying SQL column types, internal microservices, or endpoint URLs in the PRD instead of observable behavior and constraints.
+2. **Missing Non-Goals:** Omitting explicit exclusions (`Out of scope`), inviting scope creep during design and task planning.
+3. **Untestable Requirements:** Compound requirements joining multiple independent behaviors with "and", or omitting priority and verification method.
 
 ### 6.2 User Story Anti-Patterns
-1. **Technical "Developer" Stories:** Writing stories such as *"As a developer, I want a Redis cluster so that I can cache tokens"*.
-   * *Correction:* Infrastructure tasks support a feature story or architectural technical debt epic, but user stories must reflect an actual persona goal.
-2. **Horizontal Slicing:** Slicing stories by tier (DB story, Backend story, Frontend story).
-   * *Correction:* Always slice vertically so that every completed story delivers verifiable end-to-end functionality.
-3. **Compound Stories (Violating INVEST 'S'):** Stories combining multiple independent user goals with conjunctions ("As a user, I want to create an account AND set up recurring billing AND invite friends").
+1. **Gherkin Bloat / Test-Case Duplication:** Forcing verbose `Given/When/Then` scripts with arbitrary test literals into User Stories when `TestCase` files already own concrete test data and step tables, obscuring the core business rules.
+2. **Vague Checklist Items:** Writing non-binary rules such as *"Gift card validation works properly"* or *"UI is clean"* instead of concrete pass/fail rules (*"Rejects expired cards with error message and leaves cart total unchanged"*).
+3. **Horizontal Layer Stories:** Writing *"As a developer, I want a gift card database table"* — infrastructure belongs in `Task`, never `UserStory`.
+4. **Gold-Plating Criteria:** Adding checklist rules in a story that no `REQ-*` in the parent Feature/ChangeRequest authorizes.
 
 ### 6.3 Task Anti-Patterns
-1. **The Vague Horizon:** Tasks titled "Work on backend" or "Refactor code" with no technical checklist or acceptance criteria.
-2. **Untestable Completion:** Tasks without explicit Definition of Done, resulting in code merged without tests, logging, or migration rollback plans.
-3. **Orphan Tasks:** Technical tasks existing in isolation without linkage to parent stories or architectural decision records (ADRs).
+1. **Multi-Repository Tasks:** Planning a single Task that spans backend and frontend repositories, breaking single-PR atomicity.
+2. **Unbounded Scope:** Tasks without explicit Design concept links (`EP-*`, `TBL-*`, `WEB-*`) under `# Planned scope`.
+3. **Missing Blocker Graph:** Failing to declare `# Blocked by` between schema/contract foundations and their consumers.
 
 ---
 
-## 7. AI-SDLC Adaptations: Formatting for Agentic Workflows
+## 7. Primary Sources & Further Reading
 
-In modern AI-assisted software lifecycles (such as agentic coding assistants and knowledge-bundle architectures):
-1. **Strict Markdown Frontmatter:** Requirements, stories, and tasks should utilize structured YAML frontmatter (with schema-validated keys, types, priorities, and `basedOn` version stamps) so agents can parse dependency graphs deterministically.
-2. **Explicit Given-When-Then Scenarios:** BDD syntax eliminates ambiguity, enabling AI test-generation agents to produce runnable end-to-end and unit test suites without hallucinating assumptions.
-3. **Explicit Seam Specification:** Tasks should link directly to exact code symbols, file paths, and contract files (`EP-*.md`, `TBL-*.md`), scoping the AI agent's edits precisely to the affected files.
-
----
-
-## 8. Primary Sources & Further Reading
-
-1. **Silicon Valley Product Group (Marty Cagan):**
-   * *Inspired: How to Create Tech Products Customers Love* (2nd Edition, Wiley).
-   * Cagan, M. *"How to Write a Good PRD"* (SVPG Primary Archives).
-2. **Mike Cohn (Mountain Goat Software):**
-   * *User Stories Applied: For Agile Software Development* (Addison-Wesley Signature Series).
-3. **Ron Jeffries, Ann Anderson, Chet Hendrickson:**
-   * *Extreme Programming Installed* (The 3 C's of User Stories).
-4. **Bill Wake:**
-   * *"INVEST in Good Stories, and SMART Tasks"* (XP123 Explorations, 2003).
-5. **Dan North:**
-   * *"Introducing BDD"* (Better Software Magazine, 2006; Originator of Given/When/Then).
-6. **Ryan Singer (Basecamp / 37signals):**
-   * *Shape Up: Stop Running in Circles and Ship Work that Matters* (2019).
-7. **Lenny Rachitsky (Lenny's Newsletter):**
-   * *"How to write a PRD"* & *"The 1-Page PRD Template"* (Used by Figma, Airbnb, Stripe alumni).
-8. **Atlassian Agile Coach:**
-   * *"User Stories with Examples and a Template"* & *"PRD Best Practices"* (Atlassian Guides).
+1. **Silicon Valley Product Group (Marty Cagan):** *Inspired: How to Create Tech Products Customers Love* (2nd Ed., Wiley) & *"How to Write a Good PRD"*.
+2. **Mike Cohn (Mountain Goat Software):** *User Stories Applied: For Agile Software Development* (Addison-Wesley, 2004).
+3. **Ron Jeffries, Ann Anderson, Chet Hendrickson:** *Extreme Programming Installed* (Addison-Wesley, 2000 — The 3 C's: Card, Conversation, Confirmation).
+4. **Bill Wake:** *"INVEST in Good Stories, and SMART Tasks"* (XP123, 2003).
+5. **Gojko Adzic:** *Specification by Example: How Successful Teams Deliver the Right Software* (Manning, 2011 — Business rules vs. concrete examples).
+6. **Atlassian Agile Coach:** *"Acceptance Criteria: Purposes, Types, Examples and Best Practices"* (Rule-oriented checklist vs. scenario-oriented formats).
+7. **Ryan Singer (Basecamp):** *Shape Up: Stop Running in Circles and Ship Work that Matters* (2019).
+8. **Lenny Rachitsky:** *"How to Write a PRD"* (Lenny's Newsletter).

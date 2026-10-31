@@ -200,6 +200,18 @@
           "presence": "required",
           "origin": "generated",
           "generated": {"sources": [{"type": "UserStory", "heading": ["Affects"]}], "when_empty": "omit"}
+        },
+        {
+          "name": "Test cases",
+          "presence": "required",
+          "origin": "generated",
+          "generated": {
+            "sources": [
+              {"type": "TestCase", "heading": ["Covers"], "via": [{"heading": ["Requirements"]}]},
+              {"type": "TestCase", "heading": ["Covers"], "via": [{"type": "Task", "heading": ["Stories"]}, {"heading": ["Planned scope"]}]}
+            ],
+            "when_empty": "omit"
+          }
         }
       ]
     },
@@ -687,7 +699,7 @@
       },
       "headings": [
         {"name": "Acceptance", "presence": "required"},
-        {"name": "Stories", "presence": "optional", "links": {"targets": ["UserStory"], "min": 0}},
+        {"name": "Stories", "presence": "optional", "links": {"targets": ["UserStory"], "min": 0, "max": 1}},
         {
           "name": "Planned scope",
           "presence": "required",

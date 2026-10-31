@@ -10,7 +10,7 @@ Plan the build Tasks of an approved design. [Back to the user guide](user-guide.
 | **Use when** | A design, draft or agreed, needs build Tasks; a changed design or spec needs its Tasks planned again; or stories were written afterwards and the Tasks must link them |
 | **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-design-tests](sdlc-design-tests.md) |
 | **Say** | "Plan the tasks for gift cards" |
-| **You get** | `TASK-…` files, each with its acceptance, planned scope, size, dependencies and parallel wave. Every design item that is added, changed or removed is covered by exactly one Task, and every user story is linked by at least one Task. Draft branch `wiki/tasks-<Key>` |
+| **You get** | `TASK-…` files, each with its acceptance, planned scope, size, dependencies and parallel wave. Every design item that is added, changed or removed is covered by a Task, and every user story is linked by at least one Task. Each Task serves at most one story, so it can be that story's sub-task in your tracker; work several stories need and none owns goes to a foundation Task with no story. Draft branch `wiki/tasks-<Key>` |
 | **Next** | Merge the pull request, then create a ticket per Task in your tracker. To record the ticket link in the Task, ask [sdlc-edit-wiki](sdlc-edit-wiki.md). The summary names the first wave of Tasks that can start |
 
 ## What the skill does
@@ -61,7 +61,7 @@ one Task; no dependency cycles; every acceptance item is an observable result.
 | **A slice is too big** (XL) | Splits it | Review the split |
 | **The unknown is big** | Plans a `spike` first, with what it must answer | Decide what the spike must answer |
 | **Stories do not exist yet** | Does not wait. If a stories draft is open it says so | Run this skill again after the stories merge |
-| **Stories exist** | Links each Task to the stories its acceptance serves, from its own folder. Migration, spike or non-functional Tasks have no stories | Check the links |
+| **Stories exist** | Links each Task to the one story whose acceptance criteria it delivers, from its own folder. Foundation, migration, spike or non-functional Tasks have no story | Check the links |
 | **The only work is linking stories** | Plans no new Task. Adding or dropping a story link is allowed even on `Done` and started Tasks (traceability, not scope) | Approve |
 | **Planning finds a gap in the design** | Does not fix it. Lists it for [sdlc-write-spec](sdlc-write-spec.md) (ChangeRequest) or [sdlc-import](sdlc-import.md) (correction) | Run that skill |
 | **You ask for tickets in the tracker** | No skill does it | Create the tickets by hand |

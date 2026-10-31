@@ -8,7 +8,7 @@ code. [Back to the user guide](user-guide.md).
 | | |
 |---|---|
 | **Who** | QA (and developers, security or performance roles) |
-| **Use when** | A designed Feature or ChangeRequest, draft or agreed, needs test design (unit, integration, end-to-end, load or security), or its spec changed after the tests were designed |
+| **Use when** | A designed Feature or ChangeRequest, draft or agreed, needs test design (integration, end-to-end, load or security; a developer's unit tests come with the code), or its spec changed after the tests were designed |
 | **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-plan-tasks](sdlc-plan-tasks.md) |
 | **Say** | "Design the tests for gift cards" |
 | **You get** | TestSuites (`TS-…`) with one TestCase (`TC-…`) per file. Each case has its risk, numbered test data (`No | Input | Value`), steps and validations, with the request and the expected response of each step that calls an API or publishes a message, and together they cover every Requirement, contract and failure branch. Each suite records the spec version it was designed from (`basedOn`) and gets a `checklist.csv` (`No,Title,Description,Covers,Purpose`, highest risk first) written by the tool. Draft branch `wiki/tests-<Key>` |

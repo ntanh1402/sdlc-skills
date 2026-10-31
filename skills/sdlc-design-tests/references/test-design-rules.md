@@ -3,6 +3,11 @@
 ## Coverage
 
 - Requirement: at least one positive and one negative proof of each behaviour.
+- User story: each acceptance criterion is a partition of the Requirement it
+  cites, with at least one case. The case's `# Covers` links the
+  Requirement, never the story; the tool lists the case on the story.
+- User flow: one `e2e` case for each PRD user flow that spans two or more
+  stories, walking the flow end to end.
 - Endpoint: request partitions, validation, authentication, every status,
   side effects, idempotency, dependency failures, compatibility.
 - Subscription and Channel: schema, ordering, duplicates, retry, exhaustion,
@@ -28,6 +33,20 @@ The evidence makes a suite type required:
 
 A required type is declined only with the user's explicit acceptance of the
 residual risk.
+
+## Kinds of case to consider
+
+A guideline to think with: for each endpoint and each story's acceptance
+criterion, consider which of these apply, and write the cases that do.
+
+- Functional: the rule does what it says on the main path.
+- Field validation: each input's type, format, length and required rules.
+- Negative: invalid, missing or unexpected input is refused cleanly.
+- Error handling: dependency failures, timeouts and the error returned.
+- Data validation: what is stored or emitted is correct and consistent.
+- Security validation: access, authorization and the abuse the rule invites.
+
+The kinds stay in your reasoning; a case carries no kind label.
 
 ## Techniques
 

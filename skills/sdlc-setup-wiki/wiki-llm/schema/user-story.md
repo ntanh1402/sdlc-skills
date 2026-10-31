@@ -3,8 +3,8 @@
 [Common rules](schema.md)
 
 One actor's goal in a Feature or ChangeRequest: the Requirements it groups,
-shown as concrete scenarios. It lives in the folder of the Feature or
-ChangeRequest whose Requirements it lists.
+stated as pass/fail acceptance criteria. It lives in the folder of the
+Feature or ChangeRequest whose Requirements it lists.
 
 <!-- generated:schema start -->
 |  |  |
@@ -43,17 +43,21 @@ ChangeRequest whose Requirements it lists.
 | `# Notes` | optional | author |  |  |  |
 | `# References` | optional | author | Reference (any number) |  |  |
 | `# Changed by` | when not empty | tool | mirrors UserStory `# Affects` |  |  |
+| `# Test cases` | when not empty | tool | mirrors TestCase `# Covers` via its `# Requirements`, TestCase `# Covers` via Task `# Stories` via its `# Planned scope` |  |  |
 <!-- generated:schema end -->
 
 ## Rules
 
 - The prose between the title and `# Acceptance criteria` is the story
   sentence: "As a …, I want …, so that …".
-- `# Acceptance criteria` is a numbered list and nothing else. Each item is a
-  **Given** / **When** / **Then** scenario with real values, and links at
-  least one Requirement listed under `# Requirements`. Each Requirement under
-  `# Requirements` is linked by at least one item. A scenario no Requirement
-  supports is a gap in the Requirements, not a criterion.
+- `# Acceptance criteria` is a numbered list and nothing else. Each item is
+  one pass/fail statement with real values (an input it takes or refuses, a state
+  or output it produces, a boundary, a rejection), and links at least one
+  Requirement listed under `# Requirements`. Each Requirement under
+  `# Requirements` is linked by at least one item. A rule no Requirement
+  supports is a gap in the Requirements, not a criterion. Data and steps
+  belong to the TestCases. Older stories written as **Given** / **When** /
+  **Then** scenarios stay valid.
 - `# Requirements` lists at least one Functional Requirement. It links the
   `overview.md` of the story's own folder: in a ChangeRequest's folder, the
   ChangeRequest's copy, never the Feature's, because the Feature has no copy
@@ -74,8 +78,14 @@ ChangeRequest whose Requirements it lists.
   [Spec versions](schema.md#spec-versions).
 - A story has no `status`: progress is followed in the tracker. `resource` is
   the tracker ticket URL and `trackerKey` its key; a person adds them.
-- A Task links the stories it serves under `# Stories`; every story is linked
-  by at least one Task of its folder once Tasks are planned.
+- A Task links the one story it serves under `# Stories`. `sdlc-plan-tasks`
+  links every story to at least one Task of its folder; a story with no Task
+  is not a validation error.
+- `# Test cases` is written by the tool: the TestCases whose `# Covers` links
+  a Requirement under the story's `# Requirements`, and those that cover a
+  concept in the `# Planned scope` of a Task linking the story. A case may be
+  listed on several stories. QA starts from this list to test the story; it
+  may include cases of a shared concept that test more than the story.
 - A step that removes a Requirement fixes the stories that list it in the
   same change: it drops the Requirement from `# Requirements` and each
   criterion that links only that Requirement, and deletes a story left with

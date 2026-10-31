@@ -7,16 +7,24 @@ what is already answered; do not turn the checklist into a questionnaire.
 ## Readiness
 
 A Feature's intent is ready when each of these is known or recorded as an open
-question:
+question, one line per PRD section:
 
-- Problem, evidence, desired outcome, why now, actors, owner and priority.
-- Trigger, plus the happy, alternate and failure flows.
-- Business rules; the inputs, outputs, sensitive data, events, external parties
-  and observable failure behaviour each Requirement needs.
-- Functional, nonfunctional and constraint Requirements, each with a
-  verification method. Measurable quality targets when known.
-- Success measures, acceptance boundaries, risks, constraints, assumptions,
-  open questions and what is out of scope.
+- Summary: what changes for whom, why now, the owner and the priority.
+- Problem and evidence: the problem, and what shows it is real.
+- Goals and success metrics: a primary metric and a guardrail metric that
+  must not get worse. A missing baseline or target is an open question; it
+  does not block `ReqApproved`.
+- Users and personas: the actors and what each needs. Who is excluded goes
+  under out of scope.
+- User flows: the trigger, plus the happy, alternate and failure flows.
+- Business rules: the inputs, outputs, sensitive data, events, external
+  parties and observable failure behaviour each Requirement needs.
+- Requirements: functional, nonfunctional and constraint, each with a
+  verification method; measurable quality targets when known.
+- Release and rollout: phases, a feature flag, a migration or a deadline;
+  ask only when the brief mentions one.
+- Risks, assumptions and open questions.
+- Out of scope.
 
 A ChangeRequest's intent also needs:
 

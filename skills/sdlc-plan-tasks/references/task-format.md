@@ -55,8 +55,10 @@ folder, link the Feature's copy:
 - Every link in `# Planned scope` points at a Design concept with the
   qualifier the design gave it, and that concept has a `# Pending changes`
   entry for this Task's parent.
-- `# Stories` links user stories of this Task's own folder, and is left out
-  when the Task serves none.
+- `# Stories` links at most one user story, of this Task's own folder, and
+  is left out when the Task serves none.
+- When another Task also lists a concept, the note names the part this Task
+  builds.
 - `# Blocked by` is left out when the Task has no blocker.
 - `# References` is last, and left out when no Reference bears on the Task.
 - Do not write `generated` or `verified`; `draft finish` does.

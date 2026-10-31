@@ -26,7 +26,6 @@ Jira `SHOP-123`. Broken out of
 # Stories
 
 * [STORY-checkout-pay-and-confirm](STORY-checkout-pay-and-confirm.md)
-* [STORY-checkout-retry-safely](STORY-checkout-retry-safely.md)
 
 # Planned scope
 

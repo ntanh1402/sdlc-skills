@@ -106,6 +106,7 @@ def _heading_rows(schema: Schema, specs: list[dict], depth: int) -> list[list[st
         if generated:
             sources = ", ".join(
                 f"{'any type' if source['type'] == '@any' else source['type']} `{'#' * len(source['heading'])} {source['heading'][-1]}`"
+                + "".join(f" via {hop.get('type', 'its')} `# {hop['heading'][-1]}`" for hop in source.get("via", []))
                 for source in generated["sources"]
             )
             presence = "when not empty" if generated.get("when_empty") == "omit" else "always"

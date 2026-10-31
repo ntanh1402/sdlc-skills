@@ -56,5 +56,7 @@ A group of TestCases of one kind. It owns its TestCases as files in its folder.
   `Approved` once reviewed, `Implemented` when runnable tests exist. The wiki
   does not record pass and fail results.
 - `resource` is where the runnable tests live, once they exist.
+- `suiteType` `unit` is kept for older suites only; no skill writes it. A
+  developer's unit tests are written with the code (`sdlc-build-task`).
 - A test plan the suite was written from is a [Reference](reference.md),
   linked under `# References`.

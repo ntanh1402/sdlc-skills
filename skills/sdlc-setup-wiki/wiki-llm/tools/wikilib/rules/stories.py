@@ -1,4 +1,4 @@
-"""User stories: the story sentence, Given/When/Then criteria traced to the
+"""User stories: the story sentence, numbered criteria traced to the
 listed Requirements, at least one Functional Requirement, links that stay in
 the story's own folder; a Task links only stories of its own folder."""
 
@@ -16,7 +16,6 @@ ORDER = 75
 
 NUMBERED_RE = re.compile(r"^\d+[.)]\s+")
 SENTENCE = (("As a", re.compile(r"\bas an?\b")), ("I want", re.compile(r"\bi want\b")), ("so that", re.compile(r"\bso that\b")))
-STEPS = ("given", "when", "then")
 
 Requirement = tuple[Path, str]  # (file, lower-case anchor)
 
@@ -90,10 +89,6 @@ def _story(bundle: Bundle, concept: Concept, findings: list[Finding]) -> None:
         if not items or stray:
             findings.append(Finding("story.criteria", rel, "Acceptance criteria must be a numbered list and nothing else"))
         for number, item in enumerate(items, start=1):
-            words = _plain(item)
-            absent = [step.capitalize() for step in STEPS if not re.search(rf"\b{step}\b", words)]
-            if absent:
-                findings.append(Finding("story.criteria", rel, f"criterion {number} needs Given, When and Then; missing: {', '.join(absent)}"))
             these = _cited(bundle, concept, item)
             if not these:
                 findings.append(Finding("story.criteria", rel, f"criterion {number} must link the Requirement it shows"))

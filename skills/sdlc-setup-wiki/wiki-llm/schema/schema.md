@@ -106,6 +106,10 @@ one `## YYYY-MM-DD` heading per date:
 * **Change kind**: what changed and why, with links where useful.
 ```
 
+Entries are never rewritten, with one exception: when a file is deleted, a
+link to it in an earlier entry becomes its key as plain text, because every
+link must resolve.
+
 Files outside a concept folder (the Application's own files and decisions) have
 no log; git history is their record.
 

@@ -140,8 +140,21 @@ repository needs one of these, and stop.
    `$TOOL migrate`. If it reports that no migration is available, tell the user
    the wiki cannot be upgraded with this release. Then run
    `cd "$WIKI" && $TOOL draft discard setup-<version>` and stop.
-5. Run `$TOOL draft finish --by "sdlc-setup-wiki/$RELEASE"`, then go to
-   section 6.
+5. **Tasks with two or more stories.** The schema now allows a Task at most
+   one story, so a wiki written before may hold Tasks with more. Run
+   `$TOOL validate` and look for `relationships.cardinality` findings on a
+   Task's `# Stories`. When there are none, go to step 6. Otherwise ask, in
+   one round, which story each such Task keeps. Recommend the story that
+   lists the Requirements its `# Acceptance` links, or the first story listed
+   when that does not decide. On the answers, drop the other `# Stories`
+   links of each Task and add an entry to the `log.md` of the Task's folder,
+   for example
+   `* **Upgrade**: Kept STORY-checkout-pay-and-confirm on TASK-order-creation-endpoint; also served STORY-checkout-retry-safely (one story per Task since <version>).`
+   Change nothing else. A story left with no Task is not a validation error.
+6. Run `$TOOL draft finish --by "sdlc-setup-wiki/$RELEASE"`, then go to the
+   Change-set gate (section 6). When step 5 dropped a link, the report after
+   the commit also says: "Next: run sdlc-plan-tasks for <each open Feature or
+   ChangeRequest whose stories lost their Task> to plan a Task for them."
 
 ## 4. Link only
 
@@ -207,7 +220,8 @@ ordinary change there: they commit it if teammates should share it.
 
 1. If `draft finish` is not `ok`, show `missing_logs` and `validate.errors`.
    A new tool version can report problems the old one did not. Do not fix
-   wiki content in this skill. Tell the user what failed, run
+   wiki content in this skill; the one exception is the dropped story links
+   of section 3, step 5. Tell the user what failed, run
    `$TOOL draft discard <key>` from `WIKI`, and stop.
 2. Run `$TOOL draft diff` and show the user the change set:
    - list the files;

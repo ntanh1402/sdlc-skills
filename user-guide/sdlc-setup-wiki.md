@@ -51,6 +51,7 @@ pull request.
 | **The wiki was set up by a newer release** than your skills | Refuses and writes nothing | Update your skills (run `npx skills add ntanh1402/sdlc-skills -g`), then run again |
 | **An earlier upgrade branch still exists.** Its pull request is merged or closed | Discards the old branch and starts again | Approve |
 | **An earlier upgrade's pull request is still open** | Stops | Finish that pull request first |
+| **A Task serves two or more stories** (one story per Task since this release) | Asks in one round which story each such Task keeps, recommending the one its acceptance cites, drops the other links and logs them. Then names sdlc-plan-tasks for open Features whose stories lost their Task | Choose the story; run sdlc-plan-tasks after the merge |
 | **No migration exists** for the schema jump | Tells you the wiki cannot be upgraded with this release and discards its draft | Ask the maintainers of the skills for a release that migrates your wiki |
 | **Add an Application.** The wiki is current | Asks for key, title and owner team. Writes `wiki/<key>/overview.md` and the indexes on `wiki/app-<key>` | Approve, merge the pull request |
 | **The Application key already exists** | Says so, offers another key, starts nothing | Give a different key |

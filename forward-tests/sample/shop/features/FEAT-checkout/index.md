@@ -5,7 +5,6 @@
 # User stories
 
 * [Pay and get an order confirmation](STORY-checkout-pay-and-confirm.md) - A shopper turns a cart into one confirmed, paid order.
-* [Retry checkout safely](STORY-checkout-retry-safely.md) - A shopper who retries checkout is never charged twice.
 
 # Tasks
 

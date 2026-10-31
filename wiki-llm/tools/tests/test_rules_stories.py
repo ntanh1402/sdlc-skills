@@ -11,7 +11,7 @@ FEATURE = "pay/features/FEAT-pay/overview.md"
 TASK = "pay/features/FEAT-pay/TASK-pay-001.md"
 CHANGE_TASK = "pay/change-requests/CR-1/TASK-pay-003.md"
 CRITERION = (
-    "1. **Given** a cart, **when** the shopper pays, **then** the order is placed.\n"
+    "1. A shopper who pays for a cart gets the order placed.\n"
     "   ([REQ-pay-1](overview.md#req-pay-1))"
 )
 SECOND_REQ = "### REQ-pay-refund\n\n**Should** — A shopper gets a refund. Functional. Verified by test.\n\n# Architecture"
@@ -30,16 +30,16 @@ class StoryTest(RuleTest):
         self.assertClean()
 
     def test_criteria_must_be_a_numbered_list(self):
-        self.edit(STORY, "1. **Given**", "* **Given**")
+        self.edit(STORY, "1. A shopper", "* A shopper")
         self.assertReported("story.criteria", STORY)
 
     def test_criteria_hold_nothing_but_the_list(self):
         self.edit(STORY, "# Acceptance criteria\n\n", "# Acceptance criteria\n\nThese must hold.\n\n")
         self.assertRule("story.criteria", STORY)
 
-    def test_criterion_needs_given_when_then(self):
-        self.edit(STORY, "**when** the shopper pays, ", "")
-        self.assertRule("story.criteria", STORY)
+    def test_criterion_may_still_use_given_when_then(self):
+        self.edit(STORY, "1. A shopper who pays for a cart gets the order placed.", "1. **Given** a cart, **when** the shopper pays, **then** the order is placed.")
+        self.assertClean()
 
     def test_criterion_must_link_a_requirement(self):
         self.edit(STORY, "\n   ([REQ-pay-1](overview.md#req-pay-1))", "")
@@ -51,7 +51,7 @@ class StoryTest(RuleTest):
         self.edit(
             STORY,
             CRITERION,
-            CRITERION + "\n\n2. Given a paid order, when it is refunded, then the shopper gets the money back.\n"
+            CRITERION + "\n\n2. A refunded order gives the shopper the money back.\n"
             "   ([REQ-pay-refund](overview.md#req-pay-refund))",
         )
         self.edit(STORY, "* [REQ-pay-1](overview.md#req-pay-1)", "* [REQ-pay-1](overview.md#req-pay-1)\n* [REQ-pay-refund](overview.md#req-pay-refund)")
@@ -102,12 +102,16 @@ class StoryTest(RuleTest):
     def test_affects_names_a_story_of_the_changed_feature(self):
         self.write("pay/change-requests/CR-1/STORY-pay-other.md", fixture.FILES[CHANGE_STORY].replace("# Affects\n\n* [STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md) — paying now takes a coupon.", ""))
         self.edit(CHANGE_STORY, "../../features/FEAT-pay/STORY-pay-checkout.md", "STORY-pay-other.md")
-        self.edit(CHANGE_TASK, "* [STORY-pay-coupon](STORY-pay-coupon.md)", "* [STORY-pay-coupon](STORY-pay-coupon.md)\n* [STORY-pay-other](STORY-pay-other.md)")
         self.assertRule("story.affects", CHANGE_STORY)
 
     def test_task_links_only_stories_of_its_folder(self):
-        self.edit(CHANGE_TASK, "* [STORY-pay-coupon](STORY-pay-coupon.md)", "* [STORY-pay-coupon](STORY-pay-coupon.md)\n* [STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md)")
+        self.edit(CHANGE_TASK, "* [STORY-pay-coupon](STORY-pay-coupon.md)", "* [STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md)")
         self.assertRule("task.stories-place", CHANGE_TASK)
+
+    def test_task_serves_at_most_one_story(self):
+        self.write("pay/features/FEAT-pay/STORY-pay-again.md", fixture.FILES[STORY])
+        self.edit(TASK, "* [STORY-pay-checkout](STORY-pay-checkout.md)", "* [STORY-pay-checkout](STORY-pay-checkout.md)\n* [STORY-pay-again](STORY-pay-again.md)")
+        self.assertRule("relationships.cardinality", TASK)
 
     def test_task_stories_link_only_stories(self):
         self.edit(TASK, "* [STORY-pay-checkout](STORY-pay-checkout.md)", "* [TASK-pay-002](TASK-pay-002.md)")

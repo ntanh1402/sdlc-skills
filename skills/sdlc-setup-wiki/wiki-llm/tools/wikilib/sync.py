@@ -146,14 +146,44 @@ def _merge(labels: set[str]) -> str:
     return next(iter(sorted(labels)), "")
 
 
+def _link_target(relation) -> tuple[Path | None, str]:
+    """What one link points at: a Requirement by its anchor, anything else by its file."""
+    return relation.path, relation.anchor.lower() if relation.kind == "Requirement" else ""
+
+
+def _reached_targets(bundle: Bundle, concept: Concept, via: list[dict]) -> set[tuple[Path | None, str]]:
+    """The link targets reached from `concept` by following `via`: a hop with `type`
+    goes back to the concepts of that type linking the current targets; a hop
+    without goes forward along the current concepts' links under `heading`."""
+    current = {(concept.path, "")}
+    for hop in via:
+        if "type" in hop:
+            current = {
+                (candidate.path, "")
+                for candidate in bundle.of_type(hop["type"])
+                if any(_link_target(relation) in current for relation in bundle.relations(candidate, hop["heading"]))
+            }
+        else:
+            current = {
+                _link_target(relation)
+                for path, _ in current
+                if path in bundle.by_path
+                for relation in bundle.relations(bundle.by_path[path], hop["heading"])
+            }
+    return current
+
+
 def entries(bundle: Bundle, concept: Concept, spec: dict) -> list[str]:
     """List lines of one generated section of `concept`."""
     found: dict[Path, tuple[Concept, set[str]]] = {}
     for source in spec["generated"]["sources"]:
         candidates = bundle.concepts if source["type"] == "@any" else bundle.of_type(source["type"])
+        reached = _reached_targets(bundle, concept, source["via"]) if "via" in source else None
         for candidate in candidates:
             for relation in bundle.relations(candidate, source["heading"]):
-                if relation.concept is not concept:
+                if reached is None and relation.concept is not concept:
+                    continue
+                if reached is not None and _link_target(relation) not in reached:
                     continue
                 label = source.get("label")
                 if label == "@qualifier":

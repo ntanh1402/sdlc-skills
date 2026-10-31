@@ -232,3 +232,17 @@ class GeneratedRuleTest(RuleTest):
     def test_missing_index_is_stale(self):
         self.remove("pay/tests/index.md")
         self.assertIn("pay/tests/index.md", self.stale())
+
+class TestCasesTest(RuleTest):
+    def test_sync_lists_cases_covering_the_storys_requirements(self):
+        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/TC-pay-ok.md)\n", fixture.read(self.root, "pay/features/FEAT-pay/STORY-pay-checkout.md"))
+
+    def test_sync_lists_cases_covering_the_planned_scope_of_the_storys_tasks(self):
+        # TC-pay-ok covers EP-pay-create, which TASK-pay-003 of the coupon story changes
+        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/TC-pay-ok.md)\n", fixture.read(self.root, "pay/change-requests/CR-1/STORY-pay-coupon.md"))
+
+    def test_test_cases_is_left_out_when_no_case_reaches_the_story(self):
+        self.edit("pay/change-requests/CR-1/TASK-pay-003.md", "\n\n# Stories\n\n* [STORY-pay-coupon](STORY-pay-coupon.md)", "")
+        sync.write(self.root)
+        self.assertNotIn("# Test cases", fixture.read(self.root, "pay/change-requests/CR-1/STORY-pay-coupon.md"))
+        self.assertClean()

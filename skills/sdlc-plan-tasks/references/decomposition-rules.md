@@ -27,14 +27,28 @@ rollback when they matter. It never repeats the title. The unit and component
 tests a developer writes with the code belong in acceptance; full test design
 belongs to `sdlc-design-tests`.
 
-## Ownership
+## Stories and coverage
 
-Every new, changed or removed concept in the design, every obligation of a
-decision, every migration and every rollout duty has exactly one owning Task.
-Other Tasks may take part, but ownership is single. A title that joins two
-independent outcomes with "and" is two Tasks.
+A Task serves at most one story, so in any tracker it can be that story's
+sub-task. A Task with no story sits under the Feature or ChangeRequest. Cut
+the plan by story first: each story gets the Tasks that deliver its
+acceptance criteria end to end.
+
+- Every new, changed or removed concept in the design, every obligation of a
+  decision, every migration and every rollout duty is covered by at least
+  one Task.
+- Two stories that change one concept (both add to `WEB-storefront`) each
+  get their own Task listing it, with a note naming the part it builds
+  ("— modified — the gift card field").
+- An `orders` table that the pay story creates and the order-history story
+  only reads is built by the pay story's Task; the history Task is
+  `# Blocked by` it.
+- A table or contract two stories both use and neither owns is built by one
+  foundation Task with no story; the Tasks that use it are `# Blocked by` it.
+- A title that joins two independent outcomes with "and" is two Tasks.
 
 ## Parallel waves
 
+There is no fixed wave layout: each Task's `# Blocked by` sets the order.
 Wave 1 is every Task with no blocker. Wave n is every Task whose blockers are
-all in earlier waves. Report the waves at the Design gate.
+all in earlier waves. Report the computed waves at the Design gate.

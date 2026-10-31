@@ -42,7 +42,7 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
 |---|---|---|---|---|---|
 | `# <title>` | required; first heading | author |  |  |  |
 | `# Acceptance` | required | author |  |  |  |
-| `# Stories` | optional | author | UserStory (any number) |  |  |
+| `# Stories` | optional | author | UserStory (0 to 1) |  |  |
 | `# Planned scope` | required | author | any Design type (any number) | `new`, `modified`, `removed` (required) |  |
 | `# Blocked by` | optional | author | Task (any number) |  |  |
 | `# Reviewers` | optional | author |  |  |  |
@@ -55,12 +55,15 @@ One unit of build work. It lives in the folder of the Feature or ChangeRequest t
   ChangeRequest goes in the ChangeRequest folder.
 - `# Acceptance` states observable results and links the Requirements it
   satisfies. Do not repeat the title.
-- `# Stories` links the user stories this Task serves, in its own folder. A
-  Task with no story (a migration, a spike, a Task for a Nonfunctional
-  Requirement) has none. A link may be added to a `Done` Task: it is
-  traceability, not scope.
+- `# Stories` links at most one user story, in its own folder: a Task with a
+  story is that story's sub-task. A Task with none (a foundation Task shared
+  by several stories, a migration, a spike, a Task for a Nonfunctional
+  Requirement) sits under the Feature or ChangeRequest. A link may be added
+  to a `Done` Task: it is traceability, not scope.
 - `# Planned scope` links every Design concept the Task will create, change, or
-  remove, qualified `new`, `modified`, or `removed`, matching the parent's design.
+  remove, qualified `new`, `modified`, or `removed`, matching the parent's
+  design. Several Tasks may list one concept, each `Todo` Task with a note
+  naming the part it builds.
 - While the Task is not `Done`, or while its parent is not `Approved` yet
   (`Draft`, `Proposed`, `ReqApproved`), each concept in its scope carries a
   pending entry for the parent. Once the parent is `Approved` (or `InDev`) and

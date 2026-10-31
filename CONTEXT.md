@@ -65,8 +65,12 @@ The system outside the Bundle where people create a Task's ticket and follow its
 _Avoid_: board, backlog, issue system
 
 **User story**:
-One actor's goal in a Feature or ChangeRequest, written as "As a …, I want …, so that …" with Given/When/Then acceptance criteria that each cite a Requirement it lists; a file `STORY-<name>.md`, optional, with no status.
+One actor's goal in a Feature or ChangeRequest, written as "As a …, I want …, so that …" with numbered pass/fail acceptance criteria that each cite a Requirement it lists; a file `STORY-<name>.md`, optional, with no status.
 _Avoid_: story (unqualified, in skill text), epic, use case
+
+**Foundation Task**:
+A Task that serves no User story, because several stories need what it builds and none owns it; the Tasks that use it wait for it. A Task serves at most one User story.
+_Avoid_: shared task, common task, epic task
 
 **Reference**:
 Material a person approved for others to read while they work: a PRD, a change brief, a test plan, an architecture document, a page explaining a domain term, a vendor's documentation or a code example; a folder `references/REF-<name>/` of one Application whose `overview.md` summarises it, linked from any concept under `# References`. It is context, never a contract.

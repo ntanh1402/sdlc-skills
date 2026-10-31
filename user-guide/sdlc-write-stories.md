@@ -11,8 +11,8 @@ stories. [Back to the user guide](user-guide.md).
 | **Use when** | You want the Requirements as user stories ("As a …, I want …, so that …") with acceptance criteria, or want existing stories regrouped. Stories are optional |
 | **Needs first** | The spec pull request is merged, draft or agreed. It runs **at the same time** as [sdlc-design-arch](sdlc-design-arch.md); neither waits for the other |
 | **Say** | "Break gift cards into user stories", "Write the user stories for CR-sms-notifications" |
-| **You get** | `STORY-…` files, one actor's goal each, with Given/When/Then criteria that cite the Requirements. Every Functional Requirement (that is not **Wont**) is in a story. At the end, each story is printed ready to paste into a ticket. Draft branch `wiki/stories-<Key>` |
-| **Next** | Merge the stories pull request and create the tickets. After the design is merged, [sdlc-plan-tasks](sdlc-plan-tasks.md) links each Task to its stories. If Tasks are already planned, run it again to link them |
+| **You get** | `STORY-…` files, one actor's goal each, with numbered pass/fail acceptance criteria that cite the Requirements. Requirements are grouped by actor and surface, with each validation folded into the action it governs. Every Functional Requirement (that is not **Wont**) is in a story. At the end, each story is printed ready to paste into a ticket. Draft branch `wiki/stories-<Key>` |
+| **Next** | Merge the stories pull request and create the tickets. After the design is merged, [sdlc-plan-tasks](sdlc-plan-tasks.md) links each story to its Tasks. If Tasks are already planned, run it again to link them |
 
 A story groups Requirements; it never adds behaviour. The Requirements stay the
 testable unit.
@@ -52,7 +52,7 @@ testable unit.
 | **You already have stories** written in a brief | Takes them as given, with your wording. It only proposes the tracing to Requirements and reports what they leave uncovered | Check the tracing |
 | **You want a criterion that no Requirement supports** | Does not write it. It names the gap for [sdlc-write-spec](sdlc-write-spec.md). If the stories cannot be written without it, it stops before the Intent gate | Add the Requirement, then run again |
 | **A ChangeRequest** | Writes ChangeRequest stories with an `# Affects` section pointing at the Feature stories the change touches. Reads those Feature stories first | Confirm which stories are affected |
-| **You revise existing stories** | Keeps each story's key. Deletes a story whose Requirements were all removed, says why in the log, and drops the links to it from Tasks and other stories | Check the deletions |
+| **You revise existing stories** | Keeps each story's key, and rewrites each story it touches in the current form (older Given/When/Then stories stay valid until then). Deletes a story whose Requirements were all removed, says why in the log, and drops the links to it from Tasks and other stories | Check the deletions |
 | **The design merges while the stories draft is open** | Checks the Requirements of the shared file. If they are unchanged it goes on. If they changed it shows what changed and goes back to the Design gate | Re-approve |
 | **A story would cover two goals, or is too big** | Splits it by the story rules and shows the split | Decide where to cut |
 | **Tasks already exist** | Writes the stories but does not touch the Tasks | Run [sdlc-plan-tasks](sdlc-plan-tasks.md) again to link them |

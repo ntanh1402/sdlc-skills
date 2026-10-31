@@ -124,7 +124,7 @@ tracker.
 | Requirement (`REQ-…`) | One testable requirement inside a Feature or ChangeRequest |
 | Spec version | `version` of a Feature or ChangeRequest, raised each time its Requirements or PRD change. The architecture, stories, Tasks and TestSuites record the version they were written from, so the wiki lists what is outdated when the spec changes |
 | Design files | Services, endpoints, events, tables, frontends and externals. A design not built yet is marked as pending (`Planned`, `Modifying`, `Removing`) until its Task is closed |
-| User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with Given/When/Then criteria, each citing a Requirement. Optional; no status, you follow it in your tracker |
+| User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with numbered pass/fail acceptance criteria, each citing a Requirement. The tool lists the test cases QA runs for it. Optional; no status, you follow it in your tracker |
 | Reference (`REF-…`) | Material to read while working: a PRD, a test plan, a domain page, a vendor document, a code example. A folder with a summary, linked from any file under `# References`. Context, never a contract |
 | Task (`TASK-…`) | One piece of build work. Only `Todo` or `Done`; you follow progress in your tracker, not in the wiki |
 | TestSuite (`TS-…`), TestCase (`TC-…`) | The test design. A suite is `Implemented` once its test code exists |
@@ -248,12 +248,12 @@ the names come from the sample wiki in
   the same time as `sdlc-design-arch`.
 - **Say:** "Break gift cards into user stories", "Write the user stories for
   CR-sms-notifications".
-- **You get:** `STORY-…` files, one actor goal each, with Given/When/Then
+- **You get:** `STORY-…` files, one actor goal each, with numbered pass/fail
   acceptance criteria that cite the Requirements. Every Functional
   Requirement is in a story. At the end, each story is printed ready to paste
   into a ticket.
 - **Next:** merge the stories pull request and create the tickets. Once the
-  design is merged, `sdlc-plan-tasks` links each Task to its stories; if the
+  design is merged, `sdlc-plan-tasks` links each story to its Tasks; if the
   Tasks are already planned, run it again.
 
 ### sdlc-design-arch
@@ -278,16 +278,18 @@ the names come from the sample wiki in
 - **Before:** the design pull request is merged.
 - **Say:** "Plan the tasks for gift cards".
 - **You get:** `TASK-…` files, each with its acceptance, planned scope,
-  size, dependencies and wave. Every pending design item is covered by
-  exactly one Task, and every user story is linked by a Task.
+  size, dependencies and wave. Every pending design item is covered by a Task,
+  every user story is linked by a Task, and each Task serves at most one
+  story (its sub-task in the tracker) or none (a foundation Task, a
+  migration or a spike).
 - **Next:** merge the pull request, then create a ticket for each Task in
   your tracker. To record the ticket link in the Task, ask
   `sdlc-edit-wiki`.
 
 ### sdlc-design-tests
 
-- **Use when:** a design needs test design (unit, integration, end-to-end,
-  load or security), or the spec changed after the tests were designed.
+- **Use when:** a design needs test design (integration, end-to-end, load or
+  security), or the spec changed after the tests were designed.
 - **Before:** the design pull request is merged.
 - **Say:** "Design the tests for gift cards".
 - **You get:** TestSuites (`TS-…`) with one TestCase (`TC-…`) per file, each

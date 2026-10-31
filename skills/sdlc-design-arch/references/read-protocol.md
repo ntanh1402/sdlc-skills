@@ -53,7 +53,7 @@ local `main`, else `master`.
   `git grep -l "<text>" "$DEFAULT" -- wiki/` for a search.
 
 Once the draft worktree is started, read the input inside the draft worktree
-at `READ` (`write-protocol.md`, section 4).
+at `READ` (`write-protocol.md`, section 3).
 
 ## 3. Find your way around
 

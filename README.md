@@ -431,4 +431,3 @@ date.
 - [`wiki-llm/schema/schema.md`](wiki-llm/schema/schema.md): the wiki schema and
   its type rules.
 - [`CONTEXT.md`](CONTEXT.md): the terms used here.
-- [`docs/adr/`](docs/adr/): the decisions behind the design.

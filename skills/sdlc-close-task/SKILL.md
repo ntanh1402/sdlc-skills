@@ -23,11 +23,23 @@ One Task per run. Section 6 lists what it never does.
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-short flow of the run and the approval gates: no rounds and no Run plan, one
-stop that is the Intent and the Design gate together, then the Change-set
-gate. Then read the schema pages `schema.md` ("Pending changes"), `task.md`,
+Read, in this skill's folder, `references/read-protocol.md`.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read the schema pages `schema.md` ("Pending changes"), `task.md`,
 `feature.md`, `change-request.md` and the page of each Design type in the
 Task's scope, in the wiki's `.wiki-llm/schema/`.
 
@@ -41,6 +53,24 @@ Other requests go elsewhere; say so and stop:
 | Mark a Feature released or deprecated; add a ticket link to a Task or a user story | `sdlc-edit-wiki` |
 | The merged code differs from the design | `sdlc-import` on the code folder compares and corrects; a ChangeRequest with `sdlc-write-spec` when the design should change |
 | Push, merge, or open a pull request | The person does that |
+
+## The gates
+
+A gate is a stop for the person's explicit approval: first the combined Intent
+and Design gate (file-by-file changes, before any draft is started), then the
+Change-set gate (the diff and commit message, before committing).
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just close it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the changes at section 3, stop and write nothing. When
+  the person rejects at the Change-set gate, discard a draft this run started.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. Look up
 
@@ -147,12 +177,13 @@ Close TASK-coupon-api: merged as 3f2a91c "Add the apply-coupon endpoint" on orig
 Approve?
 ```
 
-An edit here is shown again before anything is written. A rejection writes
-nothing.
+An edit here is shown again before anything is written.
 
 ## 4. Write, finish and commit
 
-Start the draft `close-<Task key>` as `references/write-protocol.md` section 3
+Read `references/write-protocol.md` now.
+
+Start the draft `close-<Task key>` as `write-protocol.md` section 2
 says. The input paths are the Task file, the other Task files of the parent,
 the parent's `overview.md` and each Design file in the scope.
 
@@ -166,7 +197,7 @@ Write exactly the changes approved in section 3:
   `* **Close**: TASK-coupon-api is Done; its code is merged as 3f2a91c. EP-apply-coupon is live. Written by an AI model with sdlc-close-task.`
 
 Change nothing else in those files, and write no `index.md`. Then follow
-`references/write-protocol.md` section 4 from step 4: the input check,
+`write-protocol.md` section 3, "At section 4": the input check,
 `draft finish`, the Change-set gate, `draft commit`. Commit message:
 `close(<Task key>): <the Task's title>`.
 
@@ -179,7 +210,7 @@ and only when it has no uncommitted change
 `git -C "$SRC" worktree remove "<the worktree>"`. Otherwise leave it and say
 so. Never delete its branch.
 
-End with the summary of `references/flow.md` section 3, "Done" and "Next":
+End with the summary, "Done" and "Next":
 
 ```text
 Done: wiki/close-TASK-coupon-api, 4 files, pushed. Open the pull request.

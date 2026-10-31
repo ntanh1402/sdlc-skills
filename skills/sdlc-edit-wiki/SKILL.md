@@ -12,12 +12,42 @@ decision goes through the skill that asks for that decision.
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-short flow of the run and the approval gates: no rounds and no Run plan, one
-stop that is the Intent and the Design gate together, then the Change-set
-gate. Then read `schema.md` ("Corrections", "Pending changes") and the schema
+Read, in this skill's folder, `references/read-protocol.md`.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read `schema.md` ("Corrections", "Pending changes") and the schema
 page of each type you will edit, in the wiki's `.wiki-llm/schema/`.
+
+## The gates
+
+A gate is a stop for the person's explicit approval: first the combined Intent
+and Design gate (exact file-by-file changes, before any draft is started),
+then the Change-set gate (the diff and commit message, before committing).
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the changes at section 3, stop and write nothing. When
+  the person rejects at the Change-set gate, discard a draft this run started.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. What this skill edits
 
@@ -112,15 +142,17 @@ Not done here: "add a requirement for search filters" is sdlc-write-spec.
 Approve?
 ```
 
-An edit here is shown again. A rejection writes nothing.
+An edit here is shown again.
 
 ## 4. Write, finish and commit
+
+Read `references/write-protocol.md` now.
 
 The draft key is `edit-<key>`: the key of the concept that holds the main
 file (`edit-FEAT-catalog`, `edit-TASK-sms-channel`, `edit-SVC-orders`,
 `edit-REF-cancel-flow-example`), or a short name for an Application file
 (`edit-glossary`, `edit-conventions`).
-Start it as `references/write-protocol.md` section 3 says. The input paths
+Start it as `write-protocol.md` section 2 says. The input paths
 are the files you edit.
 
 Write exactly the approved changes. Add an entry to the `log.md` of each
@@ -136,13 +168,19 @@ The Application's own files have no log; the commit message says what
 changed. Never write `generated`, a section the tool writes, or an
 `index.md`.
 
-Then follow `references/write-protocol.md` section 4 from step 4: the input
+Then follow `write-protocol.md` section 3, "At section 4": the input
 check, `draft finish`, the Change-set gate, `draft commit`. Commit message:
 `edit(<key>): <what changed>`, for example
 `edit(FEAT-catalog): released on 2026-10-04`.
 
-End with the summary of `references/flow.md` section 3: "Done" and "Next",
-and "For other skills" when part of the request was refused.
+End with the summary: "Done" and "Next",
+and "For other skills" when part of the request was refused:
+
+```text
+Done: wiki/edit-FEAT-catalog, 2 files, pushed. Open the pull request.
+For other skills: "add a requirement for search filters" (sdlc-write-spec)
+Next: Open and merge the pull request for wiki/edit-FEAT-catalog.
+```
 
 ## 5. What this skill never does
 

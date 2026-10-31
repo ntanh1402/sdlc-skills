@@ -4,14 +4,14 @@ This file says how `sdlc-edit-wiki` drafts, checks, approves and commits its
 changes to the wiki. `SKILL.md` says what is allowed to be edited; this file
 says how the draft is written.
 
-Read `read-protocol.md` and `flow.md` next to this file first.
+Read it at `SKILL.md` section 4.
 
 ## 1. The rules
 
 - Every change goes into a **draft**: a branch `wiki/edit-<key>` with its own
   worktree in `WIKI/.worktrees/edit-<key>/`. The default branch changes only
   when the user merges the draft's pull request.
-- Stop at the approval gates of `flow.md`: first the combined Intent and Design
+- Stop at the approval gates of `SKILL.md`: first the combined Intent and Design
   stop (showing the exact changes file by file, before starting the draft),
   then the Change-set gate.
 - Never merge, never open a pull request, never call a hosting service; the
@@ -22,24 +22,7 @@ Read `read-protocol.md` and `flow.md` next to this file first.
 - Keys for a new Reference are names taken from titles, never numbers:
   `REF-cancel-flow-example`.
 
-## 2. Check the versions
-
-This skill's folder has a file `RELEASE` next to its `SKILL.md`, holding one
-line such as `1.0.0`. Compare it with the wiki's tool copy before anything
-else:
-
-```bash
-cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
-```
-
-| `status` | Do |
-|---|---|
-| `current` | Go on |
-| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
-| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
-| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
-
-## 3. The draft key
+## 2. The draft key
 
 The key is `edit-<key>`: the key of the concept that holds the main file
 (`edit-FEAT-catalog`, `edit-TASK-sms-channel`, `edit-SVC-orders`,
@@ -68,75 +51,80 @@ Otherwise decide what to do after `git fetch --quiet origin 2>/dev/null`:
    the same `draft discard` command, then continue.
 4. **Otherwise** `$T draft start edit-<key>`.
 
-## 4. The draft at each step
+## 3. The commands of each section
 
-1. **Look up, optional question, and the combined Intent/Design gate.** Read
-   the input on the default branch (`read-protocol.md`, section 2) and get
-   approval for the exact file-by-file changes (`SKILL.md`, section 3) before
-   starting the draft.
-2. **Draft.** Start or resume `edit-<key>` (section 3). Then:
+Each part is for the section of `SKILL.md` it names.
 
-   ```bash
-   cd "$WIKI/.worktrees/edit-<key>"
-   READ=$(git rev-parse "$DEFAULT")
-   ```
+### At section 4: Write, finish and commit
 
-   Read the input again here, from the default branch at `READ`.
-3. **Write** the approved changes under `wiki/` in the worktree. Add an entry
-   to the `log.md` of each concept folder you changed, under today's date,
-   newest first:
+**Draft.** Start or resume `edit-<key>` (section 2). Then:
 
-   ```markdown
-   ## 2026-10-04
+```bash
+cd "$WIKI/.worktrees/edit-<key>"
+READ=$(git rev-parse "$DEFAULT")
+```
 
-   * **Edit**: Reworded the summary; no contract changed. Written by an AI model with sdlc-edit-wiki.
-   ```
+Read the input again here, from the default branch at `READ`.
 
-   The Application's own files (`glossary.md`, `conventions.md`) have no log;
-   the commit message says what changed.
-4. **Input check.** Check whether the input changed on the default branch
-   since you read it:
+**Write** the approved changes under `wiki/` in the worktree. Add an entry
+to the `log.md` of each concept folder you changed, under today's date,
+newest first:
 
-   ```bash
-   git fetch --quiet origin 2>/dev/null
-   git diff --quiet "$READ" "$DEFAULT" -- <the input paths> || git diff --stat "$READ" "$DEFAULT" -- <the input paths>
-   ```
+```markdown
+## 2026-10-04
 
-   If it changed, show the user what changed and return to the combined
-   Intent/Design gate (`SKILL.md`, section 3). Do not merge the default branch
-   in here: `$T refresh` is for a pull request that has conflicts (section 5).
-5. **Finish.** Stamp, check and validate:
+* **Edit**: Reworded the summary; no contract changed. Written by an AI model with sdlc-edit-wiki.
+```
 
-   ```bash
-   $T draft finish --by "sdlc-edit-wiki/<the line in RELEASE>" --verified-by
-   ```
+The Application's own files (`glossary.md`, `conventions.md`) have no log;
+the commit message says what changed.
 
-   `--verified-by` without a value records the person in
-   `git config user.email` as having confirmed the files; their approval at the
-   gates is that confirmation. If `ok` is false, fix what `missing_logs` and
-   `validate.errors` report and run it again. Never record a model name.
-6. **Change-set gate.** Run `$T draft diff`. Show the files it lists (those
-   marked `authored: false` were written by the tool) and the commit message
-   `edit(<key>): <what changed>`. Ask for approval.
-7. **Commit, then the summary.**
+**Input check.** Check whether the input changed on the default branch
+since you read it:
 
-   ```bash
-   $T draft commit -m "<message>"; cd "$WIKI"
-   ```
+```bash
+git fetch --quiet origin 2>/dev/null
+git diff --quiet "$READ" "$DEFAULT" -- <the input paths> || git diff --stat "$READ" "$DEFAULT" -- <the input paths>
+```
 
-   Run both in one command: `draft commit` removes the worktree you are in.
-   Judge the result by the JSON it prints (`ok`, `branch`, `pushed`), not by an
-   error about the current directory. In the summary, "Done" names the branch
-   `wiki/edit-<key>` and says the user opens the pull request. If there is no
-   remote, say the branch must be pushed first.
+If it changed, show the user what changed and return to the combined
+Intent/Design gate (`SKILL.md`, section 3). Do not merge the default branch
+in here: `$T refresh` is for a pull request that has conflicts (section 4).
 
-## 5. When a step goes wrong
+**Finish.** Stamp, check and validate:
+
+```bash
+$T draft finish --by "sdlc-edit-wiki/<the line in RELEASE>" --verified-by
+```
+
+`--verified-by` without a value records the person in
+`git config user.email` as having confirmed the files; their approval at the
+gates is that confirmation. If `ok` is false, fix what `missing_logs` and
+`validate.errors` report and run it again. Never record a model name.
+
+**Change-set gate.** Run `$T draft diff`. Show the files it lists (those
+marked `authored: false` were written by the tool) and the commit message
+`edit(<key>): <what changed>`. Ask for approval.
+
+**Commit, then the summary.**
+
+```bash
+$T draft commit -m "<message>"; cd "$WIKI"
+```
+
+Run both in one command: `draft commit` removes the worktree you are in.
+Judge the result by the JSON it prints (`ok`, `branch`, `pushed`), not by an
+error about the current directory. In the summary, "Done" names the branch
+`wiki/edit-<key>` and says the user opens the pull request. If there is no
+remote, say the branch must be pushed first.
+
+## 4. When a step goes wrong
 
 | Situation | Do |
 |---|---|
-| `draft start` says the branch exists | Use section 3 again; never delete a draft that is not merged |
+| `draft start` says the branch exists | Use section 2 again; never delete a draft that is not merged |
 | The pull request has conflicts, because another draft was merged first | `$T draft resume edit-<key>` if the worktree is gone, then `$T refresh` in it. It resolves conflicts in tool-written files itself; for a file a person writes it stops and names it: resolve it with git and run `$T refresh` again |
 | `refresh` reports `ids.duplicate-key` | Another draft chose the same key: `$T rename <old> <new>`, then `$T refresh` |
 | `draft finish` says `git config user.email` is not set | Ask the user for the id to record, and pass it: `--verified-by human:<id>` |
-| `draft commit` refuses because files changed after `finish` | Run step 5 again |
+| `draft commit` refuses because files changed after `finish` | Run `draft finish` again |
 | The user abandons the change | `cd "$WIKI" && $T draft discard edit-<key> --remote` |

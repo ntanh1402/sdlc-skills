@@ -3,14 +3,14 @@
 This file says how `sdlc-close-task` drafts, checks, approves and commits its
 changes to the wiki. `SKILL.md` says what to write; this file says how.
 
-Read `read-protocol.md` and `flow.md` next to this file first.
+Read it at `SKILL.md` section 4.
 
 ## 1. The rules
 
 - Every change goes into a **draft**: a branch `wiki/close-<Task key>` with its
   own worktree in `WIKI/.worktrees/close-<Task key>/`. The default branch
   changes only when the user merges the draft's pull request.
-- Stop at the approval gates of `flow.md`: first the combined Intent and Design
+- Stop at the approval gates of `SKILL.md`: first the combined Intent and Design
   stop (showing the planned wiki changes file by file, before starting the
   draft), then the Change-set gate.
 - Never merge, never open a pull request, never call a hosting service; the
@@ -22,24 +22,7 @@ Read `read-protocol.md` and `flow.md` next to this file first.
   and the `log.md` of each concept folder changed. Never edit an `index.md` or
   any tool-written section; `draft finish` writes those.
 
-## 2. Check the versions
-
-This skill's folder has a file `RELEASE` next to its `SKILL.md`, holding one
-line such as `1.0.0`. Compare it with the wiki's tool copy before anything
-else:
-
-```bash
-cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
-```
-
-| `status` | Do |
-|---|---|
-| `current` | Go on |
-| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
-| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
-| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
-
-## 3. The draft key
+## 2. The draft key
 
 The key is `close-<Task key>`, for example `close-TASK-coupon-api`.
 
@@ -67,71 +50,76 @@ Otherwise decide what to do after `git fetch --quiet origin 2>/dev/null`:
    then continue.
 4. **Otherwise** `$T draft start close-<Task key>`.
 
-## 4. The draft at each step
+## 3. The commands of each section
 
-1. **Look up, question, and the combined Intent/Design gate.** Read the input
-   on the default branch (`read-protocol.md`, section 2) and get approval for
-   the file-by-file changes (`SKILL.md`, section 3) before starting the draft.
-2. **Draft.** Start or resume `close-<Task key>` (section 3). Then:
+Each part is for the section of `SKILL.md` it names.
 
-   ```bash
-   cd "$WIKI/.worktrees/close-<Task key>"
-   READ=$(git rev-parse "$DEFAULT")
-   ```
+### At section 4: Write, finish and commit
 
-   Read the input again here, from the default branch at `READ`.
-3. **Write** the approved changes under `wiki/` in the worktree. Add an entry
-   to the `log.md` of every concept folder you change, under today's date,
-   newest first:
+**Draft.** Start or resume `close-<Task key>` (section 2). Then:
 
-   ```markdown
-   ## 2026-10-12
+```bash
+cd "$WIKI/.worktrees/close-<Task key>"
+READ=$(git rev-parse "$DEFAULT")
+```
 
-   * **Close**: TASK-coupon-api is Done; its code is merged as 3f2a91c. EP-apply-coupon is live. Written by an AI model with sdlc-close-task.
-   ```
+Read the input again here, from the default branch at `READ`.
 
-4. **Input check.** Check whether the input changed on the default branch
-   since you read it:
+**Write** the approved changes under `wiki/` in the worktree. Add an entry
+to the `log.md` of every concept folder you change, under today's date,
+newest first:
 
-   ```bash
-   git fetch --quiet origin 2>/dev/null
-   git diff --quiet "$READ" "$DEFAULT" -- <the input paths> || git diff --stat "$READ" "$DEFAULT" -- <the input paths>
-   ```
+```markdown
+## 2026-10-12
 
-   If it changed, show the user what changed and return to the combined
-   Intent/Design gate (`SKILL.md`, section 3). Do not merge the default branch
-   in here: `$T refresh` is for a pull request that has conflicts (section 5).
-5. **Finish.** Stamp, check and validate:
+* **Close**: TASK-coupon-api is Done; its code is merged as 3f2a91c. EP-apply-coupon is live. Written by an AI model with sdlc-close-task.
+```
 
-   ```bash
-   $T draft finish --by "sdlc-close-task/<the line in RELEASE>" --verified-by
-   ```
+**Input check.** Check whether the input changed on the default branch
+since you read it:
 
-   `--verified-by` without a value records the person in
-   `git config user.email` as having confirmed the files; their approval at the
-   gates is that confirmation. If `ok` is false, fix what `missing_logs` and
-   `validate.errors` report and run it again. Never record a model name.
-6. **Change-set gate.** Run `$T draft diff`. Show the files it lists (those
-   marked `authored: false` were written by the tool) and the commit message
-   `close(<Task key>): <the Task's title>`. Ask for approval.
-7. **Commit, then the summary.**
+```bash
+git fetch --quiet origin 2>/dev/null
+git diff --quiet "$READ" "$DEFAULT" -- <the input paths> || git diff --stat "$READ" "$DEFAULT" -- <the input paths>
+```
 
-   ```bash
-   $T draft commit -m "<message>"; cd "$WIKI"
-   ```
+If it changed, show the user what changed and return to the combined
+Intent/Design gate (`SKILL.md`, section 3). Do not merge the default branch
+in here: `$T refresh` is for a pull request that has conflicts (section 4).
 
-   Run both in one command: `draft commit` removes the worktree you are in.
-   Judge the result by the JSON it prints (`ok`, `branch`, `pushed`), not by an
-   error about the current directory. In the summary, "Done" names the branch
-   `wiki/close-<Task key>` and says the user opens the pull request. If there
-   is no remote, say the branch must be pushed first.
+**Finish.** Stamp, check and validate:
 
-## 5. When a step goes wrong
+```bash
+$T draft finish --by "sdlc-close-task/<the line in RELEASE>" --verified-by
+```
+
+`--verified-by` without a value records the person in
+`git config user.email` as having confirmed the files; their approval at the
+gates is that confirmation. If `ok` is false, fix what `missing_logs` and
+`validate.errors` report and run it again. Never record a model name.
+
+**Change-set gate.** Run `$T draft diff`. Show the files it lists (those
+marked `authored: false` were written by the tool) and the commit message
+`close(<Task key>): <the Task's title>`. Ask for approval.
+
+**Commit, then the summary.**
+
+```bash
+$T draft commit -m "<message>"; cd "$WIKI"
+```
+
+Run both in one command: `draft commit` removes the worktree you are in.
+Judge the result by the JSON it prints (`ok`, `branch`, `pushed`), not by an
+error about the current directory. In the summary, "Done" names the branch
+`wiki/close-<Task key>` and says the user opens the pull request. If there
+is no remote, say the branch must be pushed first.
+
+## 4. When a step goes wrong
 
 | Situation | Do |
 |---|---|
-| `draft start` says the branch exists | Use section 3 again; never delete a draft that is not merged |
+| `draft start` says the branch exists | Use section 2 again; never delete a draft that is not merged |
 | The pull request has conflicts, because another draft was merged first | `$T draft resume close-<Task key>` if the worktree is gone, then `$T refresh` in it. It resolves conflicts in tool-written files itself; for a file a person writes it stops and names it: resolve it with git and run `$T refresh` again |
 | `draft finish` says `git config user.email` is not set | Ask the user for the id to record, and pass it: `--verified-by human:<id>` |
-| `draft commit` refuses because files changed after `finish` | Run step 5 again |
+| `draft commit` refuses because files changed after `finish` | Run `draft finish` again |
 | The user abandons the change | `cd "$WIKI" && $T draft discard close-<Task key> --remote` |

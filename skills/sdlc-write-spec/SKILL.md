@@ -27,13 +27,26 @@ Its draft prefix is `spec-`: the draft for `FEAT-coupons` is
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read the schema pages `schema.md`, `feature.md`,
-`change-request.md` and `reference.md` in the wiki's `.wiki-llm/schema/`.
-When a revision removes a Requirement, also `user-story.md`, `task.md` and
-`test-case.md`.
+Read, in this skill's folder, `references/read-protocol.md`; each section names
+the other `references/` files to read when it starts.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read the schema pages `schema.md`, `feature.md`, `change-request.md` and
+`reference.md` in the wiki's `.wiki-llm/schema/`. When a revision removes a
+Requirement, also `user-story.md`, `task.md` and `test-case.md`.
 
 Other requests go elsewhere; say so and stop:
 
@@ -51,7 +64,27 @@ Other requests go elsewhere; say so and stop:
 | A typo, the glossary or conventions, a Feature marked released | `sdlc-edit-wiki` |
 | A bug diagnosis, a release | not an sdlc-skills wiki skill |
 
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design), and exactly what is
+saved (Change-set), each before the next cost is paid.
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the design, stop. A draft worktree this run started
+  is discarded; a worktree an earlier run started is left as it is.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
+
 ## 1. Look up: target and mode
+
+Read `references/interview-guide.md` now.
 
 **Application.** Use the one the user names, else the one whose features match
 the request's terms (`wiki/index.md`, `wiki/<app>/features/index.md`), else
@@ -97,9 +130,51 @@ no Feature for it in the wiki, is not a spec to write. When the source reads
 that way, ask once whether it is built; if it is, stop: "this is already
 built; use sdlc-import to record it".
 
-## 2. Questions and the Intent gate
+**An unfinished run.** Last, `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
+lists the runs that stopped part-way. When one is for this request (its
+folder is `spec-<Key>`, or its plan's title names this request), read
+`references/write-protocol.md` now and go on as its section 2 says, without
+asking the rounds again.
 
-Ask in rounds, as `references/flow.md` section 4 says.
+## 2. Questions and the Intent gate
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - Which Application and mode apply? No Feature covers coupon codes in shop
+     (shop/features/index.md).
+     ➡️ New Feature FEAT-coupons in shop, status Draft.
+Q2 - What else in the wiki must change because of this?
+     ➡️ Only FEAT-coupons and its PRD Reference REF-coupons-prd.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation. A
+  recommendation that rests on the wiki cites the path. A question whose
+  answer depends on another question in the same round waits for the next
+  round.
+- **At least one round**, even when a brief seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki must change because of
+  this request, with your own answer as the recommendation. A request usually
+  touches more files than it names; asking finds them before the plan is
+  approved, not after.
+
+Wait for the answers. Ask another round when the answers open new questions.
+Search the wiki again whenever an answer brings a system, a term or a claim
+about current behaviour you have not read.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change this skill
+does not own, do not make it. List it under "For other skills" in the Run plan
+and in the summary. When your work depends on it, stop before the Intent gate
+and name the skill to run first.
+
 
 **The first round** puts what you found to the person, each as a question
 with your answer as the recommendation and the wiki paths as evidence: the
@@ -141,9 +216,11 @@ the rounds; a rejection writes nothing.
 
 ## 3. Run plan and the Design gate
 
-Start or resume the draft `spec-<Key>` as `references/write-protocol.md`
-section 3 says. For a new Feature or ChangeRequest the input is the
-Application and, for a ChangeRequest, the target Feature's `overview.md`; it
+Read `references/write-protocol.md` and `references/prd-templates.md` now.
+
+Start or resume the draft `spec-<Key>` as `write-protocol.md` section 2 and
+section 3, "At section 3", say. For a new Feature or ChangeRequest the input is
+the Application and, for a ChangeRequest, the target Feature's `overview.md`; it
 must be on the default branch.
 
 Prepare the PRD with `references/prd-templates.md` and write it straight to
@@ -154,9 +231,10 @@ is written once: the person approves the text that will be committed, and a
 resumed run still has it. Prepare a table mapping each Requirement to the PRD
 sections it comes from.
 
-Write the Run plan: its `## Files` are `overview.md` and `log.md` in the
-Feature's or ChangeRequest's folder, and the PRD's Reference folder:
-`overview.md`, `log.md` and the content file (already ticked).
+Write the Run plan (`write-protocol.md` section 4): its `## Files` are
+`overview.md` and `log.md` in the Feature's or ChangeRequest's folder, and the
+PRD's Reference folder: `overview.md`, `log.md` and the content file (already
+ticked).
 
 **Design gate.** Show the full PRD as the file holds it and the mapping, never
 only a summary, then the Run plan, and ask two questions:
@@ -296,11 +374,11 @@ Do not write `generated`, `verified` or any `index.md`: `draft finish` does.
 
 ## 5. Self review, finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 5. The input paths
-for the input check are the Application's `overview.md` (new Feature mode;
-not `features/index.md`, which the tool rewrites whenever any Feature merges),
-the target Feature's `overview.md` (ChangeRequest mode) and the file being
-revised (revision mode).
+Follow `write-protocol.md` section 3, "At section 5", with the self review of
+its section 5. The input paths for the input check are the Application's
+`overview.md` (new Feature mode; not `features/index.md`, which the tool
+rewrites whenever any Feature merges), the target Feature's `overview.md`
+(ChangeRequest mode) and the file being revised (revision mode).
 
 In the self review, have the review sub-agent also check by reading that:
 
@@ -341,6 +419,22 @@ stored: the list empties as those steps run.
 | A Feature or ChangeRequest `ReqApproved` whose design is current but that has an outdated Task (`$T outdated` lists a Task) | "`sdlc-plan-tasks` first: an approved target has no outdated Task. Then `sdlc-design-arch` again to approve it" |
 | A ChangeRequest `ReqApproved` whose Delta is current, or a Feature `ReqApproved` whose Architecture is current and that already has `Done` Tasks, with no outdated Task | "`sdlc-design-arch` again to approve it: no redesign, it updates the Feature / Design files and sets the status" |
 | A draft that is designed and current | "Mark the Requirements agreed with this skill when they are; the Tasks can be built and closed meanwhile" |
+
+## The summary
+
+End the run with at most four lines:
+
+```text
+Done: wiki/spec-FEAT-coupons, 5 files, pushed. Open the pull request.
+Not done: features/FEAT-coupons/overview.md (refund coupon rule undecided)
+For other skills: TASK-checkout-ui is outdated for version 2 (sdlc-plan-tasks)
+Next: sdlc-design-arch after the merge, even while the Requirements are a draft.
+```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not list what the self review fixed, and do not repeat the PRD: the person
+approved the content at the gates, so the last message only says where it is
+and what comes next.
 
 ## Done when
 

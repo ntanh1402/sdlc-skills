@@ -17,11 +17,24 @@ on the same design.
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read `references/decomposition-rules.md`, `references/task-sizing.md` and
-`references/task-format.md`, and the schema pages `schema.md`, `task.md`,
+Read, in this skill's folder, `references/read-protocol.md`; each section names
+the other `references/` files to read when it starts.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read the schema pages `schema.md`, `task.md`,
 `user-story.md`, `feature.md`, `change-request.md` and the page of each
 Design type in scope,
 in the wiki's `.wiki-llm/schema/`.
@@ -36,6 +49,24 @@ in the wiki's `.wiki-llm/schema/`.
 | Write the code of a Task | `sdlc-build-task` |
 | Mark a Task `Done` | `sdlc-close-task`, after its code is merged |
 | Add a ticket link to a Task | `sdlc-edit-wiki` |
+
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design), and exactly what is
+saved (Change-set), each before the next cost is paid.
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the design, stop. A draft worktree this run started
+  is discarded; a worktree an earlier run started is left as it is.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. Look up: readiness and the scope
 
@@ -79,13 +110,59 @@ observability, rollout and clean-up duties the design and its decisions
 name. A frontend route, screen or `# Calls` change is scope like any other.
 List the folder's stories beside the inventory, each with its Requirements.
 
+**An unfinished run.** Last, `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
+lists the runs that stopped part-way. When one is for this request (its
+folder is `tasks-<Key>`, or its plan's title names this request), read
+`references/write-protocol.md` now and go on as its section 2 says, without
+asking the rounds again.
+
 ## 2. Questions and the Intent gate
 
-Ask in rounds, as `references/flow.md` section 4 says. The first round names
-the target and its state, shows the scope inventory, and puts to the person
-the choices of section 3 that are theirs: where the slices are cut, which
-repository each concept is built in when the wiki does not say, the order
-when two orders are possible, and what a spike must answer. It also holds:
+Read `references/decomposition-rules.md` and `references/task-sizing.md` now:
+the choices of section 3 use them.
+
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - How should the coupon work be sliced across repositories?
+     (services/SVC-orders/overview.md, frontends/WEB-storefront/overview.md)
+     ➡️ Two Tasks: TASK-coupon-api in orders-service first, then TASK-coupon-ui in shop-web.
+Q2 - What else in the wiki must change because of this?
+     ➡️ Nothing: only Task files and the folder's log.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation. A
+  recommendation that rests on the wiki cites the path. A question whose
+  answer depends on another question in the same round waits for the next
+  round.
+- **At least one round**, even when a brief seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki must change because of
+  this request, with your own answer as the recommendation.
+
+Wait for the answers. Ask another round when the answers open new questions.
+Search the wiki again whenever an answer brings a system, a term or a claim
+about current behaviour you have not read.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change this skill
+does not own (such as a gap in the architecture or a missing Reference), do
+not make it. List it under "For other skills" in the Run plan and in the
+summary. When your work depends on it, stop before the Intent gate and name
+the skill to run first.
+
+The first round names the target and its state, shows the scope inventory, and
+puts to the person the choices of section 3 that are theirs: where the slices
+are cut, which repository each concept is built in when the wiki does not say,
+the order when two orders are possible, and what a spike must answer. It also
+holds:
 
 - **started Tasks**, when Tasks exist. The wiki does not know whether a
   `Todo` Task has started or its code is already merged: list the `Todo`
@@ -155,9 +232,12 @@ plans no new Task.
 
 ## 4. Run plan and the Design gate
 
-Start or resume the draft `tasks-<Key>` as `references/write-protocol.md`
-section 3 says. The input paths are the Feature's or ChangeRequest's
-`overview.md` and, for a ChangeRequest, the target Feature's `overview.md`.
+Read `references/write-protocol.md` and `references/task-format.md` now.
+
+Start or resume the draft `tasks-<Key>` as `write-protocol.md` section 2 and
+section 3, "At section 4", say. The input paths are the Feature's or
+ChangeRequest's `overview.md` and, for a ChangeRequest, the target Feature's
+`overview.md`.
 
 Prepare the task plan: in dependency order, one row per Task with its key,
 title, type, size, repository, planned scope, stories, acceptance summary,
@@ -165,8 +245,9 @@ blockers and confidence; then the coverage matrix (each inventory row to its
 owning Task, and each story to the Tasks that link it) and the parallel waves (Tasks with no unfinished blocker start
 together).
 
-Write the Run plan. Its `## Files` are one line per Task file, added or
-changed, with its planned scope in a few words, and the folder's `log.md`.
+Write the Run plan (`write-protocol.md` section 4). Its `## Files` are one line
+per Task file, added or changed, with its planned scope in a few words, and the
+folder's `log.md`.
 
 **Design gate.** Show the task plan in full, never only a summary, then the
 Run plan. Ask for approval (`TASK PLAN APPROVED`).
@@ -184,8 +265,9 @@ design. Do not write `index.md`.
 
 ## 6. Self review, finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, have the review sub-agent check by reading that:
+Follow `write-protocol.md` section 3, "At section 6", with the self review of
+its section 5. In the self review, have the review sub-agent check by reading
+that:
 
 - each concept of the inventory is in the `# Planned scope` of one owning
   Task (plus any earlier `Done` or started Task that built an older version
@@ -209,6 +291,22 @@ change will add a new Task for the difference. When the parent is
 `ReqApproved`, add that `sdlc-design-arch` can approve it once this pull
 request is merged: an approved parent needs every Task at its current
 version.
+
+## The summary
+
+End the run with at most four lines:
+
+```text
+Done: wiki/tasks-FEAT-coupons, 3 files, pushed. Open the pull request.
+Not done: features/FEAT-coupons/TASK-coupon-export.md (export contract undecided)
+For other skills: Missing Reference for coupon code format (sdlc-edit-wiki)
+Next: Build wave 1 (TASK-coupon-api) with sdlc-build-task after the merge.
+```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not list what the self review fixed, and do not repeat the task plan: the
+person approved the content at the gates, so the last message only says where
+it is and what comes next.
 
 ## Done when
 

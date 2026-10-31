@@ -21,8 +21,7 @@ LIFECYCLE = ("sdlc-write-spec", "sdlc-write-stories", "sdlc-design-arch", "sdlc-
 WRITERS = (*LIFECYCLE, "sdlc-close-task", "sdlc-edit-wiki")  # every skill that writes a Draft
 EXPECTED_REFERENCES = {
     "read-protocol.md": (*WRITERS, "sdlc-build-task", "sdlc-ask-wiki", "sdlc-review-code"),
-    "flow.md": (*WRITERS, "sdlc-build-task"),
-    "write-protocol.md": WRITERS,
+    "write-protocol.md": (*WRITERS, "sdlc-build-task"),
     "code-checks.md": ("sdlc-build-task", "sdlc-review-code"),
     "paste-format.md": ("sdlc-write-stories", "sdlc-ask-wiki"),
 }
@@ -210,7 +209,7 @@ class ReleaseScriptTest(unittest.TestCase):
 
 
 class SkillPackageTest(unittest.TestCase):
-    """The rules of ADR 0003 for every skill package."""
+    """Agent-neutrality and package layout rules for every skill."""
 
     def skill_files(self):
         for path in sorted(SKILLS.rglob("*")):

@@ -42,16 +42,16 @@ while [ $# -gt 0 ]; do
   esac
 done
 TOOL="python3 $HERE/skills/sdlc-setup-wiki/wiki-llm/tools/wiki_llm.py"
-for name in "${SOURCES[@]}"; do
+for name in ${SOURCES[@]+"${SOURCES[@]}"}; do
   [ -e "$HERE/forward-tests/sources/$name" ] || { echo "no such source: forward-tests/sources/$name" >&2; exit 2; }
 done
-for change in "${CHANGES[@]}"; do
+for change in ${CHANGES[@]+"${CHANGES[@]}"}; do
   [ -f "$HERE/forward-tests/changes/${change#*:}.patch" ] || { echo "no such change: forward-tests/changes/${change#*:}.patch" >&2; exit 2; }
 done
-for name in "${CODES[@]}"; do
+for name in ${CODES[@]+"${CODES[@]}"}; do
   [ -d "$HERE/forward-tests/sources/$name" ] || { echo "no such code folder: forward-tests/sources/$name" >&2; exit 2; }
 done
-for merged in "${MERGED[@]}"; do
+for merged in ${MERGED[@]+"${MERGED[@]}"}; do
   IFS=: read -r _ patch _ <<< "$merged"
   [ -f "$HERE/forward-tests/changes/$patch.patch" ] || { echo "no such change: forward-tests/changes/$patch.patch" >&2; exit 2; }
 done
@@ -72,7 +72,7 @@ else
   $TOOL copy install "$WIKI" > /dev/null
   printf '.worktrees/\n__pycache__/\n' > "$WIKI/.gitignore"
 fi
-for name in "${FIXTURES[@]}"; do
+for name in ${FIXTURES[@]+"${FIXTURES[@]}"}; do
   cp -R "$HERE/forward-tests/fixtures/$name/." "$WIKI/wiki/"
 done
 (cd "$WIKI" && python3 .wiki-llm/tools/wiki_llm.py sync > /dev/null)
@@ -94,7 +94,7 @@ $TOOL link "$DIR/workspace" "$WIKI" > /dev/null
 echo "wiki:      $WIKI"
 echo "workspace: $DIR/workspace"
 
-for name in "${SOURCES[@]}"; do
+for name in ${SOURCES[@]+"${SOURCES[@]}"}; do
   from="$HERE/forward-tests/sources/$name"
   if [ -d "$from" ]; then
     cp -R "$from" "$DIR/$name"
@@ -110,7 +110,7 @@ for name in "${SOURCES[@]}"; do
     echo "source:    $DIR/workspace/docs/$name"
   fi
 done
-for name in "${CODES[@]}"; do
+for name in ${CODES[@]+"${CODES[@]}"}; do
   repo="$DIR/$name"
   cp -R "$HERE/forward-tests/sources/$name" "$repo"
   git init -q --bare "$repo.git"
@@ -125,7 +125,7 @@ for name in "${CODES[@]}"; do
   git -C "$repo" remote set-head origin main
   echo "code:      $repo (remote $repo.git)"
 done
-for change in "${CHANGES[@]}"; do
+for change in ${CHANGES[@]+"${CHANGES[@]}"}; do
   repo="$DIR/${change%%:*}"
   name="${change#*:}"
   git -C "$repo" checkout -q -b "feat/$name"
@@ -134,7 +134,7 @@ for change in "${CHANGES[@]}"; do
   git -C "$repo" "${AUTHOR[@]}" commit -qm "$name"
   echo "change:    $repo on branch feat/$name"
 done
-for merged in "${MERGED[@]}"; do
+for merged in ${MERGED[@]+"${MERGED[@]}"}; do
   IFS=: read -r code patch task <<< "$merged"
   repo="$DIR/$code"
   git -C "$repo" checkout -q main

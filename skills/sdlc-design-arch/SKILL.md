@@ -34,15 +34,27 @@ Its draft prefix is `arch-`: the draft for `CR-sms-alerts` is
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read `references/architecture-checklist.md`,
-`references/contract-rules.md` and `references/adr-format.md`, and the schema
-pages `schema.md`, `feature.md`, `change-request.md`,
+Read, in this skill's folder, `references/read-protocol.md`; each section names
+the other `references/` files to read when it starts.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read the schema pages `schema.md`, `feature.md`, `change-request.md`,
 `architecture-decision.md` and the page of every Design type you may touch, in
-the wiki's `.wiki-llm/schema/`. When a Requirement is removed, also `user-story.md`
-and `test-case.md`.
+the wiki's `.wiki-llm/schema/`. When a Requirement is removed, also
+`user-story.md` and `test-case.md`.
 
 | Request | Skill |
 |---|---|
@@ -52,6 +64,24 @@ and `test-case.md`.
 | Build tasks, or test design, from an approved design | `sdlc-plan-tasks`, `sdlc-design-tests` |
 
 When "design this" could mean several of these, ask one routing question.
+
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design), and exactly what is
+saved (Change-set), each before the next cost is paid.
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the design, stop. A draft worktree this run started
+  is discarded; a worktree an earlier run started is left as it is.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. Look up: readiness and what exists
 
@@ -65,7 +95,7 @@ the default branch and classify:
 | `READY` | A Feature `Draft` or `ReqApproved`, or a ChangeRequest `Proposed` or `ReqApproved`, whose Architecture (Feature) or Delta (ChangeRequest) is `None` | Go on |
 | `REDESIGN` | The same statuses, already designed, and `designBasedOn` names an older version than `version`, or the person asks to change the design | Go on, revising the design in place (section 5, "A design written again") |
 | `APPROVE` | `ReqApproved`, designed, and `designBasedOn` names the current version | The short run of section 7: no new design |
-| `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft (write protocol, section 3) |
+| `NOT_MERGED` | Not on the default branch, but a `wiki/*-<Key>` draft exists | Stop and name the draft (`git branch -a --list 'wiki/*-<Key>'`) |
 | `ALREADY_DESIGNED` | `Approved` or later | Stop: a change to the design is a new ChangeRequest, written with `sdlc-write-spec` |
 | `AMBIGUOUS` | Several candidates | One question that names them; write nothing until it is answered |
 | `CONFLICT` | The requirements contradict an accepted decision or a live contract | Show both, with paths, in the first round and ask how to proceed |
@@ -86,11 +116,11 @@ the Application's indexes and `grep -rl` for the domain words. For existing comp
 their linked repository, OpenAPI or AsyncAPI contracts when they are
 available, read-only.
 
-The wiki is the record. When code and wiki disagree, classify the difference
-with `references/architecture-checklist.md` ("Drift"). Material Drift stops
-the run before the Intent gate: show both sides, ask which is true, and name
-the skill that settles it. It is a change another skill owns (`flow.md`,
-section 4).
+The wiki is the record. When code and wiki disagree, read
+`references/architecture-checklist.md` now and classify the difference with
+its "Drift". Material Drift stops the run before the Intent gate: show both
+sides, ask which is true, and name the skill that settles it. It is a change
+another skill owns (section 2).
 
 Also read the Tasks and TestSuites that already exist for the Feature: the
 design may make them out of date. For `REDESIGN`, read what changed in the
@@ -99,14 +129,61 @@ spec since the version the design was made from (`git log -p` on the
 `$T outdated --feature <Key>` (or `--change <Key>`): it lists the stories,
 Tasks and TestSuites also written from an older version.
 
+**An unfinished run.** Last, `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
+lists the runs that stopped part-way. When one is for this request (its
+folder is `arch-<Key>`, or its plan's title names this request), read
+`references/write-protocol.md` now and go on as its section 2 says, without
+asking the rounds again.
+
 ## 2. Questions and the Intent gate
 
-Ask in rounds, as `references/flow.md` section 4 says. The first round names
-the target and its state, and puts to the person the choices of section 3
-that are theirs to make, each with your recommendation and the wiki paths it
-rests on: what is reused and what is new, how the parts talk to each other,
-who owns new data, and each choice that will become a decision. It also
-holds:
+Read `references/architecture-checklist.md`, `references/contract-rules.md`
+and `references/adr-format.md` now: the choices of section 3
+use them.
+
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - Where are coupons validated? SVC-orders already owns order totals
+     (services/SVC-orders/overview.md).
+     ➡️ In SVC-orders, with no new service.
+Q2 - What else in the wiki must change because of this?
+     ➡️ EP-create-order gains a couponCode field; DB-shop gains TBL-coupons.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation. A
+  recommendation that rests on the wiki cites the path. A question whose
+  answer depends on another question in the same round waits for the next
+  round.
+- **At least one round**, even when a brief seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki must change because of
+  this request, with your own answer as the recommendation. A request usually
+  touches more files than it names; asking finds them before the plan is
+  approved, not after.
+
+Wait for the answers. Ask another round when the answers open new questions.
+Search the wiki again whenever an answer brings a system, a term or a claim
+about current behaviour you have not read.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change this skill
+does not own, do not make it. List it under "For other skills" in the Run plan
+and in the summary. When your work depends on it (such as material Drift),
+stop before the Intent gate and name the skill to run first.
+
+The first round names the target and its state, and puts to the person the
+choices of section 3 that are theirs to make, each with your recommendation and
+the wiki paths it rests on: what is reused and what is new, how the parts talk
+to each other, who owns new data, and each choice that will become a decision.
+It also holds:
 
 - any drift or conflict the lookup found;
 - the wiki question, answered with the concepts you expect to add, change or
@@ -165,10 +242,13 @@ when the design needs one the wiki lacks, say so at the Intent gate and name
 
 ## 4. Run plan and the Design gate
 
-Start or resume the draft `arch-<Key>` as `references/write-protocol.md`
-section 3 says. The input paths are the Feature's or ChangeRequest's
-`overview.md` and its PRD, and for a ChangeRequest also the target Feature's
-`overview.md`, which another ChangeRequest may change meanwhile.
+Read `references/write-protocol.md` now.
+
+Start or resume the draft `arch-<Key>` as `write-protocol.md` section 2 and
+section 3, "At section 4", say. The input paths are the Feature's or
+ChangeRequest's `overview.md` and its PRD, and for a ChangeRequest also the
+target Feature's `overview.md`, which another ChangeRequest may change
+meanwhile.
 
 Prepare the design packet:
 
@@ -184,11 +264,11 @@ Prepare the design packet:
 8. Downstream freshness: each existing Task or TestSuite this design makes out
    of date, and which `Todo` Tasks the person said have started.
 
-Write the Run plan. Its `## Files` are the Feature's or ChangeRequest's
-`overview.md` first, then for a ChangeRequest the target Feature's
-`overview.md`, each Design concept file of the ledger that is not reused,
-each decision file, and the `log.md` of every concept folder they are in. The
-out-of-date Tasks and TestSuites go under `## For other skills`
+Write the Run plan (`write-protocol.md` section 4). Its `## Files` are the
+Feature's or ChangeRequest's `overview.md` first, then for a ChangeRequest the
+target Feature's `overview.md`, each Design concept file of the ledger that is
+not reused, each decision file, and the `log.md` of every concept folder they
+are in. The out-of-date Tasks and TestSuites go under `## For other skills`
 (`sdlc-plan-tasks`, `sdlc-design-tests`); never edit them.
 
 **Design gate.** Show the full packet, never only a summary, then the Run
@@ -256,8 +336,8 @@ Show the dropped and restored files at the Design gate.
 
 ## 6. Self review, finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, have the review sub-agent also check by reading that:
+Follow `write-protocol.md` section 3, "At section 6". In the self review (its
+section 5), have the review sub-agent also check by reading that:
 
 - every Requirement appears in `## Traceability`;
 - the diagrams match the prose and the contracts;
@@ -315,11 +395,22 @@ the edits at the Design gate. When it removes a Requirement that TestCases
 cover, fix those cases the same way, as the last rule of `test-case.md` says.
 A changed Requirement keeps its key: its stories stay as they are.
 
-**The short run** (`APPROVE`): a `ReqApproved` target whose design was made
-from its current version. First do the check of "When Tasks already exist":
-when it fails, stop before any draft and give the summary it names. Otherwise
-use the short form of `references/flow.md` section 8 in the draft
-`arch-<Key>`. The one stop shows, file by file:
+**The short run** (`APPROVE`): a `ReqApproved` target whose design was made from
+its current version. First do the check of "When Tasks already exist": when it
+fails, stop before any draft and give the summary it names. Otherwise read
+`references/write-protocol.md` and use **the short run** in the draft
+`arch-<Key>`:
+
+1. Look up.
+2. Ask only when the lookup leaves something undecided.
+3. One stop that is the Intent and the Design gate together: the exact
+   changes, file by file.
+4. Write.
+5. The Change-set gate.
+6. Commit, then the summary with "Done" and "Next" only.
+
+There is no Run plan and no self review beyond the tool's own checks. The one
+stop shows, file by file:
 
 - a Feature: `status: Approved` (or `InDev` when a Task is `Done`, plus the
   Design files whose pending entries for the Feature are removed);
@@ -331,6 +422,22 @@ Then the Change-set gate and the commit, `arch(<Key>): approve`. A
 ChangeRequest whose Delta no longer fits the target Feature (another
 ChangeRequest changed it meanwhile) is a `REDESIGN`, not an approval: say so
 and go back to section 2.
+
+## The summary
+
+End the run with at most four lines:
+
+```text
+Done: wiki/arch-FEAT-coupons, 4 files, pushed. Open the pull request.
+Not done: services/SVC-orders/overview.md (the contract for refunds is undecided)
+For other skills: REQ-coupons-expiry is ambiguous (sdlc-write-spec)
+Next: sdlc-plan-tasks and sdlc-design-tests after the merge.
+```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not list what the self review fixed, and do not repeat the design: the person
+approved the content at the gates, so the last message only says where it is
+and what comes next.
 
 ## Done when
 

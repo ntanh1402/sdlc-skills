@@ -16,14 +16,26 @@ the same design.
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read `references/test-design-rules.md`, `references/case-format.md` and
-`references/security-load-checklists.md`, and the schema pages `schema.md`,
-`test-suite.md`, `test-case.md`, `feature.md`, `change-request.md`,
-`architecture-decision.md` and the page of each Design type in scope, in the
-wiki's `.wiki-llm/schema/`.
+Read, in this skill's folder, `references/read-protocol.md`; each section names
+the other `references/` files to read when it starts.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read the schema pages `schema.md`, `test-suite.md`, `test-case.md`,
+`feature.md`, `change-request.md`, `architecture-decision.md` and the page of
+each Design type in scope, in the wiki's `.wiki-llm/schema/`.
 
 | Request | Skill |
 |---|---|
@@ -32,6 +44,24 @@ wiki's `.wiki-llm/schema/`.
 | User stories | `sdlc-write-stories`; TestCases link Requirements, never stories |
 | Runnable tests, or running them | Not this skill. `sdlc-build-task` writes a Task's unit tests with its code |
 | Which tests exist, or what is uncovered | `sdlc-ask-wiki` |
+
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design), and exactly what is
+saved (Change-set), each before the next cost is paid.
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the design, stop. A draft worktree this run started
+  is discarded; a worktree an earlier run started is left as it is.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. Look up: readiness and the inventory
 
@@ -67,11 +97,57 @@ when the person says so. List:
 - data integrity, migration, compatibility, regression and clean-up;
 - the performance and security risks the Requirements and decisions state.
 
+**An unfinished run.** Last, `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
+lists the runs that stopped part-way. When one is for this request (its
+folder is `tests-<Key>`, or its plan's title names this request), read
+`references/write-protocol.md` now and go on as its section 2 says, without
+asking the rounds again.
+
 ## 2. Questions and the Intent gate
 
-Ask in rounds, as `references/flow.md` section 4 says. The first round names
-the target and its state, shows the inventory, and asks the person to choose
-the suite types. Recommend the types that apply, each with its evidence:
+Read `references/test-design-rules.md` and
+`references/security-load-checklists.md` now: the choices of section 3 use them.
+
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - Which suite types should be designed for FEAT-coupons?
+     (features/FEAT-coupons/overview.md, services/SVC-orders/EP-create-order.md)
+     ➡️ integration (TS-coupons-integration) and e2e (TS-coupons-e2e).
+Q2 - What else in the wiki must change because of this?
+     ➡️ Nothing: only TestSuites and TestCases.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation. A
+  recommendation that rests on the wiki cites the path. A question whose
+  answer depends on another question in the same round waits for the next
+  round.
+- **At least one round**, even when a brief seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki must change because of
+  this request, with your own answer as the recommendation.
+
+Wait for the answers. Ask another round when the answers open new questions.
+Search the wiki again whenever an answer brings a system, a term or a claim
+about current behaviour you have not read.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change this skill
+does not own (such as a Requirement or contract that cannot be tested as
+written), do not make it. List it under "For other skills" in the Run plan and
+in the summary. When your work depends on it, stop before the Intent gate and
+name the skill to run first.
+
+The first round names the target and its state, shows the inventory, and asks
+the person to choose the suite types. Recommend the types that apply, each with
+its evidence:
 
 - `unit`: isolated rules, transformations, validations, error mapping;
 - `integration`: service, datastore, external and message boundaries;
@@ -101,9 +177,10 @@ approval.
 
 ## 3. What goes into the design
 
-For each chosen type, partition inputs and branches with
-`references/test-design-rules.md`. "All cases" means complete coverage of the
-requirement, contract and risk partitions, not every combination of inputs.
+Read `references/case-format.md` now. For each chosen type, partition inputs and
+branches with `references/test-design-rules.md`. "All cases" means complete
+coverage of the requirement, contract and risk partitions, not every combination
+of inputs.
 
 One suite per target and type: `TS-<target words>-<type>`, for example
 `TS-coupons-e2e`. If one exists, add to it; if several match, stop and ask.
@@ -119,9 +196,12 @@ Each case is a file `TC-<behaviour words>.md` in the suite folder, written with
 
 ## 4. Run plan and the Design gate
 
-Start or resume the draft `tests-<Key>` as `references/write-protocol.md`
-section 3 says. The input paths are the Feature's or ChangeRequest's
-`overview.md` and, for a ChangeRequest, the target Feature's `overview.md`.
+Read `references/write-protocol.md` now.
+
+Start or resume the draft `tests-<Key>` as `write-protocol.md` section 2 and
+section 3, "At section 4", say. The input paths are the Feature's or
+ChangeRequest's `overview.md` and, for a ChangeRequest, the target Feature's
+`overview.md`.
 
 Prepare the test design. Build the matrix from every inventory row to its
 cases; rows without their own wiki concept (a failure branch, a risk) are
@@ -133,12 +213,12 @@ added by hand. The design is:
 - the totals by Requirement, Design concept, risk and suite type;
 - assumptions and residual risks.
 
-Write the Run plan. Its `## Files` are each new suite's `overview.md`, one
-line per case file with what it covers, and the `log.md` of each suite.
-When the user gave a test plan that the wiki does not hold yet, add its
-Reference folder `references/REF-<name>-test-plan/` (`overview.md`, `log.md`
-and the plan as a content file); the Design gate is the person's approval of
-it.
+Write the Run plan (`write-protocol.md` section 4). Its `## Files` are each new
+suite's `overview.md`, one line per case file with what it covers, and the
+`log.md` of each suite. When the user gave a test plan that the wiki does not
+hold yet, add its Reference folder `references/REF-<name>-test-plan/`
+(`overview.md`, `log.md` and the plan as a content file); the Design gate is the
+person's approval of it.
 
 **Design gate.** Show the design in full, never only a summary, then the Run
 plan. Ask for approval. Approval with an uncovered in-scope row is allowed
@@ -167,8 +247,9 @@ both.
 
 ## 6. Self review, finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 5. In the self
-review, have the review sub-agent check by reading that:
+Follow `write-protocol.md` section 3, "At section 6", with the self review of
+its section 5. In the self review, have the review sub-agent check by reading
+that:
 
 - every case has its risk, concrete data, complete steps, a validation for
   each step that needs one, clean-up and links;
@@ -187,6 +268,22 @@ Commit message: `tests(<Key>): design <n> cases`. In the summary, "Not done"
 names each gap the user accepted, and "Next" says the suites can be turned
 into runnable tests once the pull request is merged, and that each suite's
 `checklist.csv` lists its cases.
+
+## The summary
+
+End the run with at most four lines:
+
+```text
+Done: wiki/tests-FEAT-coupons, 6 files, pushed. Open the pull request.
+Not done: load suite declined by user (accepted residual risk recorded in log.md)
+For other skills: REQ-coupons-expiry lacks an exact timezone rule (sdlc-write-spec)
+Next: Implement runnable tests from each suite's checklist.csv after the merge.
+```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not list what the self review fixed, and do not repeat the test design: the
+person approved the content at the gates, so the last message only says where
+it is and what comes next.
 
 ## Done when
 

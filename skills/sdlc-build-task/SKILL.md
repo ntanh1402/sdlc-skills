@@ -15,10 +15,8 @@ It writes code, never the wiki: section 8 lists what it never does.
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/code-checks.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step.
+Read, in this skill's folder, `references/read-protocol.md`; each section names
+the other `references/` files to read when it starts.
 
 Find the wiki as the read protocol says, and check that it matches this
 skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
@@ -42,6 +40,24 @@ Other requests go elsewhere; say so and stop:
 | Change the requirements, the design, the user stories or a Task | `sdlc-write-spec`, `sdlc-design-arch`, `sdlc-write-stories`, `sdlc-plan-tasks` |
 | Runnable code for a TestCase, or running tests | Not an sdlc-skills skill |
 | Push, open a pull request, merge | The person does that |
+
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design), and exactly what is
+saved (Change-set), each before the next cost is paid.
+
+- Approval is an explicit yes to the gate's question. "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no worktree. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the design, stop. A worktree and branch this run
+  started are removed; those an earlier run started are left as they are.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. Look up: the Task, the wiki and the code
 
@@ -116,10 +132,51 @@ BASE=$(git -C "$SRC" symbolic-ref --quiet --short refs/remotes/origin/HEAD \
 `BASE` is the remote's default branch, else a local `main`, else `master`, so
 a repository with no remote still works.
 
+**An unfinished run.** Last, when the branch or the worktree of section 3
+already exists, an earlier run stopped part-way: read
+`references/write-protocol.md` now and go on as its section 2 says, without
+asking the rounds again.
+
 ## 2. Questions and the Intent gate
 
-Ask in rounds, as `references/flow.md` section 4 says. The first round names
-the Task, its parent and the code folder, and puts to the person:
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - Where should EP-apply-coupon live in ../orders-svc? Existing order endpoints
+     are in src/api/orders.py.
+     ➡️ In src/api/orders.py, with unit tests in tests/test_orders.py.
+Q2 - What else in the wiki must change because of this?
+     ➡️ Nothing.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation. A
+  recommendation that rests on the wiki or the code cites the path. A question
+  whose answer depends on another question in the same round waits for the
+  next round.
+- **At least one round**, even when a Task seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki must change because of
+  this request, with your own answer as the recommendation. Because this skill
+  never writes the wiki, every answer other than "nothing" goes under "For
+  other skills".
+
+Wait for the answers. Ask another round when the answers open new questions.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change, do not
+make it. List it under "For other skills" in the Run plan and in the summary.
+When your work depends on it, stop before the Intent gate and name the skill
+to run first.
+
+The first round names the Task, its parent and the code folder, and puts to the
+person:
 
 - the branch name and the worktree path (section 3);
 - where each scope item goes in the code, when the code allows more than one
@@ -144,59 +201,19 @@ worktree path, and what will not be built here. Ask for approval.
 | The worktree | `<code folder>/.worktrees/<NAME>/` |
 | The Run plan | `plan.md` at the root of the worktree; `sdlc-plan.md` when the repository tracks a `plan.md` of its own there |
 
-Use plain git, not the wiki's tool. Before the worktree is added, make git
-ignore the worktrees and the Run plan through the repository's
-`info/exclude`. That file is local and never committed, so the repository's
-own `.gitignore` is not touched:
-
-```bash
-PLAN=plan.md
-git -C "$SRC" cat-file -e "$BASE:plan.md" 2>/dev/null && PLAN=sdlc-plan.md
-EXCLUDE="$(git -C "$SRC" rev-parse --path-format=absolute --git-common-dir)/info/exclude"
-mkdir -p "$(dirname "$EXCLUDE")"
-for line in ".worktrees/" "/$PLAN"; do
-  grep -qxF "$line" "$EXCLUDE" 2>/dev/null || echo "$line" >> "$EXCLUDE"
-done
-git -C "$SRC" worktree add -b "<branch>" "$SRC/.worktrees/$NAME" "$BASE"
-```
-
-An ignore rule does not hide a file git already tracks. That is why a
-repository with its own `plan.md` gets `sdlc-plan.md`: its file is never
-overwritten, deleted or committed by this skill.
-
-**A resumed build.** When the branch or the worktree already exists, an
-earlier run started this Task. Never delete either. Show the branch's commits
-(`git -C "$SRC" log --oneline "$BASE..<branch>"`) and the Run plan when there
-is one, and go on as `flow.md` section 5 ("Resuming") says. A branch with no
-worktree gets one: `git -C "$SRC" worktree add "$SRC/.worktrees/$NAME" "<branch>"`.
-With no Run plan, write a new one for what is left.
-
-**The Run plan.** Write it as `flow.md` section 5 says. For code it is the
-design, so nothing else is shown at the Design gate. Under `## Files`, one
-line per code file and per unit-test file: the path, added or changed, what
-it does, and the scope item and the acceptance item it serves:
-
-```markdown
-## Files
-- [ ] src/api/coupons.py (add: POST /coupons/apply; EP-apply-coupon; acceptance 1 and 2)
-- [ ] src/api/test_coupons.py (add: unit tests for the 200, 404 and 409 paths; acceptance 1 to 3)
-- [ ] db/migration/V7__coupons.sql (add: table coupons; TBL-coupons)
-
-## Not built here
-- WEB-storefront, the coupon field: not in this folder
-```
-
-`## Not built here` lists each scope item the plan does not cover, with the
-reason. Leave it out when every item is covered.
+Read `references/write-protocol.md` now. Add the worktree as its section 2
+says, and write the Run plan as its section 4 says. For code the Run plan is
+the design, so nothing else is shown at the Design gate.
 
 ## 4. Design gate
 
-Show the Run plan in full. Ask for approval. On rejection, remove a worktree
-and a branch this run made (`git -C "$SRC" worktree remove --force
-"$SRC/.worktrees/$NAME"`, then `git -C "$SRC" branch -D "<branch>"`); leave
-those of a resumed build as they are.
+Show the Run plan in full. Ask for approval. On rejection, follow
+`write-protocol.md` section 3, "At section 4".
 
 ## 5. Write
+
+Read `references/code-checks.md` now: the self review checks the code against
+it.
 
 In the worktree, write the code and its unit tests as `conventions.md`
 requires, ticking each file in the Run plan. Match the code around it: its
@@ -223,26 +240,15 @@ and "For other skills".
 
 ## 6. Self review and the Change-set gate
 
-First check that the input did not change: `git -C "$WIKI" fetch --quiet
-origin 2>/dev/null`, then `git -C "$WIKI" diff --stat "$READ" "$DEFAULT" --
-<the Task file and each Design file in its scope>`. If it prints anything,
-show it and go back to the Design gate.
-
-Do the self review of `flow.md` section 6 with `references/code-checks.md`.
-
-**Change-set gate.** In the worktree, `git add -A`, then run the Change-set
-gate of `flow.md` (table in section 1 and section 6). The commit message
-follows `conventions.md` and ends with the trailer, after an empty line:
+Follow `write-protocol.md` section 3, "At section 6", with the self review of
+its section 5. The commit message follows `conventions.md` and ends with the
+trailer, after an empty line:
 
 ```text
 Add the apply-coupon endpoint
 
 Task: TASK-coupon-api
 ```
-
-Ask for approval. A change returns to section 5, or to the Design gate if the
-plan changes. On approval, delete the Run plan file and commit on the branch.
-Do not push.
 
 ## 7. Summary
 
@@ -251,11 +257,17 @@ Do not push.
 (`sdlc-review-code` checks it against the wiki), merge it, then close the
 Task with `sdlc-close-task`.
 
+End the run with at most four lines:
+
 ```text
 Done: task/coupon-api in ../orders-svc/.worktrees/coupon-api, 1 commit, not pushed.
 Not done: the coupon field of WEB-storefront (not in this folder)
+For other skills: REQ-coupons-expiry is ambiguous (sdlc-write-spec)
 Next: push, open the pull request, review, merge; then sdlc-close-task.
 ```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not list what the self review fixed, and do not repeat the Run plan.
 
 ## 8. What this skill never does
 

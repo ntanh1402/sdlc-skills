@@ -1,7 +1,7 @@
 # Requirements interview guide
 
 This guide says what to ask about. How to ask (rounds, a recommendation with
-each question, at least one round) is in `flow.md`, next to this file. Skip
+each question, at least one round) is in `SKILL.md` section 2. Skip
 what is already answered; do not turn the checklist into a questionnaire.
 
 ## Readiness

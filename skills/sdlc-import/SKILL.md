@@ -27,12 +27,25 @@ Its draft prefix is `import-`: the draft for the code of `SVC-orders` is
 
 ## Before you start
 
-Read, in this skill's folder, `references/read-protocol.md`,
-`references/flow.md` and `references/write-protocol.md`. `flow.md` gives the
-steps of the run and the three gates; this file says what is this skill's own
-at each step. Then read `schema.md` and `reference.md` in the wiki's
-`.wiki-llm/schema/`. The guide of the kind names the other schema pages; open
-only that guide.
+Read, in this skill's folder, `references/read-protocol.md`; each section
+names the other `references/` files to read when it starts.
+
+Find the wiki as the read protocol says, and check that it matches this
+skill. `RELEASE`, next to this file, holds one line such as `1.0.0`:
+
+```bash
+cd "$WIKI" && $T copy check --release "<the line in RELEASE>"
+```
+
+| `status` | Do |
+|---|---|
+| `current` | Go on |
+| `older` | Stop: "The wiki's tool is older than this skill. Run sdlc-setup-wiki to upgrade the wiki." |
+| `newer` | Stop: "The wiki was set up by a newer release. Update your installed sdlc-skills." |
+| `edited` | Stop: "The wiki's tool copy was edited by hand. Run sdlc-setup-wiki to restore it." |
+
+Then read `schema.md` and `reference.md` in the wiki's `.wiki-llm/schema/`. The
+guide of the kind names the other schema pages; open only that guide.
 
 Other requests go elsewhere; say so and stop:
 
@@ -48,18 +61,84 @@ Other requests go elsewhere; say so and stop:
 | A typo or a wording fix that needs no source to check against | `sdlc-edit-wiki` |
 | Tracker issues, running tests | Not this skill. Tasks are never imported |
 
-Being asked to run this skill does not approve anything it writes.
+## The gates
+
+A gate is a stop for the person's explicit approval. There are three, so the
+person decides what is being done (Intent), how (Design, taken group by
+group), and exactly what is saved (Change-set), each before the next cost is
+paid.
+
+- Approval is an explicit yes to the gate's question (or, for a Design group,
+  Approve, Change, or "Save it, I did not check it"). "Sounds good", silence
+  or "whatever you think" is not approval.
+- An edit at a gate reopens that gate (or group) and every later one.
+- When you cannot ask the person (a run with no one to answer), or the person
+  asks you to skip questions or approvals ("don't ask me, just write it"),
+  stop before the first gate and start no draft. Return the open decisions
+  and the gates the work still needs. Never assume approval.
+- When the person rejects the import as a whole, stop. A draft worktree this
+  run started is discarded; a worktree an earlier run started is left as it
+  is.
+- Being asked to run this skill does not approve anything it writes.
+- A refusal this file states is a refusal. Do not turn it into a question.
 
 ## 1. The questions
 
 The lookup of this skill reads two things: the Import source, and the wiki
-for what it already says about it (sections 2 and 3). Then ask in rounds, as
-`references/flow.md` section 4 says. The first round holds every question of
-this table the Import source leaves open, each with the answer it shows as
-the recommendation, so the person mostly confirms. It also names the kind,
-says whether the run creates or compares, and asks the wiki question: what
-else in the wiki this Import source touches. A file of another kind is
-another run, listed under "For other skills".
+for what it already says about it (sections 2 and 3). Once you know the
+kind, read its guide (the table at the top of this file) now.
+
+**An unfinished run.** After the lookup,
+`ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null` lists the runs that stopped
+part-way. When one is for this Import source (its folder is `import-<target>`,
+or its plan's title names this source), read `references/write-protocol.md` now
+and go on as its section 2 says, without asking the rounds again.
+
+Ask in rounds. A round is a numbered list of every question that can be
+answered now, each with your recommended answer. The person confirms or
+corrects, which is faster than composing an answer, and sees your reasoning
+before any work is done.
+
+```text
+Q1 - What kind of Import source is ../orders-service, and which Application does it belong to?
+     ➡️ Code of SVC-orders in Application shop (wiki/index.md); SVC-orders is not in the wiki yet, so this run creates it.
+Q2 - What else in the wiki does this Import source touch?
+     ➡️ SVC-orders, its Endpoints and Subscriptions, TBL-orders in DB-shop, and CHAN-order-created.
+```
+
+Which questions to ask, and how many, is your judgement. Three things are
+fixed:
+
+- **The format.** Numbered questions, each with a recommendation (except the
+  differences of a compare run: see below). A recommendation that rests on the
+  wiki or the Import source cites the path. A question whose answer depends on
+  another question in the same round waits for the next round.
+- **At least one round**, even when a request seems complete. Its questions are
+  then the assumptions you would otherwise make without saying so.
+- **The wiki question.** Ask what else in the wiki this Import source touches,
+  with your own answer as the recommendation. A file of another kind is
+  another run, listed under "For other skills".
+
+**Compare runs.** When the Import source is already in the wiki, read
+`references/compare.md` now. The differences found between the Import source and
+the wiki are asked as one numbered round with **no recommendation**, except the
+two proposals `references/compare.md` allows. Never choose between the wiki and
+the source for the person.
+
+Wait for the answers. Ask another round when the answers open new questions.
+When nothing that changes the output is left undecided, go to the Intent gate:
+one approval, after the rounds.
+
+**A change another skill owns.** When an answer needs a wiki change this skill
+does not own (such as a ChangeRequest for unbuilt work or a bugfix when "the
+code is wrong"), do not make it. List it under "For other skills" in the Run
+plan and in the summary. When a prerequisite of this kind (section 2) is
+not on the default branch yet, stop before the Intent gate and name the
+import run to do first.
+
+The first round holds every question of this table the Import source leaves
+open, each with the answer it shows as the recommendation, so the person mostly
+confirms. It also names the kind, says whether the run creates or compares.
 
 | Question | Notes |
 |---|---|
@@ -108,7 +187,7 @@ not in the wiki. Import its code or its architecture document first.
 ```
 
 If the prerequisite sits in a draft that is not merged, name that draft
-instead (write protocol, section 3, case 1).
+instead (`write-protocol.md` section 2, case 1).
 
 ## 3. Create or compare
 
@@ -170,13 +249,15 @@ git -C "$SRC" status --porcelain           # not empty: uncommitted changes
 - the types of file the run will write;
 - that the prerequisites of section 2 are on the default branch.
 
-Then start or resume the draft (write protocol, section 3, with the key of
-section 2). A compare run starts its draft, and so its Run plan, only when it
-has something to write or to confirm (`references/compare.md`).
+Then read `references/write-protocol.md` and start or resume the draft (its
+section 2 and section 3, "At section 4", with the key of section 2). A compare
+run starts its draft, and so its Run plan, only when it has something to write
+or to confirm (`references/compare.md`).
 
-Follow the guide of the kind to prepare every file, then write the Run plan.
-Its `## Files` lists the files under their groups (section 5), and each group
-heading records the person's answer once it is given:
+Follow the guide of the kind to prepare every file, then write the Run plan
+(`write-protocol.md` section 4). Its `## Files` lists the files under their
+groups (section 5), and each group heading records the person's answer once it
+is given:
 
 ```markdown
 ## Files
@@ -189,8 +270,7 @@ heading records the person's answer once it is given:
 - [ ] datastores/DB-shop/TBL-orders.md (add)
 ```
 
-A group with no answer yet has not been shown. A resumed run continues at the
-first such group.
+A group with no answer yet has not been shown.
 
 The **input paths** of the input check are every wiki file the run compared or
 linked, and the files that are its prerequisite.
@@ -250,8 +330,8 @@ commit.
    channels); documents add requirements, reasons, decisions and diagrams.
    List each one; never resolve one yourself.
 
-Rejecting the import as a whole discards a draft this run started (write
-protocol, section 4, step 3).
+A rejection of the import as a whole uses the command of `write-protocol.md`
+section 3, "At sections 5 and 6".
 
 ## 6. Write
 
@@ -315,7 +395,7 @@ schema pages require. For every file:
 
 ## 7. Finish and commit
 
-Follow `references/write-protocol.md` section 4 from step 4.
+Follow `write-protocol.md` section 3, "At section 7".
 
 Commit message: `import(<main concept or document name>): <what was imported>`,
 for example `import(SVC-orders): the orders service from its code at 3f2a9c1`.
@@ -324,6 +404,20 @@ In the summary, "Not done" names the files that were not written (the first
 list of section 5), "For other skills" names what the differences need
 (a ChangeRequest with `sdlc-write-spec`), and "Next" is the next run in the
 order of section 2.
+
+## The summary
+
+End the run with at most four lines:
+
+```text
+Done: wiki/import-SVC-orders, 6 files, pushed. Open the pull request.
+Not done: services/SVC-orders/EP-legacy-export.md (missing response schema)
+For other skills: checkout timeout bug in code needs a ChangeRequest (sdlc-write-spec)
+Next: Import the requirement document with sdlc-import after the merge.
+```
+
+Leave out "Not done" and "For other skills" when they have nothing to say. Do
+not repeat the three lists of `SKILL.md` section 5.
 
 ## What this skill never does
 

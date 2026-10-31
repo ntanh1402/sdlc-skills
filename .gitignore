@@ -18,10 +18,3 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 
-# Agents
-CLAUDE.md
-AGENTS.md
-GEMINI.md
-.claude
-.agents
-skills-lock.json

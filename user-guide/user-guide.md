@@ -142,6 +142,23 @@ to sprint planning, and their Tasks become your tickets. `sdlc-build-task`,
 `sdlc-review-code` and `sdlc-close-task` run inside the sprint, once for each
 Task. Marking a Feature released goes with your release.
 
+### A large Task
+
+When a Task is too big to review in one piece, split it into subtasks in your
+tracker. The Task stays one branch and one pull request; each subtask is one
+commit on that branch, and its message ends with two lines:
+
+```text
+Subtask: <tracker key of the subtask>
+Task: <Task key>
+```
+
+Reviewers read the pull request commit by commit. Fold a review fix into the
+commit it belongs to (`git commit --fixup <commit>`, then
+`git rebase --autosquash`), so each commit stays one subtask. Merge without
+squashing: each subtask stays one commit on the default branch, and
+`sdlc-close-task` finds the `Task:` line.
+
 ### The terms you need
 
 | Term | Means |

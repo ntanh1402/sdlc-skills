@@ -64,6 +64,10 @@ _Avoid_: checkpoint, confirmation, review step
 The system outside the Bundle where people create a Task's ticket and follow its progress; no skill reads or writes it.
 _Avoid_: board, backlog, issue system
 
+**Subtask**:
+A part of a large Task, created as a ticket in the Tracker and never a file of the Bundle; it is built as one commit on the Task's branch whose message ends with `Subtask: <key>` then `Task: <Task key>`.
+_Avoid_: sub-task, child Task, step
+
 **User story**:
 One actor's goal in a Feature or ChangeRequest, written as "As a …, I want …, so that …" with numbered pass/fail acceptance criteria that each cite a Requirement it lists; a file `STORY-<name>.md`, optional, with no status.
 _Avoid_: story (unqualified, in skill text), epic, use case

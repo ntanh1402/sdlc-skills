@@ -2,8 +2,8 @@
 
 This file says how `sdlc-build-task` sets up its worktree, plans, checks,
 approves and commits the code. `SKILL.md` says what to write and where the
-gates are; this file says how. Read it when `SKILL.md` section 1 finds an
-unfinished build, or at section 3.
+gates are; this file says how. Read it when `SKILL.md` section 1 finds the
+branch or the worktree of an earlier run, or at section 3.
 
 ## 1. The rules
 
@@ -13,8 +13,10 @@ unfinished build, or at section 3.
 - Stop at the three **approval gates** of `SKILL.md`: Intent, Design and
   Change-set. No worktree is added before the Intent gate is approved.
 - Use plain git, not the wiki's tool. The wiki is never written.
-- One commit on the branch, ending with the trailer `Task: <Task key>`. Never
-  push, never open a pull request.
+- One commit per run, ending with the trailer `Task: <Task key>`; with a
+  subtask, `Subtask: <subtask key>` then `Task: <Task key>`, after an empty
+  line. Never change a commit already on the branch. Never push, never open a
+  pull request.
 - The Run plan is never committed.
 
 ## 2. The worktree
@@ -43,9 +45,25 @@ overwritten, deleted or committed by this skill.
 
 **First, look for the branch and the worktree.** When the branch or the
 worktree already exists, an earlier run started this Task. Never delete
-either. A branch with no worktree gets one:
-`git -C "$SRC" worktree add "$SRC/.worktrees/$NAME" "<branch>"`. Then resume
-as section 4 ("Resuming") says.
+either. A branch that is only on `origin` gets a local branch tracking it,
+and a branch with no worktree gets one:
+`git -C "$SRC" worktree add "$SRC/.worktrees/$NAME" "<branch>"`. Then the Run
+plan file and the branch's commits
+(`git -C "$SRC" log --format='%h %s%n%b' "$BASE..<branch>"`) say what the
+earlier run was:
+
+- **A Run plan in the worktree.** That run stopped part-way: resume as section
+  4 ("Resuming") says. When the person named a subtask and the title names
+  another, say so and stop: that subtask is finished, or its Run plan deleted
+  by the person, first.
+- **No Run plan, a subtask named, and commits whose `Subtask:` lines name
+  other subtasks.** Those subtasks are built. This run builds the new one on
+  the branch's tip and keeps their commits: ask the rounds, then the gates, as
+  for a new branch. When a commit already names this subtask, say so and
+  stop: a fix to it is folded in by the person (`git commit --fixup`).
+- **No Run plan, no subtask named, and commits with `Subtask:` lines.** Name
+  the subtasks built and ask which subtask this run builds.
+- **Otherwise.** Resume as section 4 ("Resuming") says.
 
 ## 3. The commands of each section
 
@@ -65,6 +83,10 @@ made:
 git -C "$SRC" worktree remove --force "$SRC/.worktrees/$NAME"
 git -C "$SRC" branch -D "<branch>"
 ```
+
+A branch an earlier run made, which may hold other subtasks' commits, is never
+deleted: remove only a worktree this run added, or else only the Run plan file
+this run wrote.
 
 ### At section 6: Self review and the Change-set gate
 
@@ -125,6 +147,12 @@ Intent approved 2026-10-03 · Design approved 2026-10-03
   serves. Tick a file when it is written. The checkboxes are the only status.
 - `## Not built here` lists each scope item the plan does not cover, with the
   reason. Leave it out when every item is covered.
+- With a subtask, the title names it
+  (`# Run plan: sdlc-build-task, TASK-coupon-api, subtask SCRUM-175`), a line
+  under it names the commit the work starts from, the branch's tip
+  (`On: 3f2a1c9`), `## Answers` holds the part it covers, `## Files` lists only that part's
+  files, and `## Not built here` lists the rest of the Task with the reason
+  "other subtasks", or the key of the subtask that built it.
 - Add "Design approved" with the date when the Design gate is approved.
 - Leave out a heading that has nothing under it.
 - Git ignores the file via `.git/info/exclude`, and you delete it before
@@ -154,7 +182,11 @@ scope, and `conventions.md`), and these checks plus
 - each answer is reflected where it applies;
 - every acceptance item, contract rule (`# Validations`, `# Flowchart` exits,
   fields, types, status codes, columns) and `conventions.md` rule in
-  `code-checks.md` is met by reading.
+  `code-checks.md` is met by reading;
+- with a subtask, those checks cover only its part, and the commits of
+  earlier subtasks are untouched: `HEAD` is still the commit on the `On:` line
+  and the change edits what they wrote only where a line of `## Files` says
+  so.
 
 The sub-agent edits nothing and returns what it checked, its findings, and
 everything under "Not checked". When it reports that the wiki is the wrong

@@ -1,6 +1,6 @@
 ---
 name: sdlc-review-code
-description: Review a code change against the project wiki, read-only - check a branch or working tree against its Task's acceptance, the contracts in the wiki's Design files (endpoints, events, tables, vendor operations), the Task's planned scope and the Application's conventions, and report each finding as must fix or should fix with the code location and the wiki path. Use when a developer asks to review code, a branch or a pull request against the project wiki, a Task, the spec or the design. Not for a general code review without a wiki, for fixing code, for running tests, or for changing the wiki.
+description: Review a code change against the project wiki, read-only - check a branch, a working tree, one commit or a commit range against its Task's acceptance, the contracts in the wiki's Design files (endpoints, events, tables, vendor operations), the Task's planned scope and the Application's conventions, and report each finding as must fix or should fix with the code location and the wiki path. Use when a developer asks to review code, a branch, a commit or a pull request against the project wiki, a Task, the spec or the design. Not for a general code review without a wiki, for fixing code, for running tests, or for changing the wiki.
 ---
 
 # Review code against the wiki
@@ -34,7 +34,8 @@ Other requests go elsewhere; say so and stop:
 |---|---|
 | The code folder | The user names it. "This folder" is an answer. Never guess it |
 | The branch to compare against | The repository's default branch, unless the user names another |
-| A Task key | When there is one. If the user gave none, ask once: "Which Task does this change build? None is an answer." |
+| One commit or a commit range | When the user names one: a commit (`3f2a1c9`), a range (`3f2a1c9..HEAD`), or a subtask key ("the SCRUM-175 commit"). Otherwise the change is the branch |
+| A Task key | When there is one. A commit reviewed alone whose message ends with `Task: <key>` names it. If the user gave none, ask once: "Which Task does this change build? None is an answer." |
 
 Find the change (`SRC` is the code folder):
 
@@ -50,6 +51,24 @@ git -C "$SRC" status --porcelain        # new files not added yet are part of th
 The change is everything between `FROM` and the working tree. When it is
 empty, say so and stop. Read the changed files in full where the diff alone
 does not show what the code does.
+
+**One commit or a range.** The change is that commit's diff, or the range's;
+uncommitted edits are not part of it. A subtask key names the commit whose
+message has the line `Subtask: <key>`, on any local branch: the Task's branch
+may be in a worktree while this checkout is on another branch. The branch
+under review is the one that contains the commit:
+
+```bash
+git -C "$SRC" log --branches --format='%h %s' --grep='^Subtask: <key>$'
+git -C "$SRC" branch --contains <commit>
+git -C "$SRC" show --stat <commit>               # one commit
+git -C "$SRC" diff --stat <from> <to>            # a range <from>..<to>
+```
+
+When no commit or more than one has that line, say so, list the branch's
+commits with their `Subtask:` lines, and ask which. Read the changed files at
+that commit, or at the end of the range (`git -C "$SRC" show <commit>:<path>`):
+later commits may have changed them since.
 
 ## 2. What to read in the wiki
 
@@ -99,6 +118,10 @@ other work shares it.
   pending entry of another Feature or ChangeRequest. If either is true, a
   difference goes to "Not checked", with that Task's or request's key, unless
   this Task's `# Acceptance` states it.
+- **One commit or a range.** The other commits of the same Task share its
+  files; they are this Task's work, not other work. An acceptance item the
+  reviewed commits do not touch goes to "Not checked", "not in this change":
+  a review of the branch checks the whole Task.
 - **Without a Task.** Every difference in a file with `# Pending changes`
   goes to "Not checked", with the Feature or ChangeRequest the entry names.
   Ask for the Task.
@@ -114,6 +137,11 @@ the severity of each and the rules for a finding. This skill only reports.
 Report in the chat, in the order of the groups, one line per finding. Each
 finding cites the code location and the wiki path. The last line counts the
 findings. Say which wiki branch and commit you read.
+
+A review of one commit names it in the first line, with its `Subtask:` line
+when it has one: "Reviewed commit 3f2a1c9 (Subtask: SCRUM-175) on
+task/refund-endpoint for TASK-refund-endpoint." A review of a range adds the
+short hash of the commit that wrote each finding's code location after it.
 
 ```text
 Reviewed feature/refund against main for TASK-refund-endpoint. Wiki: main at 4c1e9a2.
@@ -153,7 +181,8 @@ The finding stays in the report until the wiki changes.
 
 ## Done when
 
-- The change, the base and the wiki commit are named.
+- The change, the base and the wiki commit are named; a commit reviewed
+  alone is named by its hash.
 - Every acceptance item is met, a finding, or under "Not checked".
 - Every finding cites a code location and a wiki path.
 - Nothing was written: no code, no wiki file, no comment on a hosting

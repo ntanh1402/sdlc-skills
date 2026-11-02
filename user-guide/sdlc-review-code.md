@@ -7,9 +7,9 @@ Review a code change against the wiki. Read-only. [Back to the user guide](user-
 | | |
 |---|---|
 | **Who** | Reviewer, developer |
-| **Use when** | You review a branch, a working tree or a pull request against the wiki: its Task's acceptance, the contracts in the wiki's design files, the Task's planned scope and the Application's conventions |
+| **Use when** | You review a branch, a working tree, a pull request, one commit or a commit range against the wiki: its Task's acceptance, the contracts in the wiki's design files, the Task's planned scope and the Application's conventions |
 | **Needs first** | The change is in a local code folder |
-| **Say** | "Review this branch against TASK-gift-card-redeem" |
+| **Say** | "Review this branch against TASK-gift-card-redeem". One commit: "Review the SCRUM-175 commit in this folder", or "review commit 3f2a1c9" |
 | **You get** | A list of findings **in the chat**, each marked **must fix** or **should fix**, with the code location and the wiki path. It changes nothing and gives **no verdict** |
 | **Next** | Fix what you decide to fix, then merge the code pull request. After the merge, [sdlc-close-task](sdlc-close-task.md) |
 
@@ -21,8 +21,9 @@ merged.
 
 1. Finds the wiki and reads its default branch.
 2. Finds the change: everything between the merge-base with the default branch
-   and your working tree, including new files. It reads changed files in full
-   where the diff alone does not show what the code does.
+   and your working tree, including new files; or, when you name one, a
+   commit's diff or a range's. It reads changed files in full where the diff
+   alone does not show what the code does.
 3. Reads the Task (acceptance, linked Requirements, planned scope, design
    files), or, without a Task, the Service or frontend that matches this
    repository and the design files the change touches, plus `conventions.md`.
@@ -35,7 +36,10 @@ merged.
 ## What you do
 
 - Name the code folder, and the Task if there is one. If you give none, the
-  skill asks once ("None is an answer").
+  skill asks once ("None is an answer"), unless the commit you review ends
+  with `Task: <key>`.
+- To review a large Task commit by commit, name the commit or its subtask
+  key; review the whole branch once, too, to check every acceptance item.
 - Read the findings. Decide what to fix.
 - If you think the wiki is the wrong side, say so; the skill names the remedy
   and changes nothing.
@@ -48,6 +52,8 @@ merged.
 | **No Task** | Finds the Service or frontend whose repository is this one, and reviews the design files the change touches. Differences in files with pending changes go to "Not checked" and it asks for the Task | Give the Task if you have one |
 | **The repository is not in the wiki** | Says so under "Not checked": "this repository is not in the wiki; import it with sdlc-import" | Run [sdlc-import](sdlc-import.md) |
 | **The change is empty** | Says so and stops | Check the branch |
+| **You name a commit, a range or a subtask key** | Reviews only that diff, finding a subtask's commit by its `Subtask:` line on the branch and the Task by its `Task:` line. The first line names the commit; for a range, each finding names its commit. An acceptance item the commit does not touch goes to "Not checked" | Review the next commit; review the branch for the whole Task |
+| **No commit, or several, has that `Subtask:` line** | Lists the branch's commits and asks which | Name it |
 | **A design file is partly pending** (it holds the target) | Reviews the code against the target | Nothing |
 | **Another Task or another request also covers the same design file** | Puts a difference to "Not checked" with that Task's or request's key, unless this Task's acceptance states it | Check it in the review of the other work |
 | **The acceptance mentions something only a load test can show** (p95 latency) | Lists it under "Not checked" | Verify in your own tests |

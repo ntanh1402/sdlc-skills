@@ -11,6 +11,11 @@ a worktree of its own, not pushed. The commit message ends with the line
 `Task: <Task key>`, which `sdlc-close-task` later uses to find the merged
 code.
 
+A large Task is split into subtasks in the Tracker, and one run builds one
+subtask: its commit goes on the Task's branch, after the commits of earlier
+subtasks, and its message ends with `Subtask: <subtask key>` before the
+`Task:` line.
+
 It writes code, never the wiki: section 8 lists what it never does.
 
 ## Before you start
@@ -64,6 +69,14 @@ saved (Change-set), each before the next cost is paid.
 **The input.** One Task key and one code folder. The user names the folder;
 "this folder" is an answer. Never guess it. A Task changes one repository, so
 a second folder is a second run.
+
+**A subtask.** The person may also name a subtask: its Tracker key and the
+part of the Task it covers, as acceptance items, planned scope items or files
+("Build TASK-x in ../repo, subtask SCRUM-175: the event producer"). The run
+then builds only that part. No skill reads the Tracker, so the key and the
+part come from the person: when the part is not said, ask for it in the first
+round, and never guess it. With no subtask named, the run builds the whole
+Task.
 
 Find the Task on the wiki's default branch:
 `git ls-tree -r --name-only "$DEFAULT" -- wiki | grep '/TASK-<name>.md$'`.
@@ -132,10 +145,12 @@ BASE=$(git -C "$SRC" symbolic-ref --quiet --short refs/remotes/origin/HEAD \
 `BASE` is the remote's default branch, else a local `main`, else `master`, so
 a repository with no remote still works.
 
-**An unfinished run.** Last, when the branch or the worktree of section 3
-already exists, an earlier run stopped part-way: read
-`references/write-protocol.md` now and go on as its section 2 says, without
-asking the rounds again.
+**An earlier run.** Last, when the branch or the worktree of section 3
+already exists, locally or on `origin`, read `references/write-protocol.md`
+now and go on as its section 2 says. It tells two cases apart: a run that
+stopped part-way is resumed without asking the rounds again; the commits of
+earlier subtasks are kept, and this run builds a new subtask on them after the
+rounds and the gates.
 
 ## 2. Questions and the Intent gate
 
@@ -184,20 +199,25 @@ person:
 - a scope item that is not in this folder: it belongs to another repository,
   and is listed, not built;
 - a blocker that is not `Done`;
+- with a subtask: the part it covers, when the person did not say it, asked
+  with the Task's acceptance items and planned scope items to choose from and
+  no recommendation; and the commits of earlier subtasks on the branch;
 - the wiki question. This skill never writes the wiki, so every answer but
   "nothing" goes under "For other skills".
 
 Do not ask what the Task, a Design file or `conventions.md` already settles.
 
 **Intent gate.** Restate the Task, the code folder, the branch name and the
-worktree path, and what will not be built here. Ask for approval.
+worktree path, and what will not be built here. With a subtask, also restate
+its key, the part it covers, and what is left for other subtasks. Ask for
+approval.
 
 ## 3. The worktree and the Run plan
 
 | Name | Value |
 |---|---|
 | `NAME` | The Task key without `TASK-`: `coupon-api` |
-| The branch | `task/<NAME>`, unless `conventions.md` says how branches are named; then that rule |
+| The branch | `task/<NAME>`, unless `conventions.md` says how branches are named; then that rule. Every subtask of the Task uses this branch |
 | The worktree | `<code folder>/.worktrees/<NAME>/` |
 | The Run plan | `plan.md` at the root of the worktree; `sdlc-plan.md` when the repository tracks a `plan.md` of its own there |
 
@@ -250,6 +270,15 @@ Add the apply-coupon endpoint
 Task: TASK-coupon-api
 ```
 
+With a subtask, the message ends with two lines, the subtask first:
+
+```text
+Add the coupons table
+
+Subtask: SCRUM-175
+Task: TASK-coupon-api
+```
+
 ## 7. Summary
 
 "Done" names the branch and the worktree and says the commit is not pushed.
@@ -269,6 +298,12 @@ Next: push, open the pull request, review, merge; then sdlc-close-task.
 Leave out "Not done" and "For other skills" when they have nothing to say. Do
 not list what the self review fixed, and do not repeat the Run plan.
 
+With a subtask, "Done" names the subtask and the commits of earlier subtasks
+kept on the branch; what is left for other subtasks is not "Not done". "Next"
+says: build the next subtask the same way; push and open the pull request when
+the commits are to be reviewed, one by one (`sdlc-review-code` reviews one
+commit); merge without squashing; then `sdlc-close-task`.
+
 ## 8. What this skill never does
 
 - It never writes to the wiki, and never changes a Task's status.
@@ -287,6 +322,8 @@ not list what the self review fixed, and do not repeat the Run plan.
   reason.
 - The checks of `code-checks.md` were made by reading, and what they could
   not settle was shown at the Change-set gate.
-- One commit on the branch ends with `Task: <Task key>`; the Run plan file is
-  not in it; nothing was pushed.
+- This run added one commit to the branch, ending with `Task: <Task key>`,
+  and with a subtask `Subtask: <subtask key>` on the line before it; the
+  commits of earlier subtasks are unchanged; the Run plan file is not in the
+  commit; nothing was pushed.
 - Nothing in the wiki changed.

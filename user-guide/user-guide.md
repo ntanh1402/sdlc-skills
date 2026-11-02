@@ -56,7 +56,7 @@ afterwards. Click a skill for its guide.
 | User stories, optional | BA / PO | [sdlc-write-stories](sdlc-write-stories.md), alongside design | User stories (`STORY-…`) | Merge the stories pull request, create a ticket per story from its paste-ready copy |
 | Planning | Tech lead | [sdlc-plan-tasks](sdlc-plan-tasks.md) | Tasks `Todo` | Merge the pull request, create the tracker tickets |
 | Test design | QA | [sdlc-design-tests](sdlc-design-tests.md), alongside planning | TestSuites `Approved`, each with a `checklist.csv` | Merge the pull request |
-| Implementation | Developer | [sdlc-build-task](sdlc-build-task.md), once per Task | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
+| Implementation | Developer | [sdlc-build-task](sdlc-build-task.md), once per Task or subtask | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
 | Code review | Reviewer | [sdlc-review-code](sdlc-review-code.md) | Unchanged (read-only) | Decide on the findings, merge the code pull request |
 | Closing a Task | Developer | [sdlc-close-task](sdlc-close-task.md) | Task `Done`; once the Feature or ChangeRequest is `Approved`: Design files live, Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
 | Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a suite `Implemented` |
@@ -153,8 +153,14 @@ Subtask: <tracker key of the subtask>
 Task: <Task key>
 ```
 
-Reviewers read the pull request commit by commit. Fold a review fix into the
-commit it belongs to (`git commit --fixup <commit>`, then
+Run `sdlc-build-task` once per subtask, naming the subtask and the part of
+the Task it covers: "Build TASK-gift-card-redeem in ../orders-service, subtask
+SCRUM-175: the redeem endpoint". Each run adds one commit with both lines to
+the Task's branch and keeps the commits already there.
+
+Reviewers read the pull request commit by commit; `sdlc-review-code` reviews
+one commit: "Review the SCRUM-175 commit in ../orders-service". Fold a review
+fix into the commit it belongs to (`git commit --fixup <commit>`, then
 `git rebase --autosquash`), so each commit stays one subtask. Merge without
 squashing: each subtask stays one commit on the default branch, and
 `sdlc-close-task` finds the `Task:` line.

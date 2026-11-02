@@ -51,7 +51,7 @@ Run it again from any other folder you want to link to the same wiki.
 | User stories, optional | BA / PO | `sdlc-write-stories`, alongside design | User stories (`STORY-…`) | Merge the stories pull request, create a ticket per story from its paste-ready copy |
 | Planning | Tech lead | `sdlc-plan-tasks` | Tasks `Todo` | Merge the pull request, create the tracker tickets |
 | Test design | QA | `sdlc-design-tests`, alongside planning | TestSuites `Approved`, each with a `checklist.csv` | Merge the pull request |
-| Implementation | Developer | `sdlc-build-task`, once per Task | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
+| Implementation | Developer | `sdlc-build-task`, once per Task or subtask | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
 | Code review | Reviewer | `sdlc-review-code` | Unchanged (read-only) | Decide on the findings, merge the code pull request |
 | Closing a Task | Developer | `sdlc-close-task` | Task `Done`; once the Feature or ChangeRequest is `Approved`: Design files live, Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
 | Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a suite `Implemented` |
@@ -153,8 +153,14 @@ Subtask: <tracker key of the subtask>
 Task: <Task key>
 ```
 
-Reviewers read the pull request commit by commit. Fold a review fix into the
-commit it belongs to (`git commit --fixup <commit>`, then
+Run `sdlc-build-task` once per subtask, naming the subtask and the part of
+the Task it covers: "Build TASK-gift-card-redeem in ../orders-service, subtask
+SCRUM-175: the redeem endpoint". Each run adds one commit with both lines to
+the Task's branch and keeps the commits already there.
+
+Reviewers read the pull request commit by commit; `sdlc-review-code` reviews
+one commit: "Review the SCRUM-175 commit in ../orders-service". Fold a review
+fix into the commit it belongs to (`git commit --fixup <commit>`, then
 `git rebase --autosquash`), so each commit stays one subtask. Merge without
 squashing: each subtask stays one commit on the default branch, and
 `sdlc-close-task` finds the `Task:` line.
@@ -323,20 +329,26 @@ the names come from the sample wiki in
 - **Before:** the Task is merged and `Todo`. You name the code folder. When
   its Feature or ChangeRequest is not `Approved` yet, it warns you and asks
   before going on.
-- **Say:** "Build TASK-gift-card-redeem in this folder".
+- **Say:** "Build TASK-gift-card-redeem in this folder". For one subtask of a
+  large Task, add the subtask and its part: "..., subtask SCRUM-175: the
+  redeem endpoint".
 - **You get:** the code and its unit tests, committed on a new branch
   (`task/<name>`, unless your conventions name branches differently) in a
-  worktree, with a `Task: <key>` line in the commit message. Nothing is pushed
-  and nothing is run.
+  worktree, with a `Task: <key>` line in the commit message. A subtask builds
+  only its part, as one more commit on the Task's branch whose message ends
+  with `Subtask: <subtask key>` then `Task: <key>`. Nothing is pushed and
+  nothing is run.
 - **Next:** build and run the tests yourself, push, open the pull request,
   then `sdlc-review-code`.
 
 ### sdlc-review-code
 
-- **Use when:** you review a branch, a working tree or a pull request against
-  the wiki.
+- **Use when:** you review a branch, a working tree, a pull request, one
+  commit or a commit range against the wiki.
 - **Before:** the change is in a local code folder.
-- **Say:** "Review this branch against TASK-gift-card-redeem".
+- **Say:** "Review this branch against TASK-gift-card-redeem", or, for one
+  commit, "Review the SCRUM-175 commit in this folder"; it finds a subtask's
+  commit by its `Subtask:` line.
 - **You get:** a list of findings in the chat, each marked must fix or
   should fix, with the code location and the wiki file. It changes nothing
   and gives no verdict.

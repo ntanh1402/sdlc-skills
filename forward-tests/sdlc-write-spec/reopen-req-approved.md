@@ -14,4 +14,4 @@
 ## Expected
 - The first round says the Feature goes back to `Draft` unless approved again
 - Status `Draft`, `version: 2`, `versionDate` today
-- The summary lists nothing as outdated: the Feature had no design, stories, Tasks or TestSuites
+- The summary lists nothing as outdated: the Feature had no design, stories, Tasks or test groups

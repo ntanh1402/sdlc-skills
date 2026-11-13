@@ -1,5 +1,5 @@
-No,Title,Description,Covers,Purpose
-1,Amount mismatch rejected,Prove caller cannot authorize an amount different from order total.,EP-payments-authorize,Prove caller cannot authorize an amount different from order total.
-2,Authorize is idempotent,Prove repeated authorization cannot double charge.,REQ-payments-authorize-once,Prove repeated authorization cannot double charge.
-3,Authorize success,Prove successful authorization persists and emits once.,REQ-payments-authorize-once,Prove successful authorization persists and emits once.
-4,Decline is terminal,"Prove card decline is stable, visible, and not retried.",REQ-payments-authorize-once,"Prove card decline is stable, visible, and not retried."
+No,Group,Title,Description,Category,Covers,Purpose
+3,GENERAL,Amount mismatch rejected,Prove caller cannot authorize an amount different from order total.,negative,,Prove caller cannot authorize an amount different from order total.
+2,GENERAL,Authorize is idempotent,Prove repeated authorization cannot double charge.,error-handling,,Prove repeated authorization cannot double charge.
+1,GENERAL,Authorize success,Prove successful authorization persists and emits once.,integration,,Prove successful authorization persists and emits once.
+4,GENERAL,Decline is terminal,"Prove card decline is stable, visible, and not retried.",negative,,"Prove card decline is stable, visible, and not retried."

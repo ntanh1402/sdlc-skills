@@ -8,7 +8,7 @@ HEADING_KEYS = {
 }
 FIELD_KINDS = {
     "string", "enum", "boolean", "integer", "uri", "timestamp", "date",
-    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested", "basis", "basis_list",
+    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested", "basis",
 }
 
 
@@ -18,7 +18,7 @@ class SchemaFileTest(unittest.TestCase):
         cls.schema = Schema.load()
 
     def test_versions(self):
-        self.assertEqual(self.schema.version, "1")
+        self.assertEqual(self.schema.version, "2")
         self.assertEqual(self.schema.okf_version, "0.2")
 
     def test_every_collection_type_exists(self):

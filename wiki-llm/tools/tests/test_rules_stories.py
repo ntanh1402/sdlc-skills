@@ -55,6 +55,7 @@ class StoryTest(RuleTest):
             "   ([REQ-pay-refund](overview.md#req-pay-refund))",
         )
         self.edit(STORY, "* [REQ-pay-1](overview.md#req-pay-1)", "* [REQ-pay-1](overview.md#req-pay-1)\n* [REQ-pay-refund](overview.md#req-pay-refund)")
+        self.edit("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "— AC 1", "— AC 1, 2")
         self.assertClean()
 
     def test_criterion_links_a_requirement_the_story_does_not_list(self):
@@ -89,7 +90,7 @@ class StoryTest(RuleTest):
             "REQ-pay-1](overview.md#req-pay-1)",
             "REQ-pay-2](../../change-requests/CR-1/overview.md#req-pay-2)",
         )
-        self.assertRule("story.requirement-place", STORY)
+        self.assertReported("story.requirement-place", STORY)
 
     def test_affects_only_in_a_change_request(self):
         self.write(
@@ -124,7 +125,7 @@ class StoryTest(RuleTest):
         self.edit(TASK, "STORY-pay-checkout](STORY-pay-checkout.md)", "STORY-checkout](STORY-checkout.md)")
         self.edit(CHANGE_STORY, "[STORY-pay-checkout](../../features/FEAT-pay/STORY-pay-checkout.md)", "[STORY-checkout](../../features/FEAT-pay/STORY-checkout.md)")
         sync.write(self.root)
-        self.assertRule("ids.story-format", "pay/features/FEAT-pay/STORY-checkout.md")
+        self.assertReported("ids.story-format", "pay/features/FEAT-pay/STORY-checkout.md")
 
     def test_change_request_story_key_carries_the_changed_feature_name(self):
         text = fixture.read(self.root, CHANGE_STORY)

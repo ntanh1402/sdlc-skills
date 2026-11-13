@@ -32,7 +32,7 @@ class LayoutTest(RuleTest):
 
     def test_bundle_without_applications_is_clean(self):
         shutil.rmtree(self.root / "pay")
-        self.write("index.md", '---\nokf_version: "0.2"\nschema_version: "1"\n---\n\n# Applications\n\nNone\n')
+        self.write("index.md", '---\nokf_version: "0.2"\nschema_version: "2"\n---\n\n# Applications\n\nNone\n')
         self.assertClean()
 
     def test_root_index_is_required(self):
@@ -40,7 +40,7 @@ class LayoutTest(RuleTest):
         self.assertRule("layout.root-index", "index.md")
 
     def test_schema_version_must_match(self):
-        self.edit("index.md", 'schema_version: "1"', 'schema_version: "0"')
+        self.edit("index.md", 'schema_version: "2"', 'schema_version: "0"')
         self.assertRule("layout.schema-version", "index.md")
 
     def test_unknown_collection_directory(self):

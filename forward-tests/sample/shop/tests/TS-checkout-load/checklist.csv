@@ -1,4 +1,0 @@
-No,Title,Description,Covers,Purpose
-1,Payment latency budget,Prove synchronous payment leaves room inside checkout deadline.,REQ-checkout-pay-before-confirm,Prove synchronous payment leaves room inside checkout deadline.
-2,Peak throughput,Prove checkout sustains modelled peak within latency/error budgets.,EP-orders-create,Prove checkout sustains modelled peak within latency/error budgets.
-3,Cache holds under load,Prove catalog cache protects database during checkout peak.,REQ-catalog-browse-by-category,Prove catalog cache protects database during checkout peak.

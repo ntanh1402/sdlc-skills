@@ -65,17 +65,4 @@ def check(bundle: Bundle) -> list[Finding]:
                     "warning",
                 )
             )
-
-    for suite in bundle.of_type("TestSuite"):
-        value = suite.meta.get("basedOn")
-        if not isinstance(value, list):
-            continue  # missing or malformed: reported by frontmatter
-        named = [item.get("id") for item in value if isinstance(item, dict)]
-        keys = [target.key for target in basis.verifies(bundle, suite)]
-        for key in named:
-            if key not in keys:
-                findings.append(Finding("basis.target", suite.rel, f"basedOn names {key}, which is not under # Verifies"))
-        for key in keys:
-            if key not in named:
-                findings.append(Finding("basis.target", suite.rel, f"{key} is under # Verifies; add its basedOn entry"))
     return findings

@@ -228,14 +228,14 @@ class Bundle:
             else:
                 self._problem("layout.unknown-path", entry, f"not a concept of collection {collection['dir']}/")
 
-    def _walk_concept(self, folder: Path, type_name: str, app: str) -> None:
+    def _walk_concept(self, folder: Path, type_name: str, app: str, owner: Concept | None = None) -> None:
         self.directories.append(folder)
         spec = self.schema.types[type_name]
         overview = folder / "overview.md"
         if not overview.is_file():
             self._problem("layout.missing-file", overview, f"{type_name} folder needs overview.md")
             return
-        concept = self._read(overview, type_name, folder.name, app, folder, None)
+        concept = self._read(overview, type_name, folder.name, app, folder, owner)
         if spec.get("log", True) and not (folder / "log.md").is_file():
             self._problem("layout.missing-file", folder / "log.md", f"{type_name} folder needs log.md")
         if spec.get("content_files"):
@@ -248,16 +248,19 @@ class Bundle:
         owned_types = self.schema.owned_types(type_name)
         other: list[Path] = []
         for entry in self._entries(folder):
-            if entry.is_dir():
-                self._problem("layout.unknown-path", entry, "a concept folder holds files only")
+            key = entry.name if entry.is_dir() else entry.stem
+            owned_type = self.schema.type_for_key(owned_types, key)
+            shape = self.schema.types[owned_type]["shape"] if owned_type else None
+            if entry.is_dir() and shape == "folder":
+                self._walk_concept(entry, owned_type, app, concept)
+            elif entry.is_dir():
+                self._problem("layout.unknown-path", entry, f"a {type_name} folder holds no other folder")
             elif entry.name in RESERVED:
                 continue
+            elif entry.suffix == ".md" and shape == "file":
+                self._read(entry, owned_type, entry.stem, app, None, concept)
             elif entry.suffix == ".md":
-                owned_type = self.schema.type_for_key(owned_types, entry.stem)
-                if owned_type is None:
-                    self._problem("layout.unknown-path", entry, f"a {type_name} folder cannot own this file")
-                else:
-                    self._read(entry, owned_type, entry.stem, app, None, concept)
+                self._problem("layout.unknown-path", entry, f"a {type_name} folder cannot own this file")
             elif entry.name not in extra:
                 other.append(entry)
         self._check_other_files(folder, other)

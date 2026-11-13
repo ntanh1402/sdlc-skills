@@ -57,6 +57,13 @@ class RenameConceptTest(GitTest):
         self.assertEqual(mentions(self.root, "CR-1"), [])
         self.assertEqual(problems(self.root), [])
 
+    def test_renamed_story_takes_its_test_folder_along(self):
+        code, result = self.rename("STORY-pay-checkout", "STORY-pay-at-checkout", "--allow-merged")
+        self.assertEqual(code, 0, result)
+        self.assertEqual(result["moved_tests"], [{"from": "pay/tests/TS-pay/STORY-pay-checkout", "to": "pay/tests/TS-pay/STORY-pay-at-checkout"}])
+        self.assertTrue((self.root / "pay/tests/TS-pay/STORY-pay-at-checkout/TC-1-pay-ok.md").is_file())
+        self.assertEqual(problems(self.root), [])
+
     def test_new_concept_in_a_draft_is_renamed(self):
         self.add_decision()
         code, result = self.rename("ADR-charge-later", "ADR-charge-on-capture")
@@ -112,8 +119,8 @@ class RenameRequirementTest(GitTest):
         self.assertEqual(result["kind"], "requirement")
         self.assertIn("### REQ-pay-take-payment", fixture.read(self.root, FEATURE))
         self.assertIn(
-            "[REQ-pay-take-payment](../../features/FEAT-pay/overview.md#req-pay-take-payment)",
-            fixture.read(self.root, "pay/tests/TS-pay/TC-pay-ok.md"),
+            "[REQ-pay-take-payment](../../../features/FEAT-pay/overview.md#req-pay-take-payment)",
+            fixture.read(self.root, "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"),
         )
         self.assertEqual(mentions(self.root, "REQ-pay-1"), [])
         self.assertEqual(problems(self.root), [])

@@ -38,7 +38,7 @@ Ask. Name the Application or Feature if there are several.
 | **"Show the architecture of a Feature."** | Gives a summary, the requirements, the stored diagrams, the frontends, the services with their endpoints and subscriptions, the decisions, the traceability from each Requirement, what is not live yet, and gaps it noticed (broken links, requirements missing from traceability) | Read it. If it reports a difference with code, run [sdlc-import](sdlc-import.md) on that code to compare |
 | **"Show an endpoint or a consumer."** | Gives its input, output with status codes, validations, behavior, and the stored flowchart and sequence diagram | Use it. Ask for it by key, for example `EP-orders-create` |
 | **The Feature has no architecture yet** | Says it is not designed yet, and that [sdlc-design-arch](sdlc-design-arch.md) can design it now, even while its requirements are a draft | Merge the spec, then design |
-| **"What is outdated since the spec changed?"** | Lists the architecture, stories, Tasks and TestSuites written from an older version of the spec, each with the skill that redoes it | Run those skills, or confirm an unaffected file with [sdlc-edit-wiki](sdlc-edit-wiki.md) |
+| **"What is outdated since the spec changed?"** | Lists the architecture, stories, Tasks and test groups written from an older version of the spec, each with the skill that redoes it | Run those skills, or confirm an unaffected file with [sdlc-edit-wiki](sdlc-edit-wiki.md) |
 | **"Show me a user story."** | Gives the sentence, criteria, Requirements, the Tasks that link it, and its change history | Use it |
 | **"Give me the story for the tracker."** | Prints the paste-ready copy of each story asked for, and nothing else | Paste it into a ticket. To record the ticket link in the wiki, ask [sdlc-edit-wiki](sdlc-edit-wiki.md) |
 | **"What uses X?"** | Reads the reverse sections the tool writes (`# Used by`, `# Publishers`, `# Subscribers`), or searches for the key | Plan a change with the answer |
@@ -57,7 +57,7 @@ Ask. Name the Application or Feature if there are several.
 | Requirements | [sdlc-write-spec](sdlc-write-spec.md) |
 | User stories | [sdlc-write-stories](sdlc-write-stories.md) |
 | Architecture | [sdlc-design-arch](sdlc-design-arch.md) |
-| Tasks, tests | [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-tests](sdlc-design-tests.md) |
+| Tasks, tests | [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |
 | Bringing existing code, documents or tests in | [sdlc-import](sdlc-import.md) |
 | Typos, glossary, released, ticket links | [sdlc-edit-wiki](sdlc-edit-wiki.md) |
 | The wiki itself, a new Application | [sdlc-setup-wiki](sdlc-setup-wiki.md) |

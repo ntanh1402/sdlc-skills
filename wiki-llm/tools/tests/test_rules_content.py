@@ -3,7 +3,7 @@ from .support import RuleTest
 
 FEATURE = "pay/features/FEAT-pay/overview.md"
 CHANGE = "pay/change-requests/CR-1/overview.md"
-CASE = "pay/tests/TS-pay/TC-pay-ok.md"
+CASE = "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"
 CHANNEL = "pay/channels/CHAN-pay-events/overview.md"
 EXAMPLE = "pay/channels/CHAN-pay-events/payload.example.json"
 LOG = "pay/services/SVC-pay/log.md"
@@ -39,7 +39,7 @@ class TableAndDiagramTest(RuleTest):
         self.assertRule("content.table", CASE)
 
     def test_steps_table_needs_complete_rows(self):
-        self.edit(CASE, "| 1 | Pay | Paid | Row exists |", "| 1 | Pay | Paid | |")
+        self.edit(CASE, "| 1 | Pay | Paid | Row **status** |", "| 1 | Pay | Paid | |")
         self.assertRule("content.table", CASE)
 
     def test_glossary_tables_may_be_none(self):
@@ -50,15 +50,9 @@ class TableAndDiagramTest(RuleTest):
         self.edit("pay/glossary.md", "| Role | Description |", "| Role | Meaning |")
         self.assertRule("content.table", "pay/glossary.md")
 
-    def test_test_data_is_a_numbered_table(self):
-        self.edit(CASE, "| No | Input | Value |", "| Input | Value | Note |")
+    def test_steps_table_columns(self):
+        self.edit(CASE, "| Step | Action | Expected result | Validation |", "| Step | Action | Result |")
         self.assertRule("content.table", CASE)
-
-    def test_test_data_counts_from_one_in_order(self):
-        self.edit(CASE, "| 1 | card | 4242 4242 4242 4242 |", "| 1 | card | 4242 4242 4242 4242 |\n| 3 | amount | 20.00 |")
-        self.assertRule("content.table", CASE)
-        self.edit(CASE, "| 3 | amount |", "| 2 | amount |")
-        self.assertClean()
 
     def test_feature_architecture_needs_a_flowchart(self):
         self.edit(FEATURE, "flowchart LR", "graph LR")

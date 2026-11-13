@@ -25,7 +25,7 @@ Acceptance links the Requirements and contracts it satisfies and states
 observable results, including failure behaviour, compatibility, telemetry and
 rollback when they matter. It never repeats the title. The unit and component
 tests a developer writes with the code belong in acceptance; full test design
-belongs to `sdlc-design-tests`.
+belongs to `sdlc-design-story-tests` and `sdlc-design-feature-tests`.
 
 ## Stories and coverage
 

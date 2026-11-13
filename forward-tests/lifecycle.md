@@ -17,11 +17,11 @@ before the next step reads it.
    - Requests: "Design the gift cards feature", then "Break gift cards into user stories".
    - Answers: confirm the design basis and supply the outside provider's API facts; approve the target design; approve the change set. Confirm the proposed stories; approve the stories and their change set.
    - Then merge `wiki/arch-FEAT-gift-cards`, then `wiki/stories-FEAT-gift-cards`, into `main` and push. If git reports a conflict in the stories draft, run `refresh` there, then merge and push.
-3. **Tech lead and QA, `sdlc-plan-tasks` and `sdlc-design-tests`**, both started
-   from the same `main`, before either is merged.
-   - Requests: "Plan the tasks for gift cards", then "Design the tests for gift cards".
-   - Answers: confirm the planning basis; approve the task plan and its change set; choose the test suite types and the load workload; approve the test design and its change set.
-   - Then merge the tasks branch, then the tests branch. If git reports a conflict in the tests draft, run `refresh` there, then merge and push.
+3. **Tech lead and QA, `sdlc-plan-tasks`, `sdlc-design-story-tests` and `sdlc-design-feature-tests`**, all started
+   from the same `main`, before any is merged.
+   - Requests: "Plan the tasks for gift cards", then "Design the tests for STORY-gift-cards-pay-with-card", then "Design the end-to-end tests for gift cards".
+   - Answers: confirm the planning basis; approve the task plan and its change set; choose the test categories and flows; approve each test design and its change set.
+   - Then merge the tasks branch, then the two tests branches. If git reports a conflict in a tests draft, run `refresh` there, then merge and push.
 4. **`sdlc-ask-wiki`.**
    - Requests: "List the features", then "Show the gift cards architecture".
 

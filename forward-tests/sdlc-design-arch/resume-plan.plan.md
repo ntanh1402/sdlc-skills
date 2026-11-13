@@ -21,5 +21,5 @@ Intent approved 2026-10-03 · Design approved 2026-10-03
 - [ ] services/SVC-orders/log.md (change)
 
 ## For other skills
-- TS-checkout has no case for an undeliverable address: sdlc-design-tests
+- TS-checkout has no case for an undeliverable address: sdlc-design-story-tests
 - The change to EP-orders-create has no Task: sdlc-plan-tasks

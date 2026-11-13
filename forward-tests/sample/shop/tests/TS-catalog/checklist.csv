@@ -1,5 +1,5 @@
-No,Title,Description,Covers,Purpose
-1,Edit propagates to search,Prove catalog edits reach search within the consistency SLA.,REQ-catalog-keyword-search,Prove catalog edits reach search within the consistency SLA.
-2,Archived returns 410,Prove archived products disappear from detail and search surfaces.,REQ-catalog-product-detail,Prove archived products disappear from detail and search surfaces.
-3,Browse by category,"Prove category browsing returns only active, paginated products.",REQ-catalog-browse-by-category,"Prove category browsing returns only active, paginated products."
-4,Detail cache hit,Prove repeated detail reads use cache without changing response.,EP-products-get; CACHE-catalog,Prove repeated detail reads use cache without changing response.
+No,Group,Title,Description,Category,Covers,Purpose
+4,GENERAL,Edit propagates to search,Prove catalog edits reach search within the consistency SLA.,data-validation,,Prove catalog edits reach search within the consistency SLA.
+1,GENERAL,Archived returns 410,Prove archived products disappear from detail and search surfaces.,negative,,Prove archived products disappear from detail and search surfaces.
+2,GENERAL,Browse by category,"Prove category browsing returns only active, paginated products.",functional,,"Prove category browsing returns only active, paginated products."
+3,GENERAL,Detail cache hit,Prove repeated detail reads use cache without changing response.,functional,,Prove repeated detail reads use cache without changing response.

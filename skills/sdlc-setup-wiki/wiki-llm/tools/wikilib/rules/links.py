@@ -10,6 +10,15 @@ from ..bundle import SCHEME_RE, Bundle, Finding
 ORDER = 50
 
 
+def _story_group_key(holder) -> str | None:
+    """The STORY-* group a TestGroup or TestCase belongs to: a link to that story, once sdlc-write-stories removed it,
+    is a warning the test skills fix; any other broken link is an error."""
+    if holder is None or holder.type not in ("TestGroup", "TestCase"):
+        return None
+    group = holder.key if holder.type == "TestGroup" else holder.owner.key
+    return group if group.startswith("STORY-") else None
+
+
 def _inside(bundle: Bundle, path: Path) -> bool:
     return path == bundle.root or bundle.root in path.parents
 
@@ -24,7 +33,7 @@ def check(bundle: Bundle) -> list[Finding]:
             anchor_cache[path] = markdown.anchors(body)
         return anchor_cache[path]
 
-    def check_target(source: Path, target: str, rule: str) -> None:
+    def check_target(source: Path, target: str, rule: str, severity: str = "error") -> None:
         rel = bundle.rel(source)
         path, anchor = bundle.resolve(source, target)
         if path is None:
@@ -34,14 +43,17 @@ def check(bundle: Bundle) -> list[Finding]:
         elif path.is_dir():
             findings.append(Finding("links.folder-link", rel, f"{target} is a folder; link its overview.md or index.md"))
         elif not path.is_file():
-            findings.append(Finding(rule, rel, f"{target} does not exist"))
+            findings.append(Finding(rule, rel, f"{target} does not exist", severity))
         elif anchor and path.suffix == ".md" and anchor.lower() not in anchors(path):
             findings.append(Finding("links.anchor", rel, f"{target}: no heading produces the anchor #{anchor}"))
 
     for path in bundle.markdown_files():
         _, body = frontmatter.split(bundle.text(path))
+        holder = bundle.by_path.get(path)
+        group = _story_group_key(holder)
         for _, target in markdown.links(body, images=True):
-            check_target(path, target, "links.unresolved")
+            gone_story = group is not None and Path(target.partition("#")[0]).stem == group
+            check_target(path, target, "links.unresolved", "warning" if gone_story else "error")
 
     for concept in bundle.concepts:
         resources = [concept.meta.get("resource")]

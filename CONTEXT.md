@@ -61,7 +61,7 @@ One of the three points where a writing skill stops for the user's explicit appr
 _Avoid_: checkpoint, confirmation, review step
 
 **Tracker**:
-The system outside the Bundle where people create a Task's ticket and follow its progress; no skill reads or writes it.
+The system outside the Bundle (Jira, with Confluence for pages) where people follow the progress of Features, ChangeRequests, User stories and Tasks; only `sdlc-sync-atlassian` reads or writes it, and the Bundle owns the content while the Tracker owns status, assignee and sprint.
 _Avoid_: board, backlog, issue system
 
 **User story**:
@@ -87,3 +87,31 @@ _Avoid_: author, model, agent (as a provenance value)
 **Release version**:
 The number of a Release; it changes with tool or skill fixes that leave the Schema version unchanged.
 _Avoid_: version (unqualified)
+
+**Test suite**:
+The container of the test design of one Feature or ChangeRequest: its Test groups. It has no status of its own; each Test group is approved on its own.
+_Avoid_: test plan, integration suite, e2e suite (a suite has no type)
+
+**Test case**:
+One test, of type integration or e2e, written so a tester who did not design the system can run it from its steps alone.
+_Avoid_: scenario, test script
+
+**Test case id**:
+The number of a Test case, unique within its Test suite, counting from 1 and never reused after the case is deleted.
+_Avoid_: test number, step number
+
+**Test group**:
+A folder of a Test suite with its own overview, log and open questions: one per user story the suite proves, plus the General group.
+_Avoid_: sub-suite, story suite
+
+**General group**:
+The Test group that holds the Test cases tied to no single user story, of any type.
+_Avoid_: E2E folder, cross-story folder
+
+**Orphaned group**:
+A Test group named after a user story that was split, merged or deleted. The tool warns; `sdlc-design-feature-tests` moves its Test cases to the General group.
+_Avoid_: stale group, story drift
+
+**Test category**:
+What a Test case checks: functional, field validation, negative, error handling, data validation, security validation or integration with a downstream system. Separate from its type, which says how it runs.
+_Avoid_: test type (for this meaning), security test

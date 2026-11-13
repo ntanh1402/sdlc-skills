@@ -57,22 +57,27 @@ class SyncTest(RuleTest):
         self.assertFalse((self.root / "pay/references/REF-pay-prd/drafts/index.md").exists())
         self.assertFalse((self.root / "pay/references/REF-pay-prd/images/index.md").exists())
 
-    def test_checklist_lists_cases_by_risk_then_title(self):
-        case = "pay/tests/TS-pay/TC-pay-ok.md"
+    def test_checklist_lists_cases_by_risk_then_title_numbered_by_id(self):
+        case = "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"
+        fixture.add_general(self.root)
         self.write(
-            "pay/tests/TS-pay/TC-pay-declined.md",
-            self.text(case).replace("title: Payment succeeds", "title: Card declined")
+            "pay/tests/TS-pay/GENERAL/TC-2-pay-declined.md",
+            fixture.general_case(self.text(case)).replace("title: Payment succeeds", "title: Card declined")
             .replace("# Payment succeeds", "# Card declined").replace("risk: high", "risk: critical")
             .replace("description: A valid payment is taken.", 'description: "A declined card, says so."'),
         )
         sync.write(self.root)
         self.assertEqual(
             self.text("pay/tests/TS-pay/checklist.csv"),
-            "No,Title,Description,Covers,Purpose\n"
-            '1,Card declined,"A declined card, says so.",REQ-pay-1; EP-pay-create,Prove a payment works.\n'
-            "2,Payment succeeds,A valid payment is taken.,REQ-pay-1; EP-pay-create,Prove a payment works.\n",
+            "No,Group,Title,Description,Category,Covers,Purpose\n"
+            '2,GENERAL,Card declined,"A declined card, says so.",functional,,Prove a payment works.\n'
+            "1,STORY-pay-checkout,Payment succeeds,A valid payment is taken.,functional,AC 1,Prove a payment works.\n",
         )
-        self.assertIn("* [checklist.csv](checklist.csv)", self.text("pay/tests/TS-pay/index.md"))
+        suite_index = self.text("pay/tests/TS-pay/index.md")
+        self.assertIn("* [checklist.csv](checklist.csv)", suite_index)
+        self.assertIn("# Test groups\n\n* [General](GENERAL/overview.md)", suite_index)
+        self.assertNotIn("log.md", suite_index)
+        self.assertIn("* [Card declined](TC-2-pay-declined.md)", self.text("pay/tests/TS-pay/GENERAL/index.md"))
 
     def test_a_missing_checklist_is_out_of_date(self):
         (self.root / "pay/tests/TS-pay/checklist.csv").unlink()
@@ -139,7 +144,7 @@ class SyncTest(RuleTest):
     def test_root_index(self):
         self.assertEqual(
             self.text("index.md"),
-            '---\nokf_version: "0.2"\nschema_version: "1"\n---\n\n# Applications\n\n* [Pay](pay/overview.md) - Payment platform.\n',
+            '---\nokf_version: "0.2"\nschema_version: "2"\n---\n\n# Applications\n\n* [Pay](pay/overview.md) - Payment platform.\n',
         )
 
     def test_application_index_lists_own_files_and_present_collections(self):
@@ -235,11 +240,11 @@ class GeneratedRuleTest(RuleTest):
 
 class TestCasesTest(RuleTest):
     def test_sync_lists_cases_covering_the_storys_requirements(self):
-        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/TC-pay-ok.md)\n", fixture.read(self.root, "pay/features/FEAT-pay/STORY-pay-checkout.md"))
+        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md)\n", fixture.read(self.root, "pay/features/FEAT-pay/STORY-pay-checkout.md"))
 
     def test_sync_lists_cases_covering_the_planned_scope_of_the_storys_tasks(self):
         # TC-pay-ok covers EP-pay-create, which TASK-pay-003 of the coupon story changes
-        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/TC-pay-ok.md)\n", fixture.read(self.root, "pay/change-requests/CR-1/STORY-pay-coupon.md"))
+        self.assertIn("# Test cases\n\n* [Payment succeeds](../../tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md)\n", fixture.read(self.root, "pay/change-requests/CR-1/STORY-pay-coupon.md"))
 
     def test_test_cases_is_left_out_when_no_case_reaches_the_story(self):
         self.edit("pay/change-requests/CR-1/TASK-pay-003.md", "\n\n# Stories\n\n* [STORY-pay-coupon](STORY-pay-coupon.md)", "")

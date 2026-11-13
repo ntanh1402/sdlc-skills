@@ -3,13 +3,9 @@ type: TestSuite
 title: Catalog Suite
 description: Integration tests for browse, detail, search, and indexing.
 resource: https://github.com/acme/catalog-service/tree/main/tests/integration
-status: Implemented
-suiteType: integration
 framework: gotest
 generated: { by: human:sample-author, at: 2026-07-14T10:00:00Z }
 verified: { by: human:sample-author, at: 2026-07-14T10:00:00Z }
-basedOn:
-  - { id: FEAT-catalog, version: 1, at: 2026-07-14 }
 ---
 
 # Catalog Suite

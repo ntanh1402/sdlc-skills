@@ -8,7 +8,7 @@ it. [Back to the user guide](user-guide.md).
 | | |
 |---|---|
 | **Who** | Tech lead and architect (code, architecture documents, requirement documents); QA (test suites) |
-| **Use when** | The project already exists and the wiki does not describe it yet (onboarding); or the wiki and the code may no longer agree; or a test suite has been written and its TestSuite must be marked `Implemented`; or a page, document or piece of code should be kept as a Reference for others to consult |
+| **Use when** | The project already exists and the wiki does not describe it yet (onboarding); or the wiki and the code may no longer agree; or a test suite has been written and its test groups must be marked `Implemented`; or a page, document or piece of code should be kept as a Reference for others to consult |
 | **Needs first** | The wiki is set up and the Application exists. A non-text document is converted first with [sdlc-convert-doc](sdlc-convert-doc.md). Its prerequisites are merged (see the order below) |
 | **Say** | "Import the code of ../shop-orders", "Import docs/architecture.md", "Check the wiki against ../shop-orders" |
 | **You get** | As-built Design files, `Released` Features, decisions and TestSuites, which you confirm group by group. In a compare run, you decide each difference |
@@ -27,8 +27,8 @@ One source per run:
 | **Architecture document** | The Application's architecture, decisions, conventions, glossary, a Service page for each service the wiki lacks, and the document as a Reference | Decisions `Accepted`; Services `Active` |
 | **Requirement document** (PRD, functional spec) | One as-built Feature per capability, with the document as a Reference | `Released` |
 | **A built capability with no document** | One as-built Feature | `Released` |
-| **Test code** (end-to-end, integration, load, security) | One TestSuite and one TestCase per test | `Implemented` |
-| **Test document** (test plan, sheet of manual cases) | One TestSuite and its TestCases, with the document as a Reference | `Approved` (`Implemented` if you say the runnable tests exist) |
+| **Test code** (end-to-end, integration, security; not unit or load) | One TestCase per test, in a group (`STORY-…` or `GENERAL`) of the TestSuite of the Feature it verifies | The group: `Implemented` |
+| **Test document** (test plan, sheet of manual cases) | Its TestCases in a group of the TestSuite of the Feature they verify, with the document as a Reference | The group: `Approved` (`Implemented` if you say the runnable tests exist) |
 | **A reference** (a page, a document or a code location to consult) | One Reference, and the links to it from the files you name | `Active` |
 
 **The order for a new project:** design first, then Features, then tests. Import
@@ -90,7 +90,7 @@ capability, then the tests. Import the code of a folder before its tests.
 | **Compare: you answer "the code is wrong"** | Writes nothing and says: open a bugfix ChangeRequest with [sdlc-write-spec](sdlc-write-spec.md) | Run it |
 | **Documents and code disagree** | Code wins for contracts (endpoints, tables, channels). Documents add requirements, reasons and diagrams. Every disagreement is listed, none resolved | Decide |
 | **The source contains a secret or personal data** | Never copies it. It names the setting, not the value | Nothing |
-| **A test document describes tests that exist as code** | Imports the document as a suite, `Implemented` when you say the runnable tests exist | Say so |
+| **A test document describes tests that exist as code** | Imports the document into a test group, `Implemented` when you say the runnable tests exist | Say so |
 | **You reject the whole import** | Discards a draft this run started | Nothing |
 | **The run stops half-way** | Next time it continues from the first group with no answer | Run it again |
 

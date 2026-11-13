@@ -24,6 +24,6 @@
 - Each new concept `Planned`, each changed one `Modifying`, each with a `# Pending changes` entry linking `FEAT-gift-cards`
 - Any decision in `decisions/ADR-<name>.md` `Accepted`
 - Every Requirement in `## Traceability`
-- The last message is the summary, at most four lines; "Next" names `sdlc-plan-tasks` and `sdlc-design-tests`
+- The last message is the summary, at most four lines; "Next" names `sdlc-plan-tasks`, `sdlc-design-story-tests` and `sdlc-design-feature-tests`
 - `validate` ok. **Keep this directory**: merge the branch into `main` and push
 - Later scenarios copy it as "designed"

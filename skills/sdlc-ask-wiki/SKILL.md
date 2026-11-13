@@ -9,7 +9,8 @@ Read-only. Never create, edit, delete or commit a wiki file, and never start a
 draft. Route a request to change the wiki to the skill that does it:
 `sdlc-write-spec` (requirements), `sdlc-write-stories` (user stories),
 `sdlc-design-arch` (architecture),
-`sdlc-plan-tasks` (tasks), `sdlc-design-tests` (test design),
+`sdlc-plan-tasks` (tasks), `sdlc-design-story-tests` and
+`sdlc-design-feature-tests` (test design),
 `sdlc-import` (existing code, documents or tests to bring into the wiki, or
 to compare with it), `sdlc-close-task` (a Task whose code is merged),
 `sdlc-edit-wiki` (a typo, the glossary or conventions, a Feature marked
@@ -74,9 +75,10 @@ For exactly one Feature:
    one of its ChangeRequests, with the entry's text; and the open
    ChangeRequests.
 10. Outdated: `$T outdated --feature <key>` lists the design, stories, Tasks
-   and TestSuites written from an older version, with the skill that rewrites
+   and TestGroups written from an older version, with the skill that rewrites
    each (`sdlc-design-arch`, `sdlc-write-stories`, `sdlc-plan-tasks`,
-   `sdlc-design-tests`). Leave this out when it is empty.
+   `sdlc-design-story-tests` or `sdlc-design-feature-tests`). Leave this out
+   when it is empty.
 11. Gaps found while reading: links that do not resolve, Requirements missing
    from Traceability, differences between the wiki and code you also read
    (`sdlc-import` on that code compares them file by file).

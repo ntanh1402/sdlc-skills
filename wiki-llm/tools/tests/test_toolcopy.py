@@ -21,7 +21,7 @@ def fake_source(where: Path, version: str, schema_version: str | None = None) ->
     shutil.copytree(SCHEMA_DIR, where / "schema")
     if schema_version:
         path = where / "schema/schema.json"
-        path.write_text(path.read_text(encoding="utf-8").replace('"schema_version": "1"', f'"schema_version": "{schema_version}"'), encoding="utf-8")
+        path.write_text(path.read_text(encoding="utf-8").replace('"schema_version": "2"', f'"schema_version": "{schema_version}"'), encoding="utf-8")
     return where
 
 
@@ -51,7 +51,7 @@ class CopyTest(unittest.TestCase):
         self.assertEqual(manifest["release_version"], toolcopy.release_version())
         self.assertNotIn("plugin_version", manifest)
         self.assertEqual(result["release_version"], toolcopy.release_version())
-        self.assertEqual(manifest["schema_version"], "1")
+        self.assertEqual(manifest["schema_version"], "2")
         self.assertIn("schema/schema.json", manifest["files"])
         self.assertIn("tools/wiki_llm.py", manifest["files"])
         self.assertIn("tools/wikilib/draft.py", manifest["files"])
@@ -113,7 +113,7 @@ class CopyTest(unittest.TestCase):
             code, result = self.check("--source", str(source))
             self.assertEqual((code, result["status"]), (1, "older"), version)
             self.assertEqual(result["message"], "the wiki is older than these skills: run sdlc-setup-wiki to upgrade it")
-            self.assertEqual(result["source"], {"release_version": version, "schema_version": "1"})
+            self.assertEqual(result["source"], {"release_version": version, "schema_version": "2"})
 
     def test_other_schema_version_must_be_upgraded(self):
         self.install()

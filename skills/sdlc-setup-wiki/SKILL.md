@@ -119,7 +119,11 @@ repository needs one of these, and stop.
 
 1. Show the user `copy.release_version` and `source.release_version` from
    `copy check`, and whether the Schema version changes
-   (`copy.schema_version` and `source.schema_version`). When `status` is
+   (`copy.schema_version` and `source.schema_version`). From Schema version
+   1 to 2, also say that every TestSuite is removed (each Feature or
+   ChangeRequest now has one suite, with its cases grouped by user story) and
+   that `sdlc-design-story-tests` and `sdlc-design-feature-tests` write them
+   again. When `status` is
    `edited`, list `added`, `missing` and `changed`: those hand edits will be
    replaced. Unless SELF, also say which workspace files get the note.
 2. Ask for approval. On approval, with `<version>` the value of
@@ -139,7 +143,8 @@ repository needs one of these, and stop.
 4. Run `cd .worktrees/setup-<version>`. When the Schema version changes, run
    `$TOOL migrate`. If it reports that no migration is available, tell the user
    the wiki cannot be upgraded with this release. Then run
-   `cd "$WIKI" && $TOOL draft discard setup-<version>` and stop.
+   `cd "$WIKI" && $TOOL draft discard setup-<version>` and stop. Keep its
+   `removed` suites and its `retest` keys for the report.
 5. **Tasks with two or more stories.** The schema now allows a Task at most
    one story, so a wiki written before may hold Tasks with more. Run
    `$TOOL validate` and look for `relationships.cardinality` findings on a
@@ -155,6 +160,9 @@ repository needs one of these, and stop.
    Change-set gate (section 6). When step 5 dropped a link, the report after
    the commit also says: "Next: run sdlc-plan-tasks for <each open Feature or
    ChangeRequest whose stories lost their Task> to plan a Task for them."
+   When `migrate` removed suites, it also says: "Next: run
+   sdlc-design-story-tests for each story and sdlc-design-feature-tests for
+   <each `retest` key> to write its TestSuite again."
 
 ## 4. Link only
 

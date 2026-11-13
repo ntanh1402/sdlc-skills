@@ -27,7 +27,7 @@ LOG = "# Change log\n\n## 2026-09-01\n\n* **Creation**: Created.\n"
 INDEX = "# Index\n"
 
 FILES: dict[str, str] = {
-    "index.md": '---\nokf_version: "0.2"\nschema_version: "1"\n---\n\n# Applications\n',
+    "index.md": '---\nokf_version: "0.2"\nschema_version: "2"\n---\n\n# Applications\n',
     # ----------------------------------------------------------------- application
     "pay/overview.md": page(
         f"type: Application\ntitle: Pay\ndescription: Payment platform.\nstatus: Active\nownerTeam: payments\n{G}",
@@ -224,17 +224,21 @@ FILES: dict[str, str] = {
     "pay/frontends/MB-shop/log.md": LOG,
     # ---------------------------------------------------------------------- tests
     "pay/tests/TS-pay/overview.md": page(
-        f"type: TestSuite\ntitle: Pay Suite\ndescription: End-to-end payment tests.\nstatus: Approved\nsuiteType: e2e\n{G}\n"
-        "basedOn:\n  - { id: FEAT-pay, version: 1, at: 2026-08-15 }",
+        f"type: TestSuite\ntitle: Pay Suite\ndescription: Tests of paying.\n{G}",
         "# Pay Suite\n\n# Verifies\n\n* [FEAT-pay](../../features/FEAT-pay/overview.md)",
     ),
-    "pay/tests/TS-pay/log.md": LOG,
-    "pay/tests/TS-pay/TC-pay-ok.md": page(
-        f"type: TestCase\ntitle: Payment succeeds\ndescription: A valid payment is taken.\nrisk: high\n{G}",
-        "# Payment succeeds\n\n# Covers\n\n* [REQ-pay-1](../../features/FEAT-pay/overview.md#req-pay-1)\n"
-        "* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md)\n\n# Purpose\n\nProve a payment works.\n\n"
-        "# Preconditions\n\nA cart.\n\n# Test data\n\n| No | Input | Value |\n|---|---|---|\n| 1 | card | 4242 4242 4242 4242 |\n\n# Steps\n\n"
-        "| Step | Action | Expected result | Validation |\n|---|---|---|---|\n| 1 | Pay | Paid | Row exists |\n\n"
+    "pay/tests/TS-pay/STORY-pay-checkout/overview.md": page(
+        f"type: TestGroup\ntitle: Pay at checkout\ndescription: Cases of the pay at checkout story.\nstatus: Approved\n{G}\n{B}",
+        "# Pay at checkout\n\n# Story\n\n* [STORY-pay-checkout](../../../features/FEAT-pay/STORY-pay-checkout.md)",
+    ),
+    "pay/tests/TS-pay/STORY-pay-checkout/log.md": LOG,
+    "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md": page(
+        f"type: TestCase\ntitle: Payment succeeds\ndescription: A valid payment is taken.\nrisk: high\ntestType: e2e\ntestCategory: functional\n{G}",
+        "# Payment succeeds\n\n# Covers\n\n* [STORY-pay-checkout](../../../features/FEAT-pay/STORY-pay-checkout.md) — AC 1\n"
+        "* [REQ-pay-1](../../../features/FEAT-pay/overview.md#req-pay-1)\n"
+        "* [EP-pay-create](../../../services/SVC-pay/EP-pay-create.md)\n\n# Purpose\n\nProve a payment works.\n\n"
+        "# Preconditions\n\nA cart; card 4242 4242 4242 4242.\n\n# Steps\n\n"
+        "| Step | Action | Expected result | Validation |\n|---|---|---|---|\n| 1 | Pay | Paid | Row **status** |\n\n"
         "# Postconditions and cleanup\n\nDelete the payment.",
     ),
     # ----------------------------------------------------------------- references
@@ -254,9 +258,24 @@ INDEX_DIRS = [
     "pay/change-requests/CR-1", "pay/services", "pay/services/SVC-pay", "pay/channels",
     "pay/channels/CHAN-pay-events", "pay/datastores", "pay/datastores/DB-main", "pay/datastores/CACHE-pay",
     "pay/datastores/BLOB-receipts", "pay/datastores/IDX-payments", "pay/externals", "pay/externals/EXT-bank",
-    "pay/frontends", "pay/frontends/WEB-shop", "pay/frontends/MB-shop", "pay/tests", "pay/tests/TS-pay",
+    "pay/frontends", "pay/frontends/WEB-shop", "pay/frontends/MB-shop", "pay/tests", "pay/tests/TS-pay", "pay/tests/TS-pay/STORY-pay-checkout",
     "pay/references", "pay/references/REF-pay-prd",
 ]
+
+
+def general_case(text: str) -> str:
+    """A copy of the fixture case for GENERAL: no link to the story."""
+    return text.replace("* [STORY-pay-checkout](../../../features/FEAT-pay/STORY-pay-checkout.md) — AC 1\n", "")
+
+
+def add_general(root: Path) -> None:
+    """Give the fixture suite a GENERAL group with no cases yet."""
+    write(root, "pay/tests/TS-pay/GENERAL/overview.md", page(
+        f"type: TestGroup\ntitle: General\ndescription: Cases of no single story.\nstatus: Draft\n{G}\n{B}",
+        "# General\n\n# Scope\n\nPaying end to end.",
+    ))
+    write(root, "pay/tests/TS-pay/GENERAL/log.md", LOG)
+    sync.write(root)
 
 
 def make_bundle(root: Path) -> Path:
@@ -290,4 +309,5 @@ def edit(root: Path, rel: str, old: str, new: str) -> None:
 
 
 def remove(root: Path, rel: str) -> None:
-    (root / rel).unlink()
+    path = root / rel
+    shutil.rmtree(path) if path.is_dir() else path.unlink()

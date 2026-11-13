@@ -12,7 +12,7 @@ The wiki of `cr-removes-requirement`, built the same way. Also copy `forward-tes
 
 ## Expected
 - In the same draft, `REQ-gift-cards-reject-invalid` is removed from `FEAT-gift-cards`'s Requirements and its Traceability
-- The Run plan and the Design gate list the TestCase fix beside the story fix: `TC-refused-card` is deleted (it covered only that Requirement); `TC-redeem-and-refuse` loses only its `# Covers` link to the Requirement and keeps the link to `REQ-gift-cards-redeem-at-checkout`
-- `TS-gift-cards/log.md` records the deleted case and the dropped link; no other TestCase text changes
-- No Task or TestSuite `overview.md` is edited
+- The Run plan and the Design gate list the TestCase fix beside the story fix: `GENERAL/TC-2-refused-card` is deleted (it covered only that Requirement); `GENERAL/TC-1-redeem-and-refuse` loses only its `# Covers` link to the Requirement and keeps the link to `REQ-gift-cards-redeem-at-checkout`
+- `TS-gift-cards/GENERAL/log.md` records the deleted case and the dropped link; no other TestCase text changes
+- No Task, TestSuite or TestGroup `overview.md` is edited
 - `CR-gift-cards-provider-checks` `Approved`; `validate` ok on branch `wiki/arch-CR-gift-cards-provider-checks`

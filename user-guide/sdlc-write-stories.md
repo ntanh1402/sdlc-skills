@@ -67,6 +67,6 @@ testable unit.
 | New or changed Requirements | [sdlc-write-spec](sdlc-write-spec.md) |
 | Architecture | [sdlc-design-arch](sdlc-design-arch.md) |
 | Tasks, or linking Tasks to stories | [sdlc-plan-tasks](sdlc-plan-tasks.md) |
-| Test cases (they link Requirements, never stories) | [sdlc-design-tests](sdlc-design-tests.md) |
+| Test cases | [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |
 | Show a story, or its paste-ready copy again | [sdlc-ask-wiki](sdlc-ask-wiki.md) |
 | A typo in a story, or a ticket link | [sdlc-edit-wiki](sdlc-edit-wiki.md) |

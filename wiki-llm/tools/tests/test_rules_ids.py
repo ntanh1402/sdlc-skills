@@ -18,8 +18,8 @@ class IdsTest(RuleTest):
     def test_requirement_key_is_the_feature_name_and_a_name(self):
         self.edit(FEATURE, "REQ-pay-1", "REQ-pay-take-payment")
         self.edit(FEATURE, "#req-pay-1", "#req-pay-take-payment")
-        fixture.edit(self.root, "pay/tests/TS-pay/TC-pay-ok.md", "REQ-pay-1](../../features/FEAT-pay/overview.md#req-pay-1)",
-                     "REQ-pay-take-payment](../../features/FEAT-pay/overview.md#req-pay-take-payment)")
+        fixture.edit(self.root, "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "REQ-pay-1](../../../features/FEAT-pay/overview.md#req-pay-1)",
+                     "REQ-pay-take-payment](../../../features/FEAT-pay/overview.md#req-pay-take-payment)")
         fixture.edit(self.root, "pay/features/FEAT-pay/TASK-pay-001.md", "[REQ-pay-1](overview.md#req-pay-1)",
                      "[REQ-pay-take-payment](overview.md#req-pay-take-payment)")
         self.edit(STORY, "REQ-pay-1](overview.md#req-pay-1)", "REQ-pay-take-payment](overview.md#req-pay-take-payment)")

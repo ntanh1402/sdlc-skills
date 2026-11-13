@@ -27,14 +27,14 @@ that need judgment; the tool does not check those.
 
 - A folder or filename without `.md` is the key. There is no `key` field.
 - Ownership comes from nesting: a Table belongs to the Database folder it sits
-  in, a Task or a user story to its Feature or ChangeRequest, a TestCase to
-  its TestSuite.
+  in, a Task or a user story to its Feature or ChangeRequest, a TestGroup to
+  its TestSuite, a TestCase to its TestGroup.
 - An application contains only the collections it uses.
 - A key is a type prefix and a name: lower-case words joined by `-`, taken
   from the title (`CR-coupon-codes`, `TASK-refund-endpoint`). Keys are never
   sequence numbers, so writers working in parallel do not pick the same one.
 - Keys are unique per type inside an application. TestCase keys are unique
-  inside their suite.
+  inside their suite; a TestGroup is named after its story, or `GENERAL`.
 - A key never changes after it reaches the default branch. Before that,
   `wiki_llm.py rename` changes it and every reference to it.
 
@@ -193,7 +193,7 @@ written from it records the version it read:
 | `version`, `versionDate` | Feature, ChangeRequest | the revision of its Requirements and PRD, from 1, and the day it was written |
 | `designBasedOn` | Feature, ChangeRequest | `{ version, at }` that `# Architecture` / `# Delta` was designed from |
 | `basedOn` | Task, UserStory | `{ version, at }` of its own folder's Feature or ChangeRequest |
-| `basedOn` | TestSuite | `{ id, version, at }` for each target under `# Verifies` |
+| `basedOn` | TestGroup | `{ version, at }` of the target under its TestSuite's `# Verifies` |
 
 `at` copies the target's `versionDate` for that version. The version goes up
 when the Requirements or the PRD change, never for a wording fix, and never
@@ -210,8 +210,7 @@ The tool checks that:
   an older version (`basis.approved-task`). Requirements change only before
   approval, so every Task catches up first: `sdlc-design-arch` approves only
   once `sdlc-plan-tasks` has replanned them;
-- each TestSuite has one record per target it verifies (`basis.target`);
-- a design, story, Task or TestSuite written from an older version is reported
+- a design, story, Task or TestGroup written from an older version is reported
   as a warning (`basis.outdated`). It is cleared by writing it again from the
   current version (for a `Done` Task, planning a new Task for any difference
   and updating the `Done` Task's `basedOn`), or by a person confirming it is
@@ -276,7 +275,8 @@ them; edit the authored side and run `sync`.
 | Design | Operation | [external-operation](external-operation.md) | `<app>/externals/EXT-*/OP-<slug>.md` |
 | Build | Task | [task](task.md) | `<app>/features/FEAT-*/TASK-<name>.md or <app>/change-requests/CR-*/TASK-<name>.md` |
 | Verify | TestSuite | [test-suite](test-suite.md) | `<app>/tests/TS-<slug>/` |
-| Verify | TestCase | [test-case](test-case.md) | `<app>/tests/TS-*/TC-<slug>.md` |
+| Verify | TestGroup | [test-group](test-group.md) | `<app>/tests/TS-*/STORY-<name>/ or <app>/tests/TS-*/GENERAL/` |
+| Verify | TestCase | [test-case](test-case.md) | `<app>/tests/TS-*/<STORY-* or GENERAL>/TC-<id>-<slug>.md` |
 
 **Design types:** Service, WebFrontend, MobileFrontend, Endpoint, Subscription, MessageChannel, Database, Table, Cache, BlobStore, SearchIndex, ExternalService, Operation.
 

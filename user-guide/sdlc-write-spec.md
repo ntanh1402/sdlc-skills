@@ -52,7 +52,7 @@ Feature. [Back to the user guide](user-guide.md).
 | **The Feature exists and is `Draft`** | Revises that Feature | Say what changes |
 | **The Feature exists and is `ReqApproved`** | Revises it and puts it back to `Draft` until agreed again. It says so in the first round | Re-approve at the Design gate |
 | **The PRD is in an older shape** and you revise the Feature for another reason | Rewrites the PRD whole in the current shape (Summary, Problem and evidence, Goals and success metrics, Users and personas, User flows, Business rules, Requirements, Release and rollout, Risks, Out of scope) and shows old content no section takes as a gap. It never revises a Feature only to reshape its PRD | Decide each gap at the Design gate |
-| **Your revision changes a Requirement or the PRD** | Raises `version` by one. Its summary lists the architecture, stories, Tasks and TestSuites written from the older version, with the skill that redoes each | Run those skills, or confirm an unaffected file with [sdlc-edit-wiki](sdlc-edit-wiki.md) |
+| **Your revision changes a Requirement or the PRD** | Raises `version` by one. Its summary lists the architecture, stories, Tasks and test groups written from the older version, with the skill that redoes each | Run those skills, or confirm an unaffected file with [sdlc-edit-wiki](sdlc-edit-wiki.md) |
 | **You mark a designed Feature `ReqApproved`** and its architecture was designed from this version (with no `Done` or outdated Tasks) | Sets it `Approved` instead (if Tasks are already `Done`, leaves it `ReqApproved` so [sdlc-design-arch](sdlc-design-arch.md) cleans up their pending entries and sets `InDev`) | Nothing, or run [sdlc-design-arch](sdlc-design-arch.md) when it says so |
 | **You mark a designed ChangeRequest `ReqApproved`** | Leaves it `ReqApproved`: approving it also updates its Feature | Run [sdlc-design-arch](sdlc-design-arch.md) again; with a current design it only approves |
 | **The Feature is `Approved` or later** | Writes a new **ChangeRequest** (`Proposed`, `version: 1`) instead. It never edits the target Feature | Choose the change type and risk it proposes |
@@ -71,7 +71,7 @@ Feature. [Back to the user guide](user-guide.md).
 | **You want to keep working on it** | Answer "draft" at the second question: the status stays `Draft` (Feature) or `Proposed` (ChangeRequest) | Come back later, run the skill again |
 | **A run stops part-way** | Next time it finds the draft and asks whether its plan still stands | Say yes or change it |
 | **You reject the intent** | Writes nothing | Nothing |
-| **You ask for a typo fix, architecture, tasks or tests** | Names the skill: [sdlc-edit-wiki](sdlc-edit-wiki.md), [sdlc-design-arch](sdlc-design-arch.md), [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-tests](sdlc-design-tests.md) | Run that skill |
+| **You ask for a typo fix, architecture, tasks or tests** | Names the skill: [sdlc-edit-wiki](sdlc-edit-wiki.md), [sdlc-design-arch](sdlc-design-arch.md), [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) | Run that skill |
 
 ## Not this skill
 
@@ -80,6 +80,6 @@ Feature. [Back to the user guide](user-guide.md).
 | A question about the wiki | [sdlc-ask-wiki](sdlc-ask-wiki.md) |
 | A PDF or Word file as input | [sdlc-convert-doc](sdlc-convert-doc.md) first |
 | Something already built and running | [sdlc-import](sdlc-import.md) |
-| Architecture, stories, tasks, tests | [sdlc-design-arch](sdlc-design-arch.md), [sdlc-write-stories](sdlc-write-stories.md), [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-tests](sdlc-design-tests.md) |
+| Architecture, stories, tasks, tests | [sdlc-design-arch](sdlc-design-arch.md), [sdlc-write-stories](sdlc-write-stories.md), [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |
 | A typo, the glossary, a Feature marked released | [sdlc-edit-wiki](sdlc-edit-wiki.md) |
 | A bug diagnosis | Not a wiki skill. Once you know the fix, write it up here as a ChangeRequest |

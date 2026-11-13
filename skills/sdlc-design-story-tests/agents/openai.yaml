@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Design Story Tests"
+  short_description: "Design the test cases of one user story"
+  default_prompt: "Use $sdlc-design-story-tests to design the test cases of one user story of a designed Feature or ChangeRequest."

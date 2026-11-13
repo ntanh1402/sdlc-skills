@@ -8,7 +8,7 @@ HEADING_KEYS = {
 }
 FIELD_KINDS = {
     "string", "enum", "boolean", "integer", "uri", "timestamp", "date",
-    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested", "basis", "basis_list",
+    "actor_stamp", "actor_stamps", "sources", "string_list", "suggested", "basis",
 }
 
 

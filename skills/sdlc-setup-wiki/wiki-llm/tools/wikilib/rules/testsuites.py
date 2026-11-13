@@ -2,9 +2,9 @@
 the suite's target, links it under # Story, and holds cases that cover its
 Requirements and acceptance criteria; steps a tester runs without the wiki,
 with each Validation naming what it checks in bold; open questions keep a
-group in Draft. Story drift (a story removed or renumbered after the tests
-were written) is a warning: sdlc-write-stories may leave it, the test skills
-fix it."""
+group in Draft; GENERAL says its # Scope; a suite has no log.md. Story
+warnings (a story removed or renumbered after the tests were written) leave
+sdlc-write-stories free to finish; the test skills fix them."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ import re
 
 from .. import markdown
 from ..bundle import Bundle, Concept, Finding
-from ..sync import acs, case_id, story_link, suite_cases
 from .stories import criteria
 
 ORDER = 77
@@ -20,8 +19,29 @@ ORDER = 77
 RUN_HEADINGS = ("Preconditions", "Steps", "Postconditions and cleanup")
 SEE_STEP_RE = re.compile(r"\bsee step \d+", re.IGNORECASE)
 BOLD_RE = re.compile(r"\*\*[^*]+\*\*")
-NO_OPEN_QUESTIONS = ("Draft", "Deprecated")
 GENERAL = "GENERAL"
+AC_RE = re.compile(r"^AC\s+([1-9]\d*(?:\s*,\s*[1-9]\d*)*)$")
+
+
+def case_id(case: Concept) -> int:
+    """The number in a TestCase key TC-<id>-<name>; 0 when the key has none."""
+    number = case.key.split("-")[1] if case.key.count("-") >= 2 else ""
+    return int(number) if number.isdigit() else 0
+
+
+def suite_cases(bundle: Bundle, suite: Concept) -> list[Concept]:
+    return [case for group in bundle.owned(suite, "TestGroup") for case in bundle.owned(group, "TestCase")]
+
+
+def story_link(bundle: Bundle, case: Concept, story_key: str):
+    """The `# Covers` entry of a case that links the story `story_key`, or None."""
+    return next((r for r in bundle.relations(case, ["Covers"]) if r.path is not None and r.path.stem == story_key), None)
+
+
+def ac_numbers(relation) -> list[int] | None:
+    """The criterion numbers of a story link: `— AC 1, 3` gives [1, 3]; None without that qualifier."""
+    match = AC_RE.match(relation.item.segments[0]) if relation.item.segments else None
+    return [int(number) for number in match.group(1).split(",")] if match else None
 
 
 def _key_re(bundle: Bundle) -> re.Pattern:
@@ -33,7 +53,7 @@ def _requirements(bundle: Bundle, concept: Concept, heading: str) -> set[tuple]:
     return {(r.path, r.anchor.lower()) for r in bundle.relations(concept, [heading]) if r.kind == "Requirement"}
 
 
-def _count(story: Concept) -> int:
+def _criteria_count(story: Concept) -> int:
     section = story.section(["Acceptance criteria"])
     return len(criteria(section.text)[0]) if section else 0
 
@@ -52,22 +72,22 @@ def _open_questions(group: Concept, findings: list[Finding]) -> None:
     for number, item in enumerate(items, start=1):
         if not markdown.links(item):
             findings.append(Finding("tests.open-questions", group.rel, f"open question {number} must link the Requirement, story, design or decision it is about"))
-    if items and group.status not in NO_OPEN_QUESTIONS:
+    if items and group.status != "Draft":
         findings.append(Finding("tests.open-questions", group.rel, f"a group with open questions stays Draft, not {group.status}"))
 
 
-def _story_group(bundle: Bundle, group: Concept, stories: dict[str, Concept], targets: str, findings: list[Finding]) -> None:
+def _story_group(bundle: Bundle, group: Concept, stories: dict[str, Concept], target: str, findings: list[Finding]) -> None:
     linked = [r for r in bundle.relations(group, ["Story"]) if r.path is not None]
     if not linked or linked[0].path.stem != group.key:
         findings.append(Finding("tests.group-story", group.rel, f"# Story must link {group.key}, the story this folder is named after"))
     story = stories.get(group.key)
     if story is None:
-        findings.append(_warn("tests.story-folder", group.rel, f"{group.key} is not a user story of {targets}; move its cases to the folder of their story or to GENERAL"))
+        findings.append(_warn("tests.story-folder", group.rel, f"{group.key} is not a user story of {target}; move its cases to the folder of their story or to GENERAL"))
         return
-    count, covered = _count(story), set()
+    count, covered = _criteria_count(story), set()
     for case in bundle.owned(group, "TestCase"):
         link = story_link(bundle, case, group.key)
-        numbers = acs(link) if link else None
+        numbers = ac_numbers(link) if link else None
         if numbers is None:
             findings.append(Finding("tests.story-ac", case.rel, f"# Covers must link {group.key} with the criteria it proves, as `— AC 1, 3`"))
             continue
@@ -85,6 +105,8 @@ def _story_group(bundle: Bundle, group: Concept, stories: dict[str, Concept], ta
 def _general_group(bundle: Bundle, group: Concept, findings: list[Finding]) -> None:
     if group.section(["Story"]) is not None:
         findings.append(Finding("tests.group-story", group.rel, "GENERAL holds cases of no single story; it has no # Story"))
+    if group.section(["Scope"]) is None:
+        findings.append(Finding("tests.group-scope", group.rel, "GENERAL says under # Scope which flows it covers"))
     for case in bundle.owned(group, "TestCase"):
         stories = [r.path.stem for r in bundle.relations(case, ["Covers"]) if r.path is not None and r.path.stem.startswith("STORY-")]
         if stories:
@@ -120,15 +142,17 @@ def _suite(bundle: Bundle, suite: Concept, key_re: re.Pattern, findings: list[Fi
             for case in same:
                 findings.append(Finding("tests.case-id", case.rel, f"id {number} is used by {len(same)} cases of {suite.key}; give each case its own"))
 
-    targets = [r.concept for r in bundle.relations(suite, ["Verifies"]) if r.concept is not None]
-    stories = {story.key: story for target in targets for story in bundle.owned(target, "UserStory")}
-    names = " or ".join(t.key for t in targets) or "the suite target"
+    if (suite.folder / "log.md").exists():
+        findings.append(Finding("tests.suite-log", suite.rel, "a TestSuite has no log.md; each group keeps its own"))
+    target = next((r.concept for r in bundle.relations(suite, ["Verifies"]) if r.concept is not None), None)  # schema allows one
+    stories = {story.key: story for story in bundle.owned(target, "UserStory")} if target else {}
+    name = target.key if target else "the suite target"
     for group in bundle.owned(suite, "TestGroup"):
         _open_questions(group, findings)
         if group.key == GENERAL:
             _general_group(bundle, group, findings)
         else:
-            _story_group(bundle, group, stories, names, findings)
+            _story_group(bundle, group, stories, name, findings)
         for case in bundle.owned(group, "TestCase"):
             _steps(case, key_re, findings)
 

@@ -20,7 +20,7 @@ Read it when `SKILL.md` section 1 finds an unfinished draft, or at section 4.
   `draft finish` writes those.
 - Never edit another step's output: write only a suite's `overview.md` when
   it is new, its `GENERAL/` group and the `TC-*.md` files in it under
-  `wiki/<app>/tests/`, the cases of a stale `STORY-*` group you move to
+  `wiki/<app>/tests/`, the cases of an orphaned `STORY-*` group you move to
   `GENERAL/` (plus an optional test-plan Reference folder
   `references/REF-<name>-test-plan/` when the user gave a test plan).
 - A suite's key is its target's key without the prefix: `TS-coupons`. A

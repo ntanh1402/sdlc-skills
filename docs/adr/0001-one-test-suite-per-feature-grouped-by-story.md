@@ -16,6 +16,6 @@ A case has `testType` (how it runs: integration or e2e) and an optional `testCat
 ## Consequences
 
 - Schema 1 suites are removed by `migrate`; the test design skills write them again.
-- Story drift is a warning, not an error: a deleted story, a criterion number that no longer exists, a criterion no case proves. `sdlc-write-stories` changes stories without touching tests and still finishes; the test skills fix the warnings before approving. A rename moves the story's group.
+- Story warnings, not errors: a deleted story (an orphaned group), a criterion number that no longer exists, a criterion no case proves. `sdlc-write-stories` changes stories without touching tests and still finishes; the test skills fix the warnings before approving. A rename moves the story's group.
 - Renumbering a story's criteria silently shifts the AC numbers its cases name; the story skill rereads the criteria on each run.
 - Steps carry real resource names (table `account`, topic `orders.created`), so a design without `tableName`, `channelName` or `path` blocks test design until `sdlc-design-arch` adds it.

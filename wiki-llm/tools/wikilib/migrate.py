@@ -16,7 +16,8 @@ from . import frontmatter, markdown, sync
 from .errors import Refused
 from .schema import Schema
 
-TARGET_RE = re.compile(r"\b(?:FEAT|CR)-[a-z0-9]+(?:-[a-z0-9]+)*")
+TARGET_RE = re.compile(  # the schema-1 key format, fixed history: not read from the current schema
+    r"\b(?:FEAT|CR)-[a-z0-9]+(?:-[a-z0-9]+)*")
 
 
 def _one_to_two(root: Path) -> dict:
@@ -35,16 +36,12 @@ def _one_to_two(root: Path) -> dict:
     return {"removed": removed, "retest": sorted(retest)}
 
 
-STEPS = {("1", "2"): _one_to_two}
-
-
 def run(root: Path, found: str | None, schema: Schema) -> dict:
     if found == schema.version:
         return {"ok": True, "from": found, "to": schema.version, "written": []}
-    step = STEPS.get((found, schema.version))
-    if step is None:
+    if (found, schema.version) != ("1", "2"):
         raise Refused(f"no migration from schema {found} to {schema.version} is available in this version")
-    result = step(root)
+    result = _one_to_two(root)
     index = root / "index.md"
     index.write_text(re.sub(r'^schema_version: "?[^"\n]*"?$', f'schema_version: "{schema.version}"', index.read_text(encoding="utf-8"), count=1, flags=re.M), encoding="utf-8")
     written = sync.write(root, schema)

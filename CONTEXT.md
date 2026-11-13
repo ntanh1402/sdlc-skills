@@ -108,6 +108,10 @@ _Avoid_: sub-suite, story suite
 The Test group that holds the Test cases tied to no single user story, of any type.
 _Avoid_: E2E folder, cross-story folder
 
+**Orphaned group**:
+A Test group named after a user story that was split, merged or deleted. The tool warns; `sdlc-design-feature-tests` moves its Test cases to the General group.
+_Avoid_: stale group, story drift
+
 **Test category**:
 What a Test case checks: functional, field validation, negative, error handling, data validation, security validation or integration with a downstream system. Separate from its type, which says how it runs.
 _Avoid_: test type (for this meaning), security test

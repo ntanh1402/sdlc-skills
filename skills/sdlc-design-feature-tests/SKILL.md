@@ -1,6 +1,6 @@
 ---
 name: sdlc-design-feature-tests
-description: Design the Feature-level test cases of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - the GENERAL group of its one TestSuite, with end-to-end flows across user stories and every case tied to no single story, integration or e2e, each with a category, risk, concrete preconditions, self-contained steps that name real tables, topics and endpoints, request and response payloads, checkpoint-style expected results, bold validations and open questions - and report what no case covers yet. Use when QA, developers or security roles need end-to-end or cross-story test design for a whole Feature or ChangeRequest, or when the spec changed after those tests were designed. Not for the cases of one user story (sdlc-design-story-tests), runnable test code, load tests, requirements, architecture or tasks.
+description: Design the Feature-level test cases of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - the GENERAL group of its one TestSuite, with end-to-end flows across user stories and every case tied to no single story, integration or e2e - and report what no case covers yet. Use when QA, developers or security roles need end-to-end or cross-story test design for a whole Feature or ChangeRequest, or when the spec changed after those tests were designed. Not for the cases of one user story (sdlc-design-story-tests), runnable test code, load tests, requirements, architecture or tasks.
 ---
 
 # Design the Feature-level tests
@@ -112,7 +112,7 @@ this skill's to fix. List:
 - every frontend route or screen with its access rule and its empty, loading,
   error and offline states, when a frontend is in scope;
 - the performance and security risks the Requirements and decisions state;
-- the cases of the existing `GENERAL/` group, and the cases of any stale
+- the cases of the existing `GENERAL/` group, and the cases of any orphaned
   `STORY-*` group.
 
 **An unfinished run.** Last, `ls "$WIKI"/.worktrees/*/plan.md 2>/dev/null`
@@ -225,7 +225,7 @@ proves one story's acceptance criteria belongs in that story's group, which
 id is the highest id in the suite + 1, across all its groups; ids of deleted
 cases are never reused.
 
-**A stale story group.** A `STORY-*` group whose story was split, merged or
+**An orphaned story group.** A `STORY-*` group whose story was split, merged or
 deleted is a warning. Move each of its cases to `GENERAL/`, keeping its id
 and dropping the link to the gone story from `# Covers`, log each move in
 `GENERAL/log.md`, then delete the empty group folder and list its deleted
@@ -299,7 +299,7 @@ In the draft worktree, under `wiki/<app>/tests/`:
 
 Every step and validation must make sense to a tester who did not design the
 system and does not read the wiki. Do not write `index.md` or `checklist.csv`: `draft finish` writes
-both. Do not change a `STORY-*` group except to empty a stale one.
+both. Do not change a `STORY-*` group except to empty an orphaned one.
 
 ## 6. Self review, finish and commit
 

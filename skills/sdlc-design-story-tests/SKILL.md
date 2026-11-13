@@ -1,6 +1,6 @@
 ---
 name: sdlc-design-story-tests
-description: Design the test cases of one user story of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - the story's STORY group in the TestSuite of its Feature or ChangeRequest, proving every acceptance criterion, integration or e2e cases each with a category, risk, concrete preconditions, self-contained steps that name real tables, topics and endpoints, request and response payloads, checkpoint-style expected results, bold validations and open questions. Use when QA or developers need test cases for a user story, or when the story or the spec changed after its tests were designed. Not for end-to-end flows across stories or a whole Feature (sdlc-design-feature-tests), runnable test code, load tests, requirements, architecture or tasks.
+description: Design the test cases of one user story of a designed Feature or ChangeRequest in the project wiki, while its requirements are a draft or once they are agreed - the story's STORY group in the TestSuite of its Feature or ChangeRequest, proving every acceptance criterion, integration or e2e. Use when QA or developers need test cases for a user story, or when the story or the spec changed after its tests were designed. Not for end-to-end flows across stories or a whole Feature (sdlc-design-feature-tests), runnable test code, load tests, requirements, architecture or tasks.
 ---
 
 # Design the tests of one user story

@@ -124,12 +124,14 @@ Description, Category, Covers, Purpose`, highest risk first, then by title.
   to `GENERAL/` with their ids). Draft `tests-<Key>`.
 - **`sdlc-design-story-tests`**: one user story per run; writes only that
   story's `STORY-<name>/` group, proving every criterion; fixes the story
-  drift warnings of its group, and moves a case that covers none of the
+  warnings of its group, and moves a case that covers none of the
   story's Requirements to `GENERAL/`. Draft `tests-<story key>`.
 - Both create the suite when it is missing, approve only their own group,
   and may run at the same time.
 - `sdlc-write-stories` does not change test files (decision: it stays as it
-  was before schema 2).
+  was before schema 2). The one exception is mechanical: when it renames a
+  story, `wiki_llm.py rename` moves that story's `STORY-*` group folder and
+  rewrites links to it, and reports the move as `moved_tests`.
 - `sdlc-import` imports integration, e2e and security-category tests into
   groups, never unit or load tests.
 
@@ -138,11 +140,14 @@ Description, Category, Covers, Purpose`, highest risk first, then by title.
 - Errors: duplicate case id in a suite; a `STORY-*` group without `# Story`
   linking its story, or `GENERAL` with one; a story case without its AC link;
   a `GENERAL` case linking a story; a Validation without bold; wiki keys or
-  "see Step n" in steps; open questions in a group that is not `Draft`.
-- Warnings, so `sdlc-write-stories` can always finish (decision): a story
-  group whose story is gone (and the broken links to it), an AC number that
-  does not exist, a criterion no case proves, a story case covering none of
-  the story's Requirements. The test skills fix them before approving.
+  "see Step n" in steps; open questions in a group that is not `Draft`, not a
+  numbered list, or with an item that links nothing; `GENERAL` without
+  `# Scope`; a `log.md` in a suite folder; a broken link other than one to
+  the group's own story.
+- Warnings, so `sdlc-write-stories` can always finish (decision): an
+  orphaned group (a story group whose story is gone) and the broken links to
+  that story, an AC number that does not exist, a criterion no case proves,
+  a story case covering none of the story's Requirements. The test skills fix them before approving.
 
 ## 9. Migration
 

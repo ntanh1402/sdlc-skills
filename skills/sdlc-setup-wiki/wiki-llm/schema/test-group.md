@@ -48,7 +48,7 @@ approved on its own.
 
 - The folder is named after a user story of the suite's target, or is
   `GENERAL`. A `STORY-*` group links that story under `# Story`; `GENERAL`
-  has no `# Story` and says under `# Scope` which flows it covers.
+  has no `# Story` and must say under `# Scope` which flows it covers.
 - `basedOn` is the version of the suite's target the cases were designed
   from. See [Spec versions](schema.md#spec-versions).
 - `status` is the group's design lifecycle: `Draft` while cases are being
@@ -58,13 +58,15 @@ approved on its own.
   acceptance criteria it proves (`— AC 1, 3`), and covers at least one
   Requirement the story lists. Every criterion of the story is proved by at
   least one case of the group.
+- A broken link to the group's own story is a warning (the story was removed);
+  any other broken link is an error.
 - `# Open questions` is a numbered list of questions about the
   Requirements, acceptance criteria or design that the cases cannot settle;
   each item links what it is about. A group with open questions is `Draft`.
   The run that applies an answer removes the question and logs the answer in
   `log.md`.
-- Story drift is a warning, not an error: a story removed or renamed outside
-  `wiki_llm.py rename`, a criterion number that no longer exists, a
+- Story warnings, not errors: an orphaned group (a story removed or renamed outside
+  `wiki_llm.py rename`), a criterion number that no longer exists, a
   criterion no case proves, a case that covers none of its story's
   Requirements. `sdlc-write-stories` may leave these; `sdlc-design-story-tests`
   fixes them before it approves the group.

@@ -8,7 +8,15 @@ from .. import frontmatter, markdown
 from ..bundle import SCHEME_RE, Bundle, Finding
 
 ORDER = 50
-STORY_DRIFT = ("TestGroup", "TestCase")  # a story that sdlc-write-stories removed leaves these links; the test skills fix them
+
+
+def _story_group_key(holder) -> str | None:
+    """The STORY-* group a TestGroup or TestCase belongs to: a link to that story, once sdlc-write-stories removed it,
+    is a warning the test skills fix; any other broken link is an error."""
+    if holder is None or holder.type not in ("TestGroup", "TestCase"):
+        return None
+    group = holder.key if holder.type == "TestGroup" else holder.owner.key
+    return group if group.startswith("STORY-") else None
 
 
 def _inside(bundle: Bundle, path: Path) -> bool:
@@ -42,10 +50,10 @@ def check(bundle: Bundle) -> list[Finding]:
     for path in bundle.markdown_files():
         _, body = frontmatter.split(bundle.text(path))
         holder = bundle.by_path.get(path)
-        drift = holder is not None and holder.type in STORY_DRIFT
+        group = _story_group_key(holder)
         for _, target in markdown.links(body, images=True):
-            story = drift and Path(target.partition("#")[0]).name.startswith("STORY-")
-            check_target(path, target, "links.unresolved", "warning" if story else "error")
+            gone_story = group is not None and Path(target.partition("#")[0]).stem == group
+            check_target(path, target, "links.unresolved", "warning" if gone_story else "error")
 
     for concept in bundle.concepts:
         resources = [concept.meta.get("resource")]

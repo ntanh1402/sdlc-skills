@@ -63,6 +63,19 @@ class TestSuiteRulesTest(RuleTest):
         self.edit("pay/tests/TS-pay/GENERAL/overview.md", "# Scope", "# Story\n\n* [STORY-pay-checkout](../../../features/FEAT-pay/STORY-pay-checkout.md)\n\n# Scope")
         self.assertRule("tests.group-story", "pay/tests/TS-pay/GENERAL/overview.md")
 
+    def test_general_group_says_its_scope(self):
+        fixture.add_general(self.root)
+        self.edit("pay/tests/TS-pay/GENERAL/overview.md", "\n\n# Scope\n\nPaying end to end.", "")
+        self.assertRule("tests.group-scope", "pay/tests/TS-pay/GENERAL/overview.md")
+
+    def test_suite_has_no_log(self):
+        self.write("pay/tests/TS-pay/log.md", fixture.LOG)
+        self.assertRule("tests.suite-log", SUITE)
+
+    def test_broken_link_to_another_story_is_an_error(self):
+        self.edit(CASE, "— AC 1\n", "— AC 1\n* [STORY-pay-chekout](../../../features/FEAT-pay/STORY-pay-chekout.md)\n")
+        self.assertEqual(self.severities()["links.unresolved"], {"error"})  # a typo, not the group's removed story
+
     def test_story_case_names_the_criteria_it_proves(self):
         self.edit(CASE, " — AC 1", "")
         self.assertRule("tests.story-ac", CASE)
@@ -108,6 +121,12 @@ class TestSuiteRulesTest(RuleTest):
         self.assertRule("tests.open-questions", GROUP)
         self.edit(GROUP, "status: Approved", "status: Draft")
         self.assertClean()
+
+    def test_deprecated_group_has_no_open_questions(self):
+        question = "\n\n# Open questions\n\n1. Is a zero amount allowed? ([REQ-pay-1](../../../features/FEAT-pay/overview.md#req-pay-1))"
+        self.edit(GROUP, "STORY-pay-checkout.md)", "STORY-pay-checkout.md)" + question)
+        self.edit(GROUP, "status: Approved", "status: Deprecated")
+        self.assertRule("tests.open-questions", GROUP)
 
     def test_open_question_links_what_it_is_about(self):
         self.edit(GROUP, "status: Approved", "status: Draft")

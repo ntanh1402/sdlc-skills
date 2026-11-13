@@ -61,7 +61,7 @@ the wiki's `.wiki-llm/schema/`. When a Requirement is removed, also
 | Show or explain an existing architecture | `sdlc-ask-wiki` |
 | Requirements are missing, unclear or not approved | `sdlc-write-spec` |
 | User stories | `sdlc-write-stories`; it runs at the same time as this skill |
-| Build tasks, or test design, from an approved design | `sdlc-plan-tasks`, `sdlc-design-tests` |
+| Build tasks, or test design, from an approved design | `sdlc-plan-tasks`, `sdlc-design-story-tests`, `sdlc-design-feature-tests` |
 
 When "design this" could mean several of these, ask one routing question.
 
@@ -268,8 +268,9 @@ Write the Run plan (`write-protocol.md` section 4). Its `## Files` are the
 Feature's or ChangeRequest's `overview.md` first, then for a ChangeRequest the
 target Feature's `overview.md`, each Design concept file of the ledger that is
 not reused, each decision file, and the `log.md` of every concept folder they
-are in. The out-of-date Tasks and TestSuites go under `## For other skills`
-(`sdlc-plan-tasks`, `sdlc-design-tests`); never edit them.
+are in. The out-of-date Tasks and TestGroups go under `## For other skills`
+(`sdlc-plan-tasks`, `sdlc-design-story-tests`, `sdlc-design-feature-tests`);
+never edit them.
 
 **Design gate.** Show the full packet, never only a summary, then the Run
 plan. Ask for approval (`TARGET DESIGN APPROVED`). Any edit needs the gate
@@ -355,8 +356,8 @@ section 5), have the review sub-agent also check by reading that:
   approved.
 
 Commit message: `arch(<Key>): <title>`. In the summary, "For other skills"
-lists the Tasks, stories and TestSuites reported out of date, and "Next" is
-"`sdlc-plan-tasks` and `sdlc-design-tests` after the merge". When the target
+lists the Tasks, stories and TestGroups reported out of date, and "Next" is
+"`sdlc-plan-tasks`, `sdlc-design-story-tests` and `sdlc-design-feature-tests` after the merge". When the target
 is still a draft, add: "the Tasks can be built and closed while the spec is a
 draft; the Design files' pending entries stay until the target is approved".
 
@@ -431,7 +432,7 @@ End the run with at most four lines:
 Done: wiki/arch-FEAT-coupons, 4 files, pushed. Open the pull request.
 Not done: services/SVC-orders/overview.md (the contract for refunds is undecided)
 For other skills: REQ-coupons-expiry is ambiguous (sdlc-write-spec)
-Next: sdlc-plan-tasks and sdlc-design-tests after the merge.
+Next: sdlc-plan-tasks, sdlc-design-story-tests and sdlc-design-feature-tests after the merge.
 ```
 
 Leave out "Not done" and "For other skills" when they have nothing to say. Do

@@ -43,7 +43,7 @@ Feature or ChangeRequest whose Requirements it lists.
 | `# Notes` | optional | author |  |  |  |
 | `# References` | optional | author | Reference (any number) |  |  |
 | `# Changed by` | when not empty | tool | mirrors UserStory `# Affects` |  |  |
-| `# Test cases` | when not empty | tool | mirrors TestCase `# Covers` via its `# Requirements`, TestCase `# Covers` via Task `# Stories` via its `# Planned scope` |  |  |
+| `# Test cases` | when not empty | tool | mirrors TestCase `# Covers`, TestCase `# Covers` via its `# Requirements`, TestCase `# Covers` via Task `# Stories` via its `# Planned scope` |  |  |
 <!-- generated:schema end -->
 
 ## Rules

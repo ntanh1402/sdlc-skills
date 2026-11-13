@@ -8,6 +8,7 @@ from .. import frontmatter, markdown
 from ..bundle import SCHEME_RE, Bundle, Finding
 
 ORDER = 50
+STORY_DRIFT = ("TestGroup", "TestCase")  # a story that sdlc-write-stories removed leaves these links; the test skills fix them
 
 
 def _inside(bundle: Bundle, path: Path) -> bool:
@@ -24,7 +25,7 @@ def check(bundle: Bundle) -> list[Finding]:
             anchor_cache[path] = markdown.anchors(body)
         return anchor_cache[path]
 
-    def check_target(source: Path, target: str, rule: str) -> None:
+    def check_target(source: Path, target: str, rule: str, severity: str = "error") -> None:
         rel = bundle.rel(source)
         path, anchor = bundle.resolve(source, target)
         if path is None:
@@ -34,14 +35,17 @@ def check(bundle: Bundle) -> list[Finding]:
         elif path.is_dir():
             findings.append(Finding("links.folder-link", rel, f"{target} is a folder; link its overview.md or index.md"))
         elif not path.is_file():
-            findings.append(Finding(rule, rel, f"{target} does not exist"))
+            findings.append(Finding(rule, rel, f"{target} does not exist", severity))
         elif anchor and path.suffix == ".md" and anchor.lower() not in anchors(path):
             findings.append(Finding("links.anchor", rel, f"{target}: no heading produces the anchor #{anchor}"))
 
     for path in bundle.markdown_files():
         _, body = frontmatter.split(bundle.text(path))
+        holder = bundle.by_path.get(path)
+        drift = holder is not None and holder.type in STORY_DRIFT
         for _, target in markdown.links(body, images=True):
-            check_target(path, target, "links.unresolved")
+            story = drift and Path(target.partition("#")[0]).name.startswith("STORY-")
+            check_target(path, target, "links.unresolved", "warning" if story else "error")
 
     for concept in bundle.concepts:
         resources = [concept.meta.get("resource")]

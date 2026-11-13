@@ -1,0 +1,5 @@
+No,Group,Title,Description,Category,Covers,Purpose
+3,GENERAL,Password never plaintext,Prove credentials never persist or appear in logs as plaintext.,security-validation,,Prove credentials never persist or appear in logs as plaintext.
+1,GENERAL,Login rate limited,Prove repeated failed authentication is throttled.,security-validation,,Prove repeated failed authentication is throttled.
+2,GENERAL,No user enumeration,Prove login does not disclose whether an account exists.,security-validation,,Prove login does not disclose whether an account exists.
+4,GENERAL,Session expires,Prove expired sessions cannot authorize profile access.,security-validation,,Prove expired sessions cannot authorize profile access.

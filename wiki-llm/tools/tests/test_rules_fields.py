@@ -39,12 +39,12 @@ class FieldsTest(RuleTest):
         self.assertRule("frontmatter.unknown-field", SERVICE)
 
     def test_status_on_document_type_is_undeclared(self):
-        self.edit("pay/tests/TS-pay/TC-pay-ok.md", "risk: high", "risk: high\nstatus: Draft")
-        self.assertRule("frontmatter.unknown-field", "pay/tests/TS-pay/TC-pay-ok.md")
+        self.edit("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "risk: high", "risk: high\nstatus: Draft")
+        self.assertRule("frontmatter.unknown-field", "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md")
 
     def test_enum_value(self):
-        self.edit("pay/tests/TS-pay/overview.md", "suiteType: e2e", "suiteType: smoke")
-        self.assertRule("frontmatter.bad-value", "pay/tests/TS-pay/overview.md")
+        self.edit("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "testType: e2e", "testType: load")
+        self.assertRule("frontmatter.bad-value", "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md")
 
     def test_suggested_value_may_be_any_name(self):
         self.edit(SERVICE, "serviceType: api", "serviceType: scheduler\ndeployTarget: ecs-fargate")
@@ -61,7 +61,7 @@ class FieldsTest(RuleTest):
     def test_boolean_integer_timestamp_and_date_kinds(self):
         self.edit(SERVICE, "serviceType: api", "serviceType: api\nport: eighty")
         self.edit("pay/datastores/DB-main/TBL-payments.md", "tableName: payments", "tableName: payments\npii: maybe")
-        self.edit("pay/tests/TS-pay/TC-pay-ok.md", "risk: high", "risk: high\nstale_after: yesterday")
+        self.edit("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "risk: high", "risk: high\nstale_after: yesterday")
         self.edit("pay/decisions/ADR-002.md", "decisionDate: 2026-08-20", "decisionDate: 20 Aug")
         found = {(item.rule, item.path) for item in self.findings()}
         self.assertEqual(
@@ -69,7 +69,7 @@ class FieldsTest(RuleTest):
             {
                 ("frontmatter.bad-value", SERVICE),
                 ("frontmatter.bad-value", "pay/datastores/DB-main/TBL-payments.md"),
-                ("frontmatter.bad-value", "pay/tests/TS-pay/TC-pay-ok.md"),
+                ("frontmatter.bad-value", "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"),
                 ("frontmatter.bad-value", "pay/decisions/ADR-002.md"),
             },
         )

@@ -11,7 +11,7 @@ yet, and such a difference is expected, not Drift:
 - a `# Pending changes` entry on the file;
 - an `Approved` ChangeRequest on a `Released` Feature (the Feature already
   holds that request's target);
-- a TestSuite that is not `Implemented`.
+- a TestGroup that is not `Implemented`.
 
 ## 1. Find the match
 
@@ -35,7 +35,7 @@ Two matches stop or change the run:
 - A Feature is compared only when it is `Released`. Before that it describes
   something not built: stop, "FEAT-coupons is not built yet; there is nothing
   to compare".
-- A TestSuite that is `Draft` or `Approved` may describe tests nobody has
+- A TestGroup that is `Draft` or `Approved` may describe tests nobody has
   written yet. Compare it, but a TestCase with no test in the code is expected
   there.
 
@@ -49,7 +49,7 @@ have written. Then go file by file:
 | The file matches | Say so. If nobody confirmed the file, or the person wants to confirm it again, offer to confirm it (section 4) |
 | The wiki is ahead, and a `# Pending changes` entry on the file describes that difference | Report it as expected, naming the Feature or ChangeRequest. Write nothing |
 | A `Released` Feature is ahead, and an `Approved` ChangeRequest on it describes that difference | Report it as expected, naming the ChangeRequest. Write nothing |
-| A TestSuite that is not `Implemented` has a TestCase with no test in the code | Report it as not written yet. Write nothing, and never offer the case for deletion |
+| A TestGroup that is not `Implemented` has a TestCase with no test in the code | Report it as not written yet. Write nothing, and never offer the case for deletion |
 | The file has a pending entry, and the difference is not what the entry describes | Report both. Write nothing: the file holds the target, so the correction waits until the pending work is closed. Name the Feature or ChangeRequest |
 | Drift, or a difference from a document | Ask the person (section 3) |
 | The Import source has something the wiki lacks | A new file, shown at the Design gate like any other |

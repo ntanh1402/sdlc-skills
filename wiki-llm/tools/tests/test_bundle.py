@@ -81,8 +81,8 @@ class BundleTest(unittest.TestCase):
         change = self.concept("pay/change-requests/CR-1/overview.md")
         delta = self.bundle.relations(change, ["Delta", "Target delta"])
         self.assertEqual([(r.concept.key, r.qualifier) for r in delta], [("EP-pay-create", "modified")])
-        case = self.concept("pay/tests/TS-pay/TC-pay-ok.md")
-        self.assertEqual([r.kind for r in self.bundle.relations(case, ["Covers"])], ["Requirement", "Endpoint"])
+        case = self.concept("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md")
+        self.assertEqual([r.kind for r in self.bundle.relations(case, ["Covers"])], ["UserStory", "Requirement", "Endpoint"])
 
     def test_file_that_is_not_utf8_loads_without_raising(self):
         path = self.root / "pay/references/REF-pay-prd/overview.md"

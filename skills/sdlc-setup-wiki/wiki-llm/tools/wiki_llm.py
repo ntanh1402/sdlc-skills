@@ -13,7 +13,7 @@ import os
 import sys
 from pathlib import Path
 
-from wikilib import basis, coverage, docs, draft, link, locate, rename, scaffold, sync, toolcopy, validate
+from wikilib import basis, coverage, docs, draft, link, locate, migrate, rename, scaffold, sync, toolcopy, validate
 from wikilib.bundle import Bundle
 from wikilib.errors import Refused, ToolError
 from wikilib.schema import Schema
@@ -141,12 +141,8 @@ def cmd_link(args: argparse.Namespace) -> int:
 
 def cmd_migrate(args: argparse.Namespace) -> int:
     root = locate_root(args.root, check_version=False)
-    found, current = locate.schema_version(root), Schema.load().version
-    if found == current:
-        _print({"ok": True, "from": found, "to": current, "written": []})
-        return 0
-    _print({"ok": False, "error": f"no migration from schema {found} to {current} is available in this version"})
-    return 1
+    _print(migrate.run(root, locate.schema_version(root), Schema.load()))
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:

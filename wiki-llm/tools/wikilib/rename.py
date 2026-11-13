@@ -75,7 +75,8 @@ def _app_files(bundle: Bundle, app: str) -> list[Path]:
 
 def _plan_concept(bundle: Bundle, base: Base, old: str, new: str, app: str | None, allow_merged: bool) -> Plan:
     schema = bundle.schema
-    found = [c for c in bundle.concepts if c.key == old and (app is None or c.app == app)]
+    # a TestGroup shares its story's key and moves with the story
+    found = [c for c in bundle.concepts if c.key == old and c.type != "TestGroup" and (app is None or c.app == app)]
     if not found:
         raise Refused(f"no concept or requirement has the key {old}")
     if len(found) > 1:
@@ -174,6 +175,18 @@ def _rewrite(bundle: Bundle, plan: Plan, path: Path, in_scope: bool) -> str:
     return text
 
 
+def _story_groups(bundle: Bundle, plan: Plan) -> list[tuple[Path, Path]]:
+    """(from, to) of the STORY-* test folder of a renamed story, in each suite verifying its Feature or ChangeRequest."""
+    if plan.kind != "concept" or plan.holders[0].type != "UserStory":
+        return []
+    holder = plan.holders[0].owner
+    return [
+        (suite.folder / plan.old, suite.folder / plan.new)
+        for suite in bundle.of_type("TestSuite")
+        if (suite.folder / plan.old).is_dir() and any(r.concept is holder for r in bundle.relations(suite, ["Verifies"]))
+    ]
+
+
 def rename(root: Path, old: str, new: str, *, app: str | None = None, change: str | None = None,
            allow_merged: bool = False, schema: Schema | None = None) -> dict:
     schema = schema or Schema.load()
@@ -185,6 +198,10 @@ def rename(root: Path, old: str, new: str, *, app: str | None = None, change: st
         if change is not None:
             raise ToolError("--change applies to a Requirement key only")
         plan = _plan_concept(bundle, base, old, new, app, allow_merged)
+    groups = _story_groups(bundle, plan)
+    for source, destination in groups:
+        if destination.exists():
+            raise Refused(f"{bundle.rel(destination)} already exists")
 
     scope = set(plan.scope)
     rewritten: list[Path] = []
@@ -206,6 +223,9 @@ def rename(root: Path, old: str, new: str, *, app: str | None = None, change: st
             return plan.destination / path.relative_to(plan.source) if inside else path
 
         rewritten = [after(path) for path in rewritten]
+    for source, destination in groups:
+        source.rename(destination)
+        rewritten = [destination / path.relative_to(source) if source in path.parents else path for path in rewritten]
     synced = sync.write(root, schema)
     return {
         "ok": True,
@@ -213,6 +233,7 @@ def rename(root: Path, old: str, new: str, *, app: str | None = None, change: st
         "old": old,
         "new": new,
         "moved": moved,
+        "moved_tests": [{"from": bundle.rel(source), "to": bundle.rel(destination)} for source, destination in groups],
         "rewritten": sorted(bundle.rel(path) for path in rewritten),
         "synced": [bundle.rel(path) for path in synced],
     }

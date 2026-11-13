@@ -19,7 +19,7 @@ This skill is the first lifecycle step. Its output is exactly one of:
 Each has a `version`, and the status says whether the Requirements are agreed
 (`ReqApproved`) or still a draft (`Draft` for a Feature, `Proposed` for a
 ChangeRequest). Both can be merged. The status is not a gate: architecture,
-stories, Tasks and TestSuites may be written from a draft, and each records
+stories, Tasks and test cases may be written from a draft, and each records
 the version it was written from.
 
 Its draft prefix is `spec-`: the draft for `FEAT-coupons` is
@@ -57,7 +57,7 @@ Other requests go elsewhere; say so and stop:
 | A document, code or tests that describe something already built and running | `sdlc-import` |
 | Architecture | `sdlc-design-arch`, from a draft or agreed spec |
 | User stories, a story breakdown | `sdlc-write-stories`, from a draft or agreed spec |
-| Build tasks, or test design | `sdlc-plan-tasks`, `sdlc-design-tests` |
+| Build tasks, or test design | `sdlc-plan-tasks`, `sdlc-design-story-tests`, `sdlc-design-feature-tests` |
 | An Application that does not exist yet | `sdlc-setup-wiki` ("add application `<key>`") |
 | The code of a planned Task | `sdlc-build-task` |
 | Recording that a Task's code is merged | `sdlc-close-task` |
@@ -413,7 +413,7 @@ version, run `$T outdated --feature <Key>` (or `--change <Key>`) in the
 worktree. It lists the design, stories, Tasks and TestSuites written from an
 older version. Put them under "For other skills" in the summary, each with
 the skill that rewrites it (`sdlc-design-arch`, `sdlc-write-stories`,
-`sdlc-plan-tasks`, `sdlc-design-tests`), and say that `sdlc-edit-wiki` can
+`sdlc-plan-tasks`, `sdlc-design-story-tests`, `sdlc-design-feature-tests`), and say that `sdlc-edit-wiki` can
 record one as still current when the change does not touch it. Nothing is
 stored: the list empties as those steps run.
 
@@ -423,7 +423,7 @@ stored: the list empties as those steps run.
 |---|---|
 | Not designed yet | "`sdlc-design-arch` after the merge, even while the Requirements are a draft; `sdlc-write-stories` at the same time if you want user stories" |
 | Designed from an older version | "`sdlc-design-arch` again for the new version" |
-| A Feature that became `Approved` | "`sdlc-plan-tasks` and `sdlc-design-tests` after the merge, if not done yet" |
+| A Feature that became `Approved` | "`sdlc-plan-tasks`, `sdlc-design-story-tests` and `sdlc-design-feature-tests` after the merge, if not done yet" |
 | A Feature or ChangeRequest `ReqApproved` whose design is current but that has an outdated Task (`$T outdated` lists a Task) | "`sdlc-plan-tasks` first: an approved target has no outdated Task. Then `sdlc-design-arch` again to approve it" |
 | A ChangeRequest `ReqApproved` whose Delta is current, or a Feature `ReqApproved` whose Architecture is current and that already has `Done` Tasks, with no outdated Task | "`sdlc-design-arch` again to approve it: no redesign, it updates the Feature / Design files and sets the status" |
 | A draft that is designed and current | "Mark the Requirements agreed with this skill when they are; the Tasks can be built and closed meanwhile" |

@@ -1,6 +1,6 @@
 ---
 okf_version: "0.2"
-schema_version: "1"
+schema_version: "2"
 ---
 
 # Applications

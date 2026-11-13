@@ -1,5 +1,5 @@
 {
-  "schema_version": "1",
+  "schema_version": "2",
   "okf_version": "0.2",
   "common_fields": {
     "type": {"kind": "string", "required": true},
@@ -207,6 +207,7 @@
           "origin": "generated",
           "generated": {
             "sources": [
+              {"type": "TestCase", "heading": ["Covers"]},
               {"type": "TestCase", "heading": ["Covers"], "via": [{"heading": ["Requirements"]}]},
               {"type": "TestCase", "heading": ["Covers"], "via": [{"type": "Task", "heading": ["Stories"]}, {"heading": ["Planned scope"]}]}
             ],
@@ -717,34 +718,56 @@
       "plural": "Test suites",
       "prefix": "TS-",
       "place": {"kind": "collection", "dir": "tests"},
+      "lifecycle": false,
+      "log": false,
+      "fields": {
+        "framework": {"kind": "string"}
+      },
+      "headings": [
+        {"name": "Verifies", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest"], "min": 1, "max": 1}}
+      ],
+      "owns": ["TestGroup"],
+      "extra_files": [{"name": "checklist.csv", "description": "One row per test case, highest risk first.", "origin": "generated"}]
+    },
+    "TestGroup": {
+      "page": "test-group.md",
+      "phase": "Verify",
+      "path": "<app>/tests/TS-*/STORY-<name>/ or <app>/tests/TS-*/GENERAL/",
+      "key_pattern": "^(STORY-[a-z0-9]+(-[a-z0-9]+)*|GENERAL)$",
+      "shape": "folder",
+      "plural": "Test groups",
+      "place": {"kind": "owned", "owners": ["TestSuite"]},
       "lifecycle": true,
       "statuses": ["Draft", "Approved", "Implemented", "Deprecated"],
       "fields": {
-        "suiteType": {"kind": "enum", "values": ["unit", "integration", "e2e", "load", "security"], "required": true},
-        "basedOn": {"kind": "basis_list", "required": true},
-        "framework": {"kind": "string"}
+        "basedOn": {"kind": "basis", "required": true}
       },
-      "headings": [{"name": "Verifies", "presence": "required", "links": {"targets": ["Feature", "ChangeRequest"], "min": 1}}],
-      "owns": ["TestCase"],
-      "extra_files": [{"name": "checklist.csv", "description": "One row per test case, highest risk first.", "origin": "generated"}]
+      "headings": [
+        {"name": "Story", "presence": "optional", "links": {"targets": ["UserStory"], "min": 1, "max": 1}},
+        {"name": "Scope", "presence": "optional"},
+        {"name": "Open questions", "presence": "optional"}
+      ],
+      "owns": ["TestCase"]
     },
     "TestCase": {
       "page": "test-case.md",
       "phase": "Verify",
-      "path": "<app>/tests/TS-*/TC-<slug>.md",
+      "path": "<app>/tests/TS-*/<STORY-* or GENERAL>/TC-<id>-<slug>.md",
+      "key_pattern": "^TC-[1-9][0-9]*-[a-z0-9]+(-[a-z0-9]+)*$",
       "shape": "file",
       "plural": "Test cases",
       "prefix": "TC-",
-      "place": {"kind": "owned", "owners": ["TestSuite"]},
+      "place": {"kind": "owned", "owners": ["TestGroup"]},
       "lifecycle": false,
       "fields": {
-        "risk": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true}
+        "risk": {"kind": "enum", "values": ["low", "med", "high", "critical"], "required": true},
+        "testType": {"kind": "enum", "values": ["integration", "e2e"], "required": true},
+        "testCategory": {"kind": "enum", "values": ["functional", "field-validation", "negative", "error-handling", "data-validation", "security-validation", "integration"]}
       },
       "headings": [
-        {"name": "Covers", "presence": "required", "links": {"targets": ["Requirement", "@design", "ArchitectureDecision"], "min": 1}},
+        {"name": "Covers", "presence": "required", "links": {"targets": ["Requirement", "UserStory", "@design", "ArchitectureDecision"], "min": 1}},
         {"name": "Purpose", "presence": "required"},
         {"name": "Preconditions", "presence": "required"},
-        {"name": "Test data", "presence": "required", "table": ["No", "Input", "Value"], "numbered": true},
         {"name": "Steps", "presence": "required", "table": ["Step", "Action", "Expected result", "Validation"]},
         {"name": "Postconditions and cleanup", "presence": "required"}
       ]

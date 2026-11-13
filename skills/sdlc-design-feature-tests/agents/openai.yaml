@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDLC Design Feature Tests"
+  short_description: "Design end-to-end and cross-story test cases"
+  default_prompt: "Use $sdlc-design-feature-tests to design the GENERAL test cases of a designed Feature or ChangeRequest."

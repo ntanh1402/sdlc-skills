@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schema"
@@ -44,7 +45,7 @@ class Schema:
                 return name
         for name in candidates:
             spec = self.types[name]
-            if not spec.get("prefix") and not spec.get("filename"):
+            if not spec.get("prefix") and not spec.get("filename") and re.match(spec.get("key_pattern", ""), key):
                 return name
         return None
 

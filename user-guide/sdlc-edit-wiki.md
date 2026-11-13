@@ -56,7 +56,7 @@ stops once to show the exact old and new text, then once for the change set.
 | **You want a new or changed design, contract or concept** | Refuses. A ChangeRequest with [sdlc-write-spec](sdlc-write-spec.md), then [sdlc-design-arch](sdlc-design-arch.md) | Run them |
 | **You want a story added, regrouped or its criteria changed** | Refuses. [sdlc-write-stories](sdlc-write-stories.md) | Run it |
 | **You want a Task added, or its scope, acceptance or stories changed** | Refuses. [sdlc-plan-tasks](sdlc-plan-tasks.md) | Run it |
-| **You want a TestCase or TestSuite changed** | Refuses. [sdlc-design-tests](sdlc-design-tests.md); [sdlc-import](sdlc-import.md) for a correction | Run it |
+| **You want a TestCase or TestSuite changed** | Refuses. [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md); [sdlc-import](sdlc-import.md) for a correction | Run it |
 | **You want a Task's status changed** | Refuses. [sdlc-close-task](sdlc-close-task.md), after the code is merged | Close it |
 | **The wiki is wrong about what is built** | Refuses. [sdlc-import](sdlc-import.md) compares and corrects | Run it |
 | **Your request mixes allowed and refused edits** | Does the allowed part and lists the rest under "For other skills", each with its skill | Run the other skills |

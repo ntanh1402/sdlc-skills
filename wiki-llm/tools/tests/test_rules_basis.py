@@ -1,4 +1,4 @@
-"""Spec versions: designBasedOn, basedOn on Tasks, stories and TestSuites; outdated."""
+"""Spec versions: designBasedOn, basedOn on Tasks, stories and TestGroups; outdated."""
 
 from wikilib import sync
 
@@ -11,10 +11,9 @@ CHANGE = "pay/change-requests/CR-1/overview.md"
 TODO_TASK = "pay/features/FEAT-pay/TASK-pay-002.md"
 DONE_TASK = "pay/features/FEAT-pay/TASK-pay-001.md"
 STORY = "pay/features/FEAT-pay/STORY-pay-checkout.md"
-SUITE = "pay/tests/TS-pay/overview.md"
+GROUP = "pay/tests/TS-pay/STORY-pay-checkout/overview.md"
 FEATURE_VERSION = "version: 1\nversionDate: 2026-08-15\ndesignBasedOn: { version: 1, at: 2026-08-15 }"
 FEATURE_BASIS = "basedOn: { version: 1, at: 2026-08-15 }"
-SUITE_BASIS = "  - { id: FEAT-pay, version: 1, at: 2026-08-15 }"
 
 
 class BasisTest(RuleTest):
@@ -72,7 +71,7 @@ class BasisTest(RuleTest):
 
     def test_a_new_version_reports_what_was_written_from_the_old_one(self):
         self.new_version()
-        self.assertEqual(self.outdated_paths(), {DONE_TASK, TODO_TASK, STORY, SUITE})
+        self.assertEqual(self.outdated_paths(), {DONE_TASK, TODO_TASK, STORY, GROUP})
         self.assertEqual({item.severity for item in self.findings() if item.rule == "basis.outdated"}, {"warning"})
 
     def test_an_old_design_is_outdated(self):
@@ -90,19 +89,10 @@ class BasisTest(RuleTest):
         self.edit(FEATURE, "status: Draft", "status: InDev")
         self.assertReported("basis.approved-task", DONE_TASK)
         self.assertReported("basis.approved-task", TODO_TASK)
-        self.assertEqual(self.outdated_paths(), {STORY, SUITE})
+        self.assertEqual(self.outdated_paths(), {STORY, GROUP})
         for path in (DONE_TASK, TODO_TASK):
             self.edit(path, FEATURE_BASIS, "basedOn: { version: 2, at: 2026-09-10 }")
         self.assertNotIn("basis.approved-task", {item.rule for item in self.findings()})
-
-    def test_suite_basis_names_each_verified_target(self):
-        self.edit(SUITE, SUITE_BASIS, SUITE_BASIS + "\n  - { id: CR-1, version: 1, at: 2026-08-20 }")
-        self.assertRule("basis.target", SUITE)
-
-    def test_suite_target_without_basis(self):
-        self.edit(SUITE, "* [FEAT-pay](../../features/FEAT-pay/overview.md)", "* [FEAT-pay](../../features/FEAT-pay/overview.md)\n* [CR-1](../../change-requests/CR-1/overview.md)")
-        sync.write(self.root)
-        self.assertRule("basis.target", SUITE)
 
     def test_outdated_command(self):
         self.assertEqual(
@@ -118,6 +108,6 @@ class BasisTest(RuleTest):
                 {"path": STORY, "type": "UserStory", "field": "basedOn", "version": 1, "at": "2026-08-15"},
                 {"path": DONE_TASK, "type": "Task", "field": "basedOn", "version": 1, "at": "2026-08-15"},
                 {"path": TODO_TASK, "type": "Task", "field": "basedOn", "version": 1, "at": "2026-08-15"},
-                {"path": SUITE, "type": "TestSuite", "field": "basedOn", "version": 1, "at": "2026-08-15"},
+                {"path": GROUP, "type": "TestGroup", "field": "basedOn", "version": 1, "at": "2026-08-15"},
             ],
         )

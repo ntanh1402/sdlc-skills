@@ -12,7 +12,7 @@ requirements are a draft or once they are agreed. [Back to the user guide](user-
 | **Needs first** | The spec pull request is merged, draft or agreed |
 | **Say** | "Design the gift cards feature" |
 | **You get** | The Architecture section (a ChangeRequest: the Delta), Mermaid diagrams, new or changed services, endpoints, events, tables and externals marked as **pending**, decisions (`ADR-…`), traceability from each Requirement, and `designBasedOn`: the spec version it was designed from. Status `Approved` only once the Requirements are agreed. Draft branch `wiki/arch-<Key>` |
-| **Next** | Merge the design pull request, then [sdlc-plan-tasks](sdlc-plan-tasks.md) and [sdlc-design-tests](sdlc-design-tests.md), in either order or both at once |
+| **Next** | Merge the design pull request, then [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-story-tests](sdlc-design-story-tests.md) and [sdlc-design-feature-tests](sdlc-design-feature-tests.md), in any order or all at once |
 
 ## What the skill does
 
@@ -24,7 +24,7 @@ requirements are a draft or once they are agreed. [Back to the user guide](user-
    choices become decisions. It also asks the **downstream freshness**
    question: which existing `Todo` Tasks have already been started.
 3. **Intent gate** (design basis): the target, the systems reused or added, the
-   decisions expected, drift found, and the Tasks or TestSuites the design will
+   decisions expected, drift found, and the Tasks or test groups the design will
    make out of date.
 4. Prepares the **design packet**: context, a ledger of every concept (new,
    modified, removed or reused, with the reason), the high-level diagram, a
@@ -63,7 +63,7 @@ requirements are a draft or once they are agreed. [Back to the user guide](user-
 | **An existing service could serve the need** | Reuses it, unless a different ownership or lifecycle boundary is proven. It never copies a concept to avoid changing it | Challenge the recommendation if you disagree |
 | **A material, hard-to-reverse choice with a credible alternative** | Writes an architecture decision (`ADR-…`, `Accepted`) with its alternatives. Reuses an accepted decision that already covers it. A decision is replaced only by a new decision | Approve |
 | **A Requirement has a user interface** | Names which web or mobile frontend owns each screen. It never invents a frontend | Confirm |
-| **Tasks or TestSuites already exist** | Lists the ones the design makes out of date under "For other skills". It never edits them | Run [sdlc-plan-tasks](sdlc-plan-tasks.md) and [sdlc-design-tests](sdlc-design-tests.md) after the merge |
+| **Tasks or test groups already exist** | Lists the ones the design makes out of date under "For other skills". It never edits them | Run [sdlc-plan-tasks](sdlc-plan-tasks.md) and [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) after the merge |
 | **A `Todo` Task has already been started** | Asks you to acknowledge each started Task separately. The wiki cannot know | Tell it which Tasks started |
 | **A ChangeRequest** | Fills its Delta. Once the ChangeRequest is `ReqApproved`, in the **same** change, it sets it `Approved` and updates the target Feature's Requirements and Architecture to the new target. While it is `Proposed`, the Feature is left alone | Check both |
 | **The design removes a Requirement** that user stories or TestCases list | Fixes those stories and cases in the same draft and shows the edits at the Design gate | Check the edits |
@@ -81,4 +81,4 @@ requirements are a draft or once they are agreed. [Back to the user guide](user-
 | Show or explain an existing architecture | [sdlc-ask-wiki](sdlc-ask-wiki.md) |
 | Requirements missing, unclear or not approved | [sdlc-write-spec](sdlc-write-spec.md) |
 | User stories | [sdlc-write-stories](sdlc-write-stories.md) |
-| Build tasks or test design | [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-tests](sdlc-design-tests.md) |
+| Build tasks or test design | [sdlc-plan-tasks](sdlc-plan-tasks.md), [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |

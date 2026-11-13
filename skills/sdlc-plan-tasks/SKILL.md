@@ -13,7 +13,7 @@ every user story in the folder is linked by at least one Task, and each Task
 serves at most one story.
 
 Its draft prefix is `tasks-`: the draft for `FEAT-coupons` is
-`wiki/tasks-FEAT-coupons`. It may run at the same time as `sdlc-design-tests`
+`wiki/tasks-FEAT-coupons`. It may run at the same time as the test design skills
 on the same design.
 
 ## Before you start
@@ -43,7 +43,7 @@ in the wiki's `.wiki-llm/schema/`.
 | Request | Skill |
 |---|---|
 | No approved design yet | `sdlc-design-arch` |
-| Test cases or suites | `sdlc-design-tests` |
+| Test cases or suites | `sdlc-design-story-tests`, `sdlc-design-feature-tests` |
 | User stories | `sdlc-write-stories` |
 | Create or update tickets in Jira or another tracker | No skill does: a person creates the ticket by hand and may add `trackerKey` and `resource` to the Task |
 | Explain the existing Tasks | `sdlc-ask-wiki` (no gates, nothing written) |
@@ -185,7 +185,7 @@ Follow `references/decomposition-rules.md` and `references/task-sizing.md`:
 - Vertical, independently reviewable and demonstrable slices; foundations,
   contracts and migrations before their consumers; risky spikes first.
 - `taskType`: `dev`, `design` or `spike`. `test` only implements a TestSuite
-  that is already approved; test design is `sdlc-design-tests`.
+  that is already approved; test design is `sdlc-design-story-tests` and `sdlc-design-feature-tests`.
 - Size XS to L. An XL Task is split.
 - Each Task's `# Planned scope` links the concepts it builds, with the
   qualifier the design gave them. Each concept in the inventory is in the

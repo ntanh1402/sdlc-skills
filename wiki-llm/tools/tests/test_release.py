@@ -17,7 +17,7 @@ REPO = toolcopy.TOOL_HOME.parent
 SKILLS = REPO / "skills"
 SETUP = SKILLS / "sdlc-setup-wiki"
 FIX = "run `python3 release.py` to refresh it"
-LIFECYCLE = ("sdlc-write-spec", "sdlc-write-stories", "sdlc-design-arch", "sdlc-plan-tasks", "sdlc-design-tests", "sdlc-import")
+LIFECYCLE = ("sdlc-write-spec", "sdlc-write-stories", "sdlc-design-arch", "sdlc-plan-tasks", "sdlc-design-feature-tests", "sdlc-design-story-tests", "sdlc-import")
 WRITERS = (*LIFECYCLE, "sdlc-close-task", "sdlc-edit-wiki")  # every skill that writes a Draft
 EXPECTED_REFERENCES = {
     "read-protocol.md": (*WRITERS, "sdlc-build-task", "sdlc-ask-wiki", "sdlc-review-code"),

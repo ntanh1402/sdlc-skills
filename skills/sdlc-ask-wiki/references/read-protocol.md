@@ -91,7 +91,7 @@ one file or one folder named by its key, for example
   list Requirements no TestCase covers, Design concepts no Task plans, and
   Functional Requirements no user story lists.
 - **Outdated.** `$T outdated --feature FEAT-x` (or `--change CR-x`) lists the
-  design, stories, Tasks and TestSuites written from an older version of the
+  design, stories, Tasks and TestGroups written from an older version of the
   spec. These are the only tool commands a reader needs.
 - **History.** Read the concept folder's `log.md`, then `git log -p` on the
   folder.

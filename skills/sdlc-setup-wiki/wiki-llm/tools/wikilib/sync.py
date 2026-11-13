@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import io
 import os
+import re
 from pathlib import Path
 
 from . import frontmatter, markdown
@@ -71,10 +72,10 @@ def _concept_index(bundle: Bundle, concept: Concept) -> str:
     spec = bundle.schema.types[concept.type]
     blocks: list[tuple[str, list[str]]] = [(concept.title, [_entry("Overview", "overview.md", concept.description)])]
     for owned_type in spec.get("owns", []):
-        owned = sorted(bundle.owned(concept, owned_type), key=lambda item: item.key)
+        owned = sorted(bundle.owned(concept, owned_type), key=case_id if owned_type == "TestCase" else lambda item: item.key)
         if owned:
             plural = bundle.schema.types[owned_type]["plural"]
-            blocks.append((plural, [_entry(item.title, item.path.name, item.description) for item in owned]))
+            blocks.append((plural, [_entry(item.title, _link(item.path, concept.folder), item.description) for item in owned]))
     extra = [_entry(entry["name"], entry["name"], entry["description"]) for entry in spec.get("extra_files", [])]
     if extra:
         blocks.append(("Files", extra))
@@ -86,13 +87,28 @@ def _concept_index(bundle: Bundle, concept: Concept) -> str:
 RISK_ORDER = ("critical", "high", "med", "low")
 
 
-def _covered_key(relation) -> str:
-    """The key of one `# Covers` entry: REQ-… for a Requirement, else the concept's key."""
-    if relation.kind == "Requirement":
-        return "REQ-" + relation.anchor[4:]
-    if relation.concept is not None:
-        return relation.concept.key
-    return relation.item.label or relation.item.text
+def case_id(case: Concept) -> int:
+    """The number in a TestCase key TC-<id>-<name>; 0 when the key has none."""
+    number = case.key.split("-")[1] if case.key.count("-") >= 2 else ""
+    return int(number) if number.isdigit() else 0
+
+
+AC_RE = re.compile(r"^AC\s+([1-9]\d*(?:\s*,\s*[1-9]\d*)*)$")
+
+
+def suite_cases(bundle: Bundle, suite: Concept) -> list[Concept]:
+    return [case for group in bundle.owned(suite, "TestGroup") for case in bundle.owned(group, "TestCase")]
+
+
+def story_link(bundle: Bundle, case: Concept, story_key: str):
+    """The `# Covers` entry of a case that links the story `story_key`, or None."""
+    return next((r for r in bundle.relations(case, ["Covers"]) if r.path is not None and r.path.stem == story_key), None)
+
+
+def acs(relation) -> list[int] | None:
+    """The criterion numbers of a story link: `— AC 1, 3` gives [1, 3]; None without that qualifier."""
+    match = AC_RE.match(relation.item.segments[0]) if relation.item.segments else None
+    return [int(number) for number in match.group(1).split(",")] if match else None
 
 
 def _one_line(text: str) -> str:
@@ -100,7 +116,8 @@ def _one_line(text: str) -> str:
 
 
 def checklist(bundle: Bundle, suite: Concept) -> str:
-    """`checklist.csv` of a TestSuite: one row per TestCase, highest risk first, then by title."""
+    """`checklist.csv` of a TestSuite: one row per TestCase, highest risk first, then by title; `No` is the case id
+    and `Covers` the criteria of the group's story the case covers."""
 
     def order(case: Concept) -> tuple[int, str, str]:
         risk = case.meta.get("risk")
@@ -109,11 +126,15 @@ def checklist(bundle: Bundle, suite: Concept) -> str:
 
     out = io.StringIO()
     writer = csv.writer(out, lineterminator="\n")
-    writer.writerow(["No", "Title", "Description", "Covers", "Purpose"])
-    for number, case in enumerate(sorted(bundle.owned(suite, "TestCase"), key=order), start=1):
-        covers = "; ".join(_covered_key(relation) for relation in bundle.relations(case, ["Covers"]))
+    writer.writerow(["No", "Group", "Title", "Description", "Category", "Covers", "Purpose"])
+    for case in sorted(suite_cases(bundle, suite), key=order):
+        link = story_link(bundle, case, case.owner.key) if case.owner.key != "GENERAL" else None
+        numbers = acs(link) if link else None
+        covers = "AC " + ", ".join(map(str, numbers)) if numbers else ""
         purpose = case.section(["Purpose"])
-        writer.writerow([number, case.title, case.description, covers, _one_line(purpose.text) if purpose else ""])
+        category = case.meta.get("testCategory")
+        row = [case_id(case), case.owner.key, case.title, case.description, category if isinstance(category, str) else "", covers]
+        writer.writerow(row + [_one_line(purpose.text) if purpose else ""])
     return out.getvalue()
 
 

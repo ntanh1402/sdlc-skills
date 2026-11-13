@@ -32,7 +32,7 @@ class LinksTest(RuleTest):
         self.assertRule("links.folder-link", SERVICE)
 
     def test_missing_anchor(self):
-        self.edit("pay/tests/TS-pay/TC-pay-ok.md", "#req-pay-1", "#req-pay-9")
+        self.edit("pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md", "#req-pay-1", "#req-pay-9")
         self.assertIn("links.anchor", {item.rule for item in self.findings()})
 
     def test_anchor_within_the_same_file(self):

@@ -45,7 +45,7 @@ Then read the schema pages `schema.md`, `user-story.md`, `feature.md`,
 | New or changed Requirements, or a criterion no Requirement supports | `sdlc-write-spec` |
 | Architecture | `sdlc-design-arch` |
 | Build tasks, or linking Tasks to stories | `sdlc-plan-tasks` |
-| Test cases or suites | `sdlc-design-tests` |
+| Test cases or suites | `sdlc-design-story-tests` for one story, `sdlc-design-feature-tests` for flows across stories |
 | Create or update tickets in the tracker | No skill does: a person pastes the story and may add `trackerKey` and `resource` to it (`sdlc-edit-wiki`) |
 | Show a story, or its paste-ready copy again | `sdlc-ask-wiki` |
 | A typo in a story | `sdlc-edit-wiki` |

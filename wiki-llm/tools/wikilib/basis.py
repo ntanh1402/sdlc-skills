@@ -1,11 +1,11 @@
-"""Spec versions: what each design, story, Task and TestSuite was written from.
+"""Spec versions: what each design, story, Task and TestGroup was written from.
 
 A Feature or ChangeRequest (a target) carries `version` and `versionDate`.
 What is written from it records the version it read:
 
   designBasedOn  on the target itself, once `# Architecture` / `# Delta` is written
   basedOn        on a Task or user story: its own folder's target
-  basedOn        on a TestSuite: a list, one entry per target under `# Verifies`
+  basedOn        on a TestGroup: the target under its TestSuite's `# Verifies`
 
 A record is outdated when it names an older version than the target's.
 """
@@ -68,14 +68,11 @@ def records(bundle: Bundle) -> list[Record]:
         entry = parse_entry(holder.meta.get("basedOn"))
         if entry and holder.owner is not None and holder.owner.type in TARGETS:
             found.append(Record(holder, "basedOn", holder.owner, *entry))
-    for suite in bundle.of_type("TestSuite"):
-        value = suite.meta.get("basedOn")
-        verified = {target.key: target for target in verifies(bundle, suite)}
-        for item in value if isinstance(value, list) else []:
-            entry = parse_entry(item)
-            target = verified.get(item.get("id")) if isinstance(item, dict) else None
-            if entry and target is not None:
-                found.append(Record(suite, "basedOn", target, *entry))
+    for group in bundle.of_type("TestGroup"):
+        entry = parse_entry(group.meta.get("basedOn"))
+        targets = verifies(bundle, group.owner) if group.owner is not None else []
+        if entry and targets:
+            found.append(Record(group, "basedOn", targets[0], *entry))
     return found
 
 

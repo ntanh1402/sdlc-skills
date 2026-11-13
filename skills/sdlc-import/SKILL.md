@@ -1,6 +1,6 @@
 ---
 name: sdlc-import
-description: Bring an existing, already built system into the project wiki, one source per run - a service's or frontend's code, an architecture document, a requirement document (PRD), a built capability that has no document, an end-to-end, integration, load or security test suite, a test plan, or a page, document or code example to keep as a Reference - as as-built Design files, Released Features, decisions, TestSuites and References that a person confirms group by group. When the source is already in the wiki, compare it with the wiki instead and let the person decide each difference. Use for brownfield onboarding, importing or documenting existing code, documents or tests, and checking whether the wiki still matches the code. Not for anything that is not built yet, for reviewing a code change, or for running tests.
+description: Bring an existing, already built system into the project wiki, one source per run - a service's or frontend's code, an architecture document, a requirement document (PRD), a built capability that has no document, an end-to-end, integration or security test suite, a test plan, or a page, document or code example to keep as a Reference - as as-built Design files, Released Features, decisions, TestSuites and References that a person confirms group by group. When the source is already in the wiki, compare it with the wiki instead and let the person decide each difference. Use for brownfield onboarding, importing or documenting existing code, documents or tests, and checking whether the wiki still matches the code. Not for anything that is not built yet, for reviewing a code change, or for running tests.
 ---
 
 # Import an existing project
@@ -15,7 +15,7 @@ what is built and running today. A person confirms them group by group.
 | Architecture document | `references/import-architecture-document.md` |
 | Requirement document (a PRD, a functional spec) | `references/import-requirement-document.md` |
 | A built capability that has no document | `references/import-undocumented-capability.md` |
-| Test code: one end-to-end, integration, load or security suite | `references/import-test-code.md` |
+| Test code: one end-to-end, integration or security suite | `references/import-test-code.md` |
 | Test document (a test plan, a sheet of manual cases) | `references/import-test-document.md` |
 | A reference: a page, a document or a code location to consult | `references/import-reference.md` |
 
@@ -163,8 +163,8 @@ list the ones you see and the order to do them (section 2), and do the first.
 | Architecture document | The Application's `# Architecture`, decisions, `conventions.md`, `glossary.md`, a Service page for each service the wiki lacks, and the document as a Reference | Decisions `Accepted`; Services `Active` | `import-<document name>` | Nothing |
 | Requirement document | One as-built Feature per capability, and the document as a Reference | `Released` | `import-FEAT-<name>`; `import-<document name>` for several Features | A Service page for each service it uses |
 | Capability with no document | One as-built Feature | `Released` | `import-FEAT-<name>` | The Endpoints and Subscriptions of the services it uses |
-| Test code | One TestSuite and one TestCase per test | `Implemented` | `import-TS-<name>` | A Feature it verifies |
-| Test document | One TestSuite, its TestCases, and the document as a Reference | `Approved` | `import-TS-<name>` | A Feature it verifies |
+| Test code | One TestCase per test, in a group of the TestSuite of the Feature (both created when missing) | Each group it writes: `Implemented` | `import-TS-<name>` | A Feature it verifies |
+| Test document | Its TestCases in a group of the TestSuite of the Feature (both created when missing), and the document as a Reference | Each group it writes: `Approved` | `import-TS-<name>` | A Feature it verifies |
 | Reference | One Reference, and the `# References` links to it | `Active` | `import-REF-<name>` | Nothing |
 
 `<document name>` is the file name without its extension, in lower-case words
@@ -175,8 +175,8 @@ Three cases write another status:
 - a decision the document shows as replaced is `Superseded`;
 - a file kept after the code dropped what it describes is `Deprecated`
   (`references/compare.md`);
-- a TestSuite from a test document is `Implemented`, with `resource`, when the
-  person says its runnable tests exist.
+- a TestGroup from a test document is `Implemented`, and its suite has
+  `resource`, when the person says its runnable tests exist.
 
 The order is Design, then Features, then tests. When a prerequisite is not on
 the default branch, stop before the Intent gate and name the run to do first:
@@ -363,9 +363,9 @@ schema pages require. For every file:
   has one.
 - **Spec versions.** A Feature this run creates has `version: 1`,
   `versionDate` today and, with its `# Architecture`,
-  `designBasedOn: { version: 1, at: <today> }`. A TestSuite has `basedOn`
-  with one entry per target under `# Verifies`, each copying that target's
-  `version` and `versionDate`. A correction to an existing Feature keeps its
+  `designBasedOn: { version: 1, at: <today> }`. A TestGroup has `basedOn`
+  copying the `version` and `versionDate` of the target under its suite's
+  `# Verifies`. A correction to an existing Feature keeps its
   `version`.
 - **`resource`** of a Service or frontend is the repository URL of section 4.
   A TestSuite written from test code has `resource` set to where its tests
@@ -426,7 +426,7 @@ not repeat the three lists of `SKILL.md` section 5.
   or `Approved` on a Feature; `Planned`, `Modifying` or `Removing` on a Design
   file), and never a `# Pending changes` entry.
 - It never corrects a file that holds a target not built yet.
-- It never runs the code or its tests, and never imports unit tests.
+- It never runs the code or its tests, and never imports unit or load tests.
 - It never picks the answer to a difference.
 
 ## Done when

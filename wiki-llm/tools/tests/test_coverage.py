@@ -6,8 +6,8 @@ import io
 from .support import RuleTest
 from .test_cli import run
 
-TESTCASE = "pay/tests/TS-pay/TC-pay-ok.md"
-COVERS_REQ = "* [REQ-pay-1](../../features/FEAT-pay/overview.md#req-pay-1)\n"
+TESTCASE = "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"
+COVERS_REQ = "* [REQ-pay-1](../../../features/FEAT-pay/overview.md#req-pay-1)\n"
 FEATURE = "pay/features/FEAT-pay/overview.md"
 SECOND_REQ = "### REQ-pay-refund\n\n**Should** — A shopper gets a refund. Functional. Verified by test.\n\n# Architecture"
 
@@ -27,7 +27,7 @@ class CoverageTest(RuleTest):
         self.assertEqual(self.coverage("tests", "--change", "CR-1")[1]["uncovered"], ["REQ-pay-2"])
 
     def test_change_requirement_covered_through_the_change_request(self):
-        self.edit(TESTCASE, COVERS_REQ, COVERS_REQ + "* [REQ-pay-2](../../change-requests/CR-1/overview.md#req-pay-2)\n")
+        self.edit(TESTCASE, COVERS_REQ, COVERS_REQ + "* [REQ-pay-2](../../../change-requests/CR-1/overview.md#req-pay-2)\n")
         self.assertEqual(self.coverage("tests", "--change", "CR-1")[1]["uncovered"], [])
 
     def test_modified_requirement_covered_through_the_feature(self):

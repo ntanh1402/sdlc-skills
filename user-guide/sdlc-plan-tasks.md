@@ -8,7 +8,7 @@ Plan the build Tasks of an approved design. [Back to the user guide](user-guide.
 |---|---|
 | **Who** | Tech lead |
 | **Use when** | A design, draft or agreed, needs build Tasks; a changed design or spec needs its Tasks planned again; or stories were written afterwards and the Tasks must link them |
-| **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-design-tests](sdlc-design-tests.md) |
+| **Needs first** | The design pull request is merged. It may run at the same time as [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |
 | **Say** | "Plan the tasks for gift cards" |
 | **You get** | `TASK-…` files, each with its acceptance, planned scope, size, dependencies and parallel wave. Every design item that is added, changed or removed is covered by a Task, and every user story is linked by at least one Task. Each Task serves at most one story, so it can be that story's sub-task in your tracker; work several stories need and none owns goes to a foundation Task with no story. Draft branch `wiki/tasks-<Key>` |
 | **Next** | Merge the pull request, then create a ticket per Task in your tracker. To record the ticket link in the Task, ask [sdlc-edit-wiki](sdlc-edit-wiki.md). The summary names the first wave of Tasks that can start |
@@ -73,7 +73,7 @@ one Task; no dependency cycles; every acceptance item is an observable result.
 | Request | Use |
 |---|---|
 | No approved design yet | [sdlc-design-arch](sdlc-design-arch.md) |
-| Test cases or suites | [sdlc-design-tests](sdlc-design-tests.md) |
+| Test cases or suites | [sdlc-design-story-tests](sdlc-design-story-tests.md), [sdlc-design-feature-tests](sdlc-design-feature-tests.md) |
 | User stories | [sdlc-write-stories](sdlc-write-stories.md) |
 | Writing a Task's code | [sdlc-build-task](sdlc-build-task.md) |
 | Marking a Task `Done` | [sdlc-close-task](sdlc-close-task.md) |

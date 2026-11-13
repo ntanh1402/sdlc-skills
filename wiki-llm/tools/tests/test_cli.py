@@ -111,30 +111,39 @@ class DiscoveryTest(unittest.TestCase):
         self.assertEqual(result["error"], "no bundle found: run from inside a wiki repository or pass --root")
 
     def test_schema_version_mismatch_stops_the_command(self):
-        fixture.edit(self.root, "index.md", 'schema_version: "1"', 'schema_version: "0"')
+        fixture.edit(self.root, "index.md", 'schema_version: "2"', 'schema_version: "0"')
         for command in (["validate"], ["sync"], ["sync", "--check"]):
             code, result = run("--root", str(self.root), *command)
             self.assertEqual(code, 2)
             self.assertEqual(
                 result["error"],
-                "bundle is schema 0, this tool is schema 1: run `wiki_llm.py migrate` (sdlc-setup-wiki does this)",
+                "bundle is schema 0, this tool is schema 2: run `wiki_llm.py migrate` (sdlc-setup-wiki does this)",
             )
 
     def test_index_without_schema_version_is_not_a_bundle(self):
-        fixture.edit(self.root, "index.md", 'schema_version: "1"\n', "")
+        fixture.edit(self.root, "index.md", 'schema_version: "2"\n', "")
         code, result = run("--root", str(self.root), "validate")
         self.assertEqual(code, 2)
         self.assertIn("no schema_version", result["error"])
 
     def test_migrate_says_no_migration_exists(self):
-        fixture.edit(self.root, "index.md", 'schema_version: "1"', 'schema_version: "0"')
+        fixture.edit(self.root, "index.md", 'schema_version: "2"', 'schema_version: "0"')
         code, result = run("--root", str(self.root), "migrate")
         self.assertEqual(code, 1)
-        self.assertEqual(result["error"], "no migration from schema 0 to 1 is available in this version")
+        self.assertEqual(result["error"], "no migration from schema 0 to 2 is available in this version")
+
+    def test_migrate_from_schema_1_removes_every_suite(self):
+        fixture.edit(self.root, "index.md", 'schema_version: "2"', 'schema_version: "1"')
+        code, result = run("--root", str(self.root), "migrate")
+        self.assertEqual(code, 0, result)
+        self.assertEqual((result["from"], result["to"], result["removed"], result["retest"]), ("1", "2", ["pay/tests/TS-pay"], ["FEAT-pay"]))
+        self.assertIn('schema_version: "2"', fixture.read(self.root, "index.md"))
+        self.assertFalse((self.root / "pay/tests/TS-pay").exists())
+        self.assertEqual(run("--root", str(self.root), "validate")[0], 0)
 
     def test_migrate_on_a_current_bundle_changes_nothing(self):
         code, result = run("--root", str(self.root), "migrate")
-        self.assertEqual((code, result), (0, {"ok": True, "from": "1", "to": "1", "written": []}))
+        self.assertEqual((code, result), (0, {"ok": True, "from": "2", "to": "2", "written": []}))
 
 
 class DocsCommandTest(unittest.TestCase):

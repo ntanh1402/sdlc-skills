@@ -1,9 +1,11 @@
+from wikilib import sync
+
 from . import fixture
 from .support import RuleTest
 
 SERVICE = "pay/services/SVC-pay/overview.md"
 TASK = "pay/features/FEAT-pay/TASK-pay-001.md"
-CASE = "pay/tests/TS-pay/TC-pay-ok.md"
+CASE = "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"
 CHANGE = "pay/change-requests/CR-1/overview.md"
 SUBSCRIPTION = "pay/services/SVC-pay/SUB-pay-events.md"
 ADR = "pay/decisions/ADR-002.md"
@@ -43,15 +45,20 @@ class RelationshipsTest(RuleTest):
 
     def test_test_case_coverage_rejects_an_illegal_target(self):
         """The second defect the old validator missed."""
-        self.edit(CASE, "* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md)", "* [TS-pay](overview.md)")
+        self.edit(CASE, "* [EP-pay-create](../../../services/SVC-pay/EP-pay-create.md)", "* [TS-pay](../overview.md)")
         self.assertRule("relationships.target-type", CASE)
 
     def test_test_case_may_cover_only_a_design_concept(self):
-        self.edit(CASE, "* [REQ-pay-1](../../features/FEAT-pay/overview.md#req-pay-1)\n", "")
+        self.edit(CASE, "* [REQ-pay-1](../../../features/FEAT-pay/overview.md#req-pay-1)\n", "")
+        text = fixture.read(self.root, CASE)
+        self.remove("pay/tests/TS-pay/STORY-pay-checkout")
+        fixture.add_general(self.root)
+        self.write("pay/tests/TS-pay/GENERAL/TC-1-pay-ok.md", fixture.general_case(text))  # a case in a story folder must cover one of its Requirements
+        sync.write(self.root)
         self.assertClean()
 
     def test_test_case_may_cover_a_decision(self):
-        self.edit(CASE, "* [EP-pay-create](../../services/SVC-pay/EP-pay-create.md)", "* [ADR-002](../../decisions/ADR-002.md)")
+        self.edit(CASE, "* [EP-pay-create](../../../services/SVC-pay/EP-pay-create.md)", "* [ADR-002](../../../decisions/ADR-002.md)")
         self.assertClean()
 
     def test_requirement_anchor_may_be_written_in_upper_case(self):
@@ -61,7 +68,7 @@ class RelationshipsTest(RuleTest):
 
     def test_feature_link_without_requirement_anchor_is_not_a_requirement(self):
         self.edit(CASE, "overview.md#req-pay-1)", "overview.md)")
-        self.assertRule("relationships.target-type", CASE)
+        self.assertReported("relationships.target-type", CASE)
 
     def test_decision_may_affect_a_feature(self):
         self.assertClean()

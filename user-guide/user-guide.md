@@ -55,16 +55,16 @@ afterwards. Click a skill for its guide.
 | Design | Architect | [sdlc-design-arch](sdlc-design-arch.md) | Architecture written from the spec's version; `Approved` once the Requirements are agreed too | Merge the design pull request |
 | User stories, optional | BA / PO | [sdlc-write-stories](sdlc-write-stories.md), alongside design | User stories (`STORY-…`) | Merge the stories pull request, create a ticket per story from its paste-ready copy |
 | Planning | Tech lead | [sdlc-plan-tasks](sdlc-plan-tasks.md) | Tasks `Todo` | Merge the pull request, create the tracker tickets |
-| Test design | QA | [sdlc-design-tests](sdlc-design-tests.md), alongside planning | TestSuites `Approved`, each with a `checklist.csv` | Merge the pull request |
+| Test design | QA | [sdlc-design-story-tests](sdlc-design-story-tests.md) per story and [sdlc-design-feature-tests](sdlc-design-feature-tests.md) per Feature, alongside planning | TestGroups `Approved`, each suite with a `checklist.csv` | Merge the pull request |
 | Implementation | Developer | [sdlc-build-task](sdlc-build-task.md), once per Task | Unchanged (it writes code, not the wiki) | Push the code branch, open the pull request |
 | Code review | Reviewer | [sdlc-review-code](sdlc-review-code.md) | Unchanged (read-only) | Decide on the findings, merge the code pull request |
 | Closing a Task | Developer | [sdlc-close-task](sdlc-close-task.md) | Task `Done`; once the Feature or ChangeRequest is `Approved`: Design files live, Feature `InDev`, or ChangeRequest `Implemented` once all its Tasks are `Done` | Merge the close pull request |
-| Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a suite `Implemented` |
+| Testing | QA, developers | Your usual tools | Unchanged | Write the test code from the TestCases and run it in CI. Then `sdlc-import` on the test code marks a test group `Implemented` |
 | Release | Release manager | Your usual tools, then [sdlc-edit-wiki](sdlc-edit-wiki.md) | Feature `Released` | Deploy. Then ask `sdlc-edit-wiki` to mark the Feature released |
 | Maintenance | Anyone | `sdlc-write-spec`, `sdlc-import`, `sdlc-edit-wiki` | A new ChangeRequest, or corrections | See below |
 
 **Starting before the Requirements are agreed.** A spec can be merged as a
-draft (`Draft`, `Proposed`). The architecture, stories, Tasks and TestSuites
+draft (`Draft`, `Proposed`). The architecture, stories, Tasks and test groups
 can all start from it, and Tasks can be built and closed while the spec is a
 draft; each records the spec `version` it was written from. While the parent
 is not `Approved` yet, closing a Task marks the Task `Done` and leaves the
@@ -103,7 +103,7 @@ flowchart TD
   m6 -. "stories" .-> tasks
   arch --> m2(["you: merge the design PR"])
   m2 -- "designed" --> tasks["sdlc-plan-tasks"]
-  m2 -- "designed" --> tests["sdlc-design-tests"]
+  m2 -- "designed" --> tests["sdlc-design-story-tests, sdlc-design-feature-tests"]
   tasks --> m3(["you: merge the PR, create tickets"])
   m3 -- "Task Todo" --> build["sdlc-build-task"]
   build --> pr(["you: push, open the code PR"])
@@ -116,7 +116,7 @@ flowchart TD
   ship --> released["sdlc-edit-wiki: Released"]
   tests --> m4(["you: merge the PR"])
   m4 --> testcode(["you: write and run the test code"])
-  testcode --> importT["sdlc-import: suite Implemented"]
+  testcode --> importT["sdlc-import: test group Implemented"]
 ```
 
 Rectangles are skills. Rounded boxes are steps you do yourself.
@@ -128,7 +128,7 @@ Rectangles are skills. Rounded boxes are steps you do yourself.
 | Product owner, business analyst | [write-spec](sdlc-write-spec.md), [write-stories](sdlc-write-stories.md), [convert-doc](sdlc-convert-doc.md) | [ask-wiki](sdlc-ask-wiki.md) to check status |
 | Architect | [design-arch](sdlc-design-arch.md), [import](sdlc-import.md) (architecture documents) | [ask-wiki](sdlc-ask-wiki.md) to read a design |
 | Tech lead | [setup-wiki](sdlc-setup-wiki.md), [import](sdlc-import.md), [plan-tasks](sdlc-plan-tasks.md) | [edit-wiki](sdlc-edit-wiki.md) to record ticket links |
-| QA | [design-tests](sdlc-design-tests.md), [import](sdlc-import.md) (test suites) | [ask-wiki](sdlc-ask-wiki.md) for coverage |
+| QA | [design-story-tests](sdlc-design-story-tests.md), [design-feature-tests](sdlc-design-feature-tests.md), [import](sdlc-import.md) (test suites) | [ask-wiki](sdlc-ask-wiki.md) for coverage |
 | Developer | [build-task](sdlc-build-task.md), [close-task](sdlc-close-task.md) | [review-code](sdlc-review-code.md) before the merge |
 | Reviewer | [review-code](sdlc-review-code.md) | [ask-wiki](sdlc-ask-wiki.md) for the Task and its design |
 | Release manager | [edit-wiki](sdlc-edit-wiki.md) | [ask-wiki](sdlc-ask-wiki.md) for what is not built |
@@ -137,7 +137,7 @@ Rectangles are skills. Rounded boxes are steps you do yourself.
 
 `sdlc-write-spec`, `sdlc-write-stories` and `sdlc-design-arch` belong to backlog
 refinement: a Feature is ready for a sprint when its design is merged, and its
-stories are the backlog items. `sdlc-plan-tasks` and `sdlc-design-tests` belong
+stories are the backlog items. `sdlc-plan-tasks`, `sdlc-design-story-tests` and `sdlc-design-feature-tests` belong
 to sprint planning, and their Tasks become your tickets. `sdlc-build-task`,
 `sdlc-review-code` and `sdlc-close-task` run inside the sprint, once for each
 Task. Marking a Feature released goes with your release.
@@ -149,12 +149,12 @@ Task. Marking a Feature released goes with your release.
 | Feature (`FEAT-…`) | A capability of an Application: its PRD, Requirements and Architecture. Statuses: `Draft` → `ReqApproved` → `Approved` → `InDev` → `Released` (later `Deprecated`). `ReqApproved` means the Requirements are agreed; `Approved` means agreed and designed from the current version |
 | ChangeRequest (`CR-…`) | A change to one Feature that is already `Approved` or later. Statuses: `Proposed` → `ReqApproved` → `Approved` → `Implemented` (or `Rejected`) |
 | Requirement (`REQ-…`) | One testable requirement inside a Feature or ChangeRequest |
-| Spec version | `version` of a Feature or ChangeRequest, raised each time its Requirements or PRD change. The architecture, stories, Tasks and TestSuites record the version they were written from, so the wiki lists what is outdated when the spec changes |
+| Spec version | `version` of a Feature or ChangeRequest, raised each time its Requirements or PRD change. The architecture, stories, Tasks and test groups record the version they were written from, so the wiki lists what is outdated when the spec changes |
 | Design files | Services, endpoints, events, tables, frontends and externals. A design not built yet is marked as pending (`Planned`, `Modifying`, `Removing`) until its Task is closed |
 | User story (`STORY-…`) | One actor's goal: "As a …, I want …, so that …" with numbered pass/fail acceptance criteria, each citing a Requirement. The tool lists the test cases QA runs for it. Optional; no status, you follow it in your tracker |
 | Reference (`REF-…`) | Material to read while working: a PRD, a test plan, a domain page, a vendor document, a code example. A folder with a summary, linked from any file under `# References`. Context, never a contract |
 | Task (`TASK-…`) | One piece of build work. Only `Todo` or `Done`; you follow progress in your tracker, not in the wiki |
-| TestSuite (`TS-…`), TestCase (`TC-…`) | The test design. A suite is `Implemented` once its test code exists |
+| TestSuite (`TS-…`), TestGroup (`STORY-…`, `GENERAL`), TestCase (`TC-…`) | The test design: one suite per Feature or ChangeRequest, one group per user story plus `GENERAL`. A group is `Implemented` once its test code exists |
 | Draft | One skill run's changes, on a branch `wiki/<step>-<key>` of the wiki repository. The next step only sees it after you merge its pull request |
 | Workspace | The folder you start your agent in, usually a code repository. `sdlc-setup-wiki` links it to the wiki |
 
@@ -192,7 +192,7 @@ assumes you know this:
 
    ```text
    Done: wiki/arch-FEAT-gift-cards, 6 files, pushed. Open the pull request.
-   Next: sdlc-plan-tasks and sdlc-design-tests after the merge.
+   Next: sdlc-plan-tasks, sdlc-design-story-tests and sdlc-design-feature-tests after the merge.
    ```
 
 **If a run stops part-way,** run the same skill again. It finds its unfinished
@@ -224,7 +224,8 @@ what you do), and *Not this skill*.
 | [sdlc-write-stories](sdlc-write-stories.md) | Break approved Requirements into user stories |
 | [sdlc-design-arch](sdlc-design-arch.md) | Design the architecture of approved requirements |
 | [sdlc-plan-tasks](sdlc-plan-tasks.md) | Plan the build Tasks of an approved design |
-| [sdlc-design-tests](sdlc-design-tests.md) | Design TestSuites and TestCases of an approved design |
+| [sdlc-design-story-tests](sdlc-design-story-tests.md) | Design the test cases of one user story |
+| [sdlc-design-feature-tests](sdlc-design-feature-tests.md) | Design the end-to-end and cross-story test cases of a Feature or ChangeRequest |
 | [sdlc-build-task](sdlc-build-task.md) | Write the code and unit tests of one Task, on a branch |
 | [sdlc-review-code](sdlc-review-code.md) | Review a code change against the wiki, read-only |
 | [sdlc-close-task](sdlc-close-task.md) | Record in the wiki that a Task's code is merged |

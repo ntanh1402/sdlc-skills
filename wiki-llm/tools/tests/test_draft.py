@@ -308,9 +308,9 @@ class DiffTest(DraftTest):
     def test_checklist_is_tool_written(self):
         worktree = self.start()
         root = self.bundle(worktree)
-        case = "pay/tests/TS-pay/TC-pay-ok.md"
+        case = "pay/tests/TS-pay/STORY-pay-checkout/TC-1-pay-ok.md"
         fixture.edit(root, case, "Prove a payment works.", "Prove a valid card is charged once.")
-        fixture.edit(root, "pay/tests/TS-pay/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Test design**: Sharper purpose.\n\n## 2026-09-01\n")
+        fixture.edit(root, "pay/tests/TS-pay/STORY-pay-checkout/log.md", "## 2026-09-01\n", "## 2026-09-30\n\n* **Test design**: Sharper purpose.\n\n## 2026-09-01\n")
         code, result = self.finish(worktree)
         self.assertEqual(code, 0, result)
         self.assertIn("pay/tests/TS-pay/checklist.csv", result["synced"])
